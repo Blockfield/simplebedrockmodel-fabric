@@ -6,11 +6,14 @@ import com.maydaymemory.mae.basic.BoneTransform;
 import com.maydaymemory.mae.basic.ZYXRotationView;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectList;
+
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.renderer.LightTexture;
+
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
@@ -40,10 +43,10 @@ public class BedrockBone {
     public float y;
     public float z;
     public Quaternionf rotation = new Quaternionf();
-    /**
-     * 这个旋转不会应用到渲染，只会用来生成 bind pose。
-     */
+
+    /** 这个旋转不会应用到渲染，只会用来生成 bind pose。 */
     public Vector3f rotationInEuler = new Vector3f();
+
     public float xScale = 1;
     public float yScale = 1;
     public float zScale = 1;
@@ -53,6 +56,7 @@ public class BedrockBone {
     private Map<String, LocatorData> locators = Map.of();
     private boolean hasCubesInTree;
     private boolean hasMeshesInTree;
+
     @Environment(EnvType.CLIENT)
     private transient AcceleratedBedrockBoneCache acceleratedCache;
 
@@ -62,25 +66,58 @@ public class BedrockBone {
     }
 
     @Environment(EnvType.CLIENT)
-    public void render(PoseStack poseStack, VertexConsumer consumer, int lightmap, int overlay, float red, float green, float blue, float alpha) {
-        this.renderGeometryPass(poseStack, consumer, lightmap, overlay, red, green, blue, alpha, false);
+    public void render(
+            PoseStack poseStack,
+            VertexConsumer consumer,
+            int lightmap,
+            int overlay,
+            float red,
+            float green,
+            float blue,
+            float alpha) {
+        this.renderGeometryPass(
+                poseStack, consumer, lightmap, overlay, red, green, blue, alpha, false);
     }
 
     @Environment(EnvType.CLIENT)
-    public void renderCubes(PoseStack poseStack, VertexConsumer quadConsumer, int lightmap, int overlay,
-                            float red, float green, float blue, float alpha) {
-        this.renderGeometryPass(poseStack, quadConsumer, lightmap, overlay, red, green, blue, alpha, false);
+    public void renderCubes(
+            PoseStack poseStack,
+            VertexConsumer quadConsumer,
+            int lightmap,
+            int overlay,
+            float red,
+            float green,
+            float blue,
+            float alpha) {
+        this.renderGeometryPass(
+                poseStack, quadConsumer, lightmap, overlay, red, green, blue, alpha, false);
     }
 
     @Environment(EnvType.CLIENT)
-    public void renderMeshes(PoseStack poseStack, VertexConsumer triangleConsumer, int lightmap, int overlay,
-                             float red, float green, float blue, float alpha) {
-        this.renderGeometryPass(poseStack, triangleConsumer, lightmap, overlay, red, green, blue, alpha, true);
+    public void renderMeshes(
+            PoseStack poseStack,
+            VertexConsumer triangleConsumer,
+            int lightmap,
+            int overlay,
+            float red,
+            float green,
+            float blue,
+            float alpha) {
+        this.renderGeometryPass(
+                poseStack, triangleConsumer, lightmap, overlay, red, green, blue, alpha, true);
     }
 
     @Environment(EnvType.CLIENT)
-    private void renderGeometryPass(PoseStack poseStack, VertexConsumer consumer, int lightmap, int overlay,
-                                    float red, float green, float blue, float alpha, boolean meshesPass) {
+    private void renderGeometryPass(
+            PoseStack poseStack,
+            VertexConsumer consumer,
+            int lightmap,
+            int overlay,
+            float red,
+            float green,
+            float blue,
+            float alpha,
+            boolean meshesPass) {
         if (!this.hasGeometryInTree(meshesPass)) {
             return;
         }
@@ -94,16 +131,29 @@ public class BedrockBone {
         PoseStack.Pose pose = poseStack.last();
 
         if (meshesPass) {
-            if (!this.meshes.isEmpty() && !AcceleratedRenderingCompat.renderMeshes(this, pose, consumer, packedLight, overlay, red, green, blue, alpha)) {
+            if (!this.meshes.isEmpty()
+                    && !AcceleratedRenderingCompat.renderMeshes(
+                            this, pose, consumer, packedLight, overlay, red, green, blue, alpha)) {
                 this.compileMeshes(pose, consumer, packedLight, overlay, red, green, blue, alpha);
             }
-        } else if (!this.cubes.isEmpty() && !AcceleratedRenderingCompat.renderCubes(this, pose, consumer, packedLight, overlay, red, green, blue, alpha)) {
+        } else if (!this.cubes.isEmpty()
+                && !AcceleratedRenderingCompat.renderCubes(
+                        this, pose, consumer, packedLight, overlay, red, green, blue, alpha)) {
             this.compile(pose, consumer, packedLight, overlay, red, green, blue, alpha);
         }
 
         for (BedrockBone child : this.children) {
             if (child.hasGeometryInTree(meshesPass)) {
-                child.renderGeometryPass(poseStack, consumer, packedLight, overlay, red, green, blue, alpha, meshesPass);
+                child.renderGeometryPass(
+                        poseStack,
+                        consumer,
+                        packedLight,
+                        overlay,
+                        red,
+                        green,
+                        blue,
+                        alpha,
+                        meshesPass);
             }
         }
 
@@ -158,7 +208,15 @@ public class BedrockBone {
     }
 
     @Environment(EnvType.CLIENT)
-    private void compile(PoseStack.Pose pose, VertexConsumer consumer, int lightmap, int overlay, float red, float green, float blue, float alpha) {
+    private void compile(
+            PoseStack.Pose pose,
+            VertexConsumer consumer,
+            int lightmap,
+            int overlay,
+            float red,
+            float green,
+            float blue,
+            float alpha) {
         Matrix3f normal = pose.normal();
         ClientConstants.NORMALS[0].set(-normal.m10, -normal.m11, -normal.m12);
         ClientConstants.NORMALS[1].set(normal.m10, normal.m11, normal.m12);
@@ -167,19 +225,40 @@ public class BedrockBone {
         ClientConstants.NORMALS[4].set(-normal.m00, -normal.m01, -normal.m02);
         ClientConstants.NORMALS[5].set(normal.m00, normal.m01, normal.m02);
         for (BedrockCube bedrockCube : this.cubes) {
-            bedrockCube.compile(pose, ClientConstants.NORMALS, consumer, lightmap, overlay, red, green, blue, alpha);
+            bedrockCube.compile(
+                    pose,
+                    ClientConstants.NORMALS,
+                    consumer,
+                    lightmap,
+                    overlay,
+                    red,
+                    green,
+                    blue,
+                    alpha);
         }
     }
 
     @Environment(EnvType.CLIENT)
-    private void compileMeshes(PoseStack.Pose pose, VertexConsumer consumer, int lightmap, int overlay, float red, float green, float blue, float alpha) {
+    private void compileMeshes(
+            PoseStack.Pose pose,
+            VertexConsumer consumer,
+            int lightmap,
+            int overlay,
+            float red,
+            float green,
+            float blue,
+            float alpha) {
         for (BedrockMesh mesh : this.meshes) {
             mesh.compileTriangles(pose, consumer, lightmap, overlay, red, green, blue, alpha);
         }
     }
 
     public BoneTransform getBoneTransform() {
-        return new BoneTransform(index, new Vector3f(x, y, z), new ZYXRotationView(rotation), new Vector3f(xScale, yScale, zScale));
+        return new BoneTransform(
+                index,
+                new Vector3f(x, y, z),
+                new ZYXRotationView(rotation),
+                new Vector3f(xScale, yScale, zScale));
     }
 
     public Matrix4f getGlobalTransform() {

@@ -28,11 +28,10 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 
 /**
- * Statement expression implementation. Statement expressions
- * do not have children expressions, they just have a single
- * operation type.
+ * Statement expression implementation. Statement expressions do not have children expressions, they
+ * just have a single operation type.
  *
- * <p>Example statement expressions: {@code break}, {@code continue}</p>
+ * <p>Example statement expressions: {@code break}, {@code continue}
  *
  * @since 3.0.0
  */
@@ -59,10 +58,8 @@ public final class StatementExpression implements Expression {
         return visitor.visitStatement(this);
     }
 
-
     /**
-     * Enum containing all the possible operations/types
-     * of statement expressions.
+     * Enum containing all the possible operations/types of statement expressions.
      *
      * @since 3.0.0
      */
@@ -81,5 +78,4 @@ public final class StatementExpression implements Expression {
          */
         CONTINUE
     }
-
 }

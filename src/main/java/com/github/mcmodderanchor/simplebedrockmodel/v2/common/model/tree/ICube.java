@@ -20,7 +20,8 @@ public sealed interface ICube permits CubeBox, CubePerFace {
 
     float @Nullable [] pivot();
 
-    @Nullable Quaternionf rotation();
+    @Nullable
+    Quaternionf rotation();
 
     default boolean hasRotation() {
         return pivot() != null && rotation() != null;

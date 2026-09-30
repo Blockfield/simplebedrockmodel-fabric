@@ -1,5 +1,7 @@
 package com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.component.lifetime;
 
+import static com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.ParticleJsonUtils.getMolang;
+
 import com.github.mcmodderanchor.simplebedrockmodel.v1.molang.runtime.MolangContext;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.molang.runtime.MolangExpression;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.component.IEmitterComponent;
@@ -8,15 +10,10 @@ import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.runtime.Particle
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import static com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.ParticleJsonUtils.getMolang;
-
-/**
- * 表达式生命周期。对应 "minecraft:emitter_lifetime_expression"。
- */
+/** 表达式生命周期。对应 "minecraft:emitter_lifetime_expression"。 */
 public record EmitterLifetimeExpression(
-        MolangExpression activationExpression,
-        MolangExpression expirationExpression
-) implements LifetimeComponent {
+        MolangExpression activationExpression, MolangExpression expirationExpression)
+        implements LifetimeComponent {
 
     @Override
     public int order() {
@@ -33,7 +30,8 @@ public record EmitterLifetimeExpression(
         return new Runtime(activationExpression, expirationExpression);
     }
 
-    public static EmitterLifetimeExpression fromJson(String key, JsonElement value, ParticleMolangEnvironment molang) {
+    public static EmitterLifetimeExpression fromJson(
+            String key, JsonElement value, ParticleMolangEnvironment molang) {
         JsonObject obj = value.getAsJsonObject();
         return new EmitterLifetimeExpression(
                 molang.compile(getMolang(obj, "activation_expression", "1")),

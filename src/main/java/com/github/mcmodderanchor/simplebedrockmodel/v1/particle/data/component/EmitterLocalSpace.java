@@ -1,13 +1,11 @@
 package com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.component;
 
+import static com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.ParticleJsonUtils.getBoolean;
+
 import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.runtime.ParticleEmitterInstance;
 import com.google.gson.JsonObject;
 
-import static com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.ParticleJsonUtils.getBoolean;
-
-/**
- * 发射器局部空间组件。对应 "minecraft:emitter_local_space"。
- */
+/** 发射器局部空间组件。对应 "minecraft:emitter_local_space"。 */
 public record EmitterLocalSpace(boolean position, boolean rotation, boolean velocity)
         implements IEmitterComponentDefinition, IEmitterComponent {
 

@@ -1,6 +1,7 @@
 package com.github.mcmodderanchor.simplebedrockmodel.v1.common.molang;
 
 import com.github.mcmodderanchor.simplebedrockmodel.v1.molang.runtime.binding.QueryBinding;
+
 import net.minecraft.world.entity.LivingEntity;
 
 /**
@@ -11,8 +12,7 @@ import net.minecraft.world.entity.LivingEntity;
 @SuppressWarnings("unused")
 public class MolangLivingContext<T extends LivingEntity> extends MolangEntityContext<T> {
 
-    public MolangLivingContext() {
-    }
+    public MolangLivingContext() {}
 
     public MolangLivingContext(T entity) {
         super(entity);

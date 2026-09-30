@@ -23,37 +23,32 @@
  */
 package com.github.mcmodderanchor.simplebedrockmodel.v1.molang.util;
 
+import static java.util.Objects.requireNonNull;
+
 import com.github.mcmodderanchor.simplebedrockmodel.v1.molang.runtime.TypeCastException;
+
 import org.jetbrains.annotations.NotNull;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 
-import static java.util.Objects.requireNonNull;
-
 public final class AsmUtil {
 
-    private AsmUtil() {
-    }
+    private AsmUtil() {}
 
-    /**
-     * Returns the internal name (slash-separated) for a Java class.
-     */
+    /** Returns the internal name (slash-separated) for a Java class. */
     public static @NotNull String internalName(final @NotNull Class<?> clazz) {
         return Type.getInternalName(clazz);
     }
 
-    /**
-     * Returns the type descriptor for a Java class.
-     */
+    /** Returns the type descriptor for a Java class. */
     public static @NotNull String descriptor(final @NotNull Class<?> clazz) {
         return Type.getDescriptor(clazz);
     }
 
-    /**
-     * Emits a type cast from {@code from} to {@code to} on the given MethodVisitor.
-     */
-    public static void addCast(final @NotNull MethodVisitor mv, final @NotNull Type from, final @NotNull Type to) {
+    /** Emits a type cast from {@code from} to {@code to} on the given MethodVisitor. */
+    public static void addCast(
+            final @NotNull MethodVisitor mv, final @NotNull Type from, final @NotNull Type to) {
         requireNonNull(mv, "mv");
         requireNonNull(from, "from");
         requireNonNull(to, "to");
@@ -84,7 +79,8 @@ public final class AsmUtil {
         }
     }
 
-    private static void addPrimitiveCast(final @NotNull MethodVisitor mv, final @NotNull Type from, final @NotNull Type to) {
+    private static void addPrimitiveCast(
+            final @NotNull MethodVisitor mv, final @NotNull Type from, final @NotNull Type to) {
         int f = from.getSort();
         int t = to.getSort();
 
@@ -230,10 +226,9 @@ public final class AsmUtil {
         }
     }
 
-    /**
-     * Emits a boxing instruction (primitive → wrapper).
-     */
-    private static void addBoxing(final @NotNull MethodVisitor mv, final @NotNull Type primitiveType) {
+    /** Emits a boxing instruction (primitive → wrapper). */
+    private static void addBoxing(
+            final @NotNull MethodVisitor mv, final @NotNull Type primitiveType) {
         String wrapperInternal;
         String valueOfDesc;
         switch (primitiveType.getSort()) {
@@ -275,10 +270,9 @@ public final class AsmUtil {
         mv.visitMethodInsn(Opcodes.INVOKESTATIC, wrapperInternal, "valueOf", valueOfDesc, false);
     }
 
-    /**
-     * Emits an unboxing instruction (wrapper → primitive).
-     */
-    private static void addUnboxing(final @NotNull MethodVisitor mv, final @NotNull Type primitiveType) {
+    /** Emits an unboxing instruction (wrapper → primitive). */
+    private static void addUnboxing(
+            final @NotNull MethodVisitor mv, final @NotNull Type primitiveType) {
         String wrapperInternal;
         String methodName;
         String methodDesc;
@@ -329,9 +323,7 @@ public final class AsmUtil {
         mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, wrapperInternal, methodName, methodDesc, false);
     }
 
-    /**
-     * Pushes a zero/null constant for the given type.
-     */
+    /** Pushes a zero/null constant for the given type. */
     public static void addConstZero(final @NotNull MethodVisitor mv, final @NotNull Type type) {
         switch (type.getSort()) {
             case Type.BOOLEAN:
@@ -360,9 +352,7 @@ public final class AsmUtil {
         }
     }
 
-    /**
-     * Emits a return instruction for the given type.
-     */
+    /** Emits a return instruction for the given type. */
     public static void addReturn(final @NotNull MethodVisitor mv, final @NotNull Type type) {
         switch (type.getSort()) {
             case Type.VOID:
@@ -390,31 +380,26 @@ public final class AsmUtil {
         }
     }
 
-    /**
-     * Emits a load instruction for the given type and local variable index.
-     */
-    public static void addLoad(final @NotNull MethodVisitor mv, int index, final @NotNull Type type) {
+    /** Emits a load instruction for the given type and local variable index. */
+    public static void addLoad(
+            final @NotNull MethodVisitor mv, int index, final @NotNull Type type) {
         mv.visitVarInsn(type.getOpcode(Opcodes.ILOAD), index);
     }
 
-    /**
-     * Emits a store instruction for the given type and local variable index.
-     */
-    public static void addStore(final @NotNull MethodVisitor mv, int index, final @NotNull Type type) {
+    /** Emits a store instruction for the given type and local variable index. */
+    public static void addStore(
+            final @NotNull MethodVisitor mv, int index, final @NotNull Type type) {
         mv.visitVarInsn(type.getOpcode(Opcodes.ISTORE), index);
     }
 
-    /**
-     * Returns the size of a type in local variable slots (1 or 2).
-     */
+    /** Returns the size of a type in local variable slots (1 or 2). */
     public static int typeSize(final @NotNull Type type) {
         return type.getSize();
     }
 
-    /**
-     * Builds a method descriptor string from return type and parameter types.
-     */
-    public static @NotNull String methodDescriptor(final @NotNull Class<?> returnType, final @NotNull Class<?>... paramTypes) {
+    /** Builds a method descriptor string from return type and parameter types. */
+    public static @NotNull String methodDescriptor(
+            final @NotNull Class<?> returnType, final @NotNull Class<?>... paramTypes) {
         Type[] asmParamTypes = new Type[paramTypes.length];
         for (int i = 0; i < paramTypes.length; i++) {
             asmParamTypes[i] = Type.getType(paramTypes[i]);

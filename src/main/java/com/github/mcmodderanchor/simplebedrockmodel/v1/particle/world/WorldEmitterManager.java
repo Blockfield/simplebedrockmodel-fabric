@@ -8,12 +8,14 @@ import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.runtime.EventExe
 import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.runtime.ParticleEmitterInstance;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.runtime.ParticleInstance;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.runtime.ParticleMolangEnvironment;
+
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.world.phys.Vec3;
+
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 
@@ -39,14 +41,18 @@ public class WorldEmitterManager {
     /**
      * 添加一个世界粒子发射器。
      *
-     * @param level      客户端世界
-     * @param pos        发射器世界坐标
-     * @param velocity   发射器世界速度（blocks/second）
+     * @param level 客户端世界
+     * @param pos 发射器世界坐标
+     * @param velocity 发射器世界速度（blocks/second）
      * @param definition 粒子效果定义
      * @return 创建的发射器实例，可用于后续控制；如果 definition 为 null 则返回 null
      */
     @Nullable
-    public ParticleEmitterInstance addEmitter(ClientLevel level, Vec3 pos, Vec3 velocity, @Nullable ParticleEffectDefinition definition) {
+    public ParticleEmitterInstance addEmitter(
+            ClientLevel level,
+            Vec3 pos,
+            Vec3 velocity,
+            @Nullable ParticleEffectDefinition definition) {
         if (definition == null) {
             SimpleBedrockModel.LOGGER.warn("Attempted to add world emitter with null definition");
             return null;
@@ -56,7 +62,8 @@ public class WorldEmitterManager {
         ParticleEmitterInstance emitter = new ParticleEmitterInstance(definition, molang);
 
         // 设置事件上下文
-        EventExecutor.EventContext eventCtx = new EventExecutor.EventContext(emitter, molang, level, pos);
+        EventExecutor.EventContext eventCtx =
+                new EventExecutor.EventContext(emitter, molang, level, pos);
         emitter.setEventContext(eventCtx);
 
         // 触发创建事件（必须在 setEventContext 之后调用）
@@ -84,9 +91,9 @@ public class WorldEmitterManager {
     }
 
     public static void onClientTick(Minecraft client) {
-//        if (event.phase != TickEvent.Phase.START) {
-//            return;
-//        }
+        //        if (event.phase != TickEvent.Phase.START) {
+        //            return;
+        //        }
         if (!CLOCK.shouldTick()) {
             return;
         }
@@ -99,8 +106,8 @@ public class WorldEmitterManager {
 
     /**
      * 每 tick 驱动所有发射器。
-     * <p>
-     * 应在 {@code TickEvent.ClientTickEvent} 中调用。
+     *
+     * <p>应在 {@code TickEvent.ClientTickEvent} 中调用。
      */
     public void tick() {
         float dt = 1f / 20f; // 固定 tick 步长
@@ -121,8 +128,9 @@ public class WorldEmitterManager {
 
             // 更新事件上下文中的位置
             Vec3 currentPos = new Vec3(active.worldX, active.worldY, active.worldZ);
-            active.emitter.setEventContext(new EventExecutor.EventContext(
-                    active.emitter, active.molang, active.level, currentPos));
+            active.emitter.setEventContext(
+                    new EventExecutor.EventContext(
+                            active.emitter, active.molang, active.level, currentPos));
 
             active.emitter.tick(dt);
 
@@ -132,9 +140,7 @@ public class WorldEmitterManager {
         }
     }
 
-    /**
-     * 将发射器产出的粒子转换为 {@link SnowStormParticle} 并投递到 ParticleEngine。
-     */
+    /** 将发射器产出的粒子转换为 {@link SnowStormParticle} 并投递到 ParticleEngine。 */
     private void deliverParticle(ActiveWorldEmitter active, ParticleInstance particle) {
         Minecraft mc = Minecraft.getInstance();
         if (mc.particleEngine == null || active.level == null) {
@@ -168,19 +174,23 @@ public class WorldEmitterManager {
         particle.y = (float) py;
         particle.z = (float) pz;
 
-        SnowStormParticle worldParticle = new SnowStormParticle(active.level, particle, active.definition, active.emitter);
+        SnowStormParticle worldParticle =
+                new SnowStormParticle(active.level, particle, active.definition, active.emitter);
         mc.particleEngine.add(worldParticle);
     }
 
     private void updateEmitterTransform(ActiveWorldEmitter active) {
         Matrix4f identity = new Matrix4f();
-        Matrix4f worldTransform = new Matrix4f().translation((float) active.worldX, (float) active.worldY, (float) active.worldZ);
+        Matrix4f worldTransform =
+                new Matrix4f()
+                        .translation(
+                                (float) active.worldX,
+                                (float) active.worldY,
+                                (float) active.worldZ);
         active.emitter.setEmitterTransform(identity, worldTransform);
     }
 
-    /**
-     * 清空所有发射器。
-     */
+    /** 清空所有发射器。 */
     public void clear() {
         emitters.clear();
     }
@@ -189,16 +199,12 @@ public class WorldEmitterManager {
         return emitters;
     }
 
-    /**
-     * 获取当前活跃的发射器数量。
-     */
+    /** 获取当前活跃的发射器数量。 */
     public int getEmitterCount() {
         return emitters.size();
     }
 
-    /**
-     * 活跃的世界发射器上下文。
-     */
+    /** 活跃的世界发射器上下文。 */
     public static class ActiveWorldEmitter {
         public ParticleEmitterInstance emitter;
         public ParticleMolangEnvironment molang;

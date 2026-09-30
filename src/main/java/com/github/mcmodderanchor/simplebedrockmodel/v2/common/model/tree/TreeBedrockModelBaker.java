@@ -11,8 +11,10 @@ import com.maydaymemory.mae.basic.BoneTransform;
 import com.maydaymemory.mae.basic.Pose;
 import com.maydaymemory.mae.basic.PoseBuilder;
 import com.maydaymemory.mae.basic.RotationView;
+
 import net.minecraft.core.Direction;
 import net.minecraft.world.phys.AABB;
+
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
@@ -23,35 +25,51 @@ import org.joml.Vector3fc;
 import java.util.*;
 
 public class TreeBedrockModelBaker {
-    private static final int[][] UV_ORDER_NO_MIRROR = new int[][]{
-            {2, 3, 7, 6}, {1, 2, 6, 7}, {1, 2, 7, 8}, {4, 5, 7, 8}, {2, 4, 7, 8}, {0, 1, 7, 8},
-    };
-    private static final int[][] UV_ORDER_MIRRORED = new int[][]{
-            {3, 2, 7, 6}, {2, 1, 6, 7}, {2, 1, 7, 8}, {5, 4, 7, 8}, {1, 0, 7, 8}, {4, 2, 7, 8},
-    };
+    private static final int[][] UV_ORDER_NO_MIRROR =
+            new int[][] {
+                {2, 3, 7, 6}, {1, 2, 6, 7}, {1, 2, 7, 8}, {4, 5, 7, 8}, {2, 4, 7, 8}, {0, 1, 7, 8},
+            };
+    private static final int[][] UV_ORDER_MIRRORED =
+            new int[][] {
+                {3, 2, 7, 6}, {2, 1, 6, 7}, {2, 1, 7, 8}, {5, 4, 7, 8}, {1, 0, 7, 8}, {4, 2, 7, 8},
+            };
 
     public static TreeBedrockModel bake(BedrockModelPOJO pojo) {
         ModelSource source = modelSource(pojo);
         if (source.bones == null || source.bones.length == 0) {
-            return new TreeBedrockModel(new TreeBoneDefinition[0], Map.of(), Map.of(), new ArrayPoseBuilder().toPose(), source.renderBoundingBox);
+            return new TreeBedrockModel(
+                    new TreeBoneDefinition[0],
+                    Map.of(),
+                    Map.of(),
+                    new ArrayPoseBuilder().toPose(),
+                    source.renderBoundingBox);
         }
         CompileBone[] compileBones = createCompileBones(source.bones);
         Map<String, CompileBone> boneByName = indexCompileBones(compileBones);
         linkCompileBones(source.bones, boneByName);
-        TreeBoneDefinition[] definitions = createDefinitions(source.bones, compileBones, source.texWidth, source.texHeight);
+        TreeBoneDefinition[] definitions =
+                createDefinitions(source.bones, compileBones, source.texWidth, source.texHeight);
         definitions = applySubtreeGeometryFlags(definitions);
         Map<String, Integer> indexByName = new LinkedHashMap<>();
         Map<String, Map.Entry<Integer, LocatorData>> locatorByName = new LinkedHashMap<>();
         for (TreeBoneDefinition definition : definitions) {
             indexByName.put(definition.name(), definition.index());
             for (Map.Entry<String, LocatorData> locator : definition.locators().entrySet()) {
-                locatorByName.put(locator.getKey(), TreeBedrockModel.locatorEntry(definition.index(), locator.getValue()));
+                locatorByName.put(
+                        locator.getKey(),
+                        TreeBedrockModel.locatorEntry(definition.index(), locator.getValue()));
             }
         }
-        return new TreeBedrockModel(definitions, indexByName, locatorByName, createBindPose(definitions), source.renderBoundingBox);
+        return new TreeBedrockModel(
+                definitions,
+                indexByName,
+                locatorByName,
+                createBindPose(definitions),
+                source.renderBoundingBox);
     }
 
-    private static TreeBoneDefinition[] createDefinitions(BonesItem[] sourceBones, CompileBone[] compileBones, int texWidth, int texHeight) {
+    private static TreeBoneDefinition[] createDefinitions(
+            BonesItem[] sourceBones, CompileBone[] compileBones, int texWidth, int texHeight) {
         ArrayList<List<Integer>> children = new ArrayList<>(compileBones.length);
         for (int i = 0; i < compileBones.length; i++) children.add(new ArrayList<>());
         for (CompileBone bone : compileBones) {
@@ -66,15 +84,32 @@ public class TreeBedrockModelBaker {
             ICube[] cubes = createCubes(sourceBone, bone, texWidth, texHeight);
             LocalCubeBounds ownCubeBounds = ownCubeBounds(cubes);
             PolyMesh[] polyMeshes = createPolyMeshes(sourceBone, bone, texWidth, texHeight);
-            result[i] = new TreeBoneDefinition(bone.name, bone.index, parentIndex, childArray,
-                    bone.pivotX, bone.pivotY, bone.pivotZ, bone.bindX, bone.bindY, bone.bindZ,
-                    bone.bindRotation, bone.bindEulerRotation, parseLocators(sourceBone, bone), cubes, ownCubeBounds, polyMeshes,
-                    cubes.length > 0, TreeGeometryWriter.hasTriangles(polyMeshes));
+            result[i] =
+                    new TreeBoneDefinition(
+                            bone.name,
+                            bone.index,
+                            parentIndex,
+                            childArray,
+                            bone.pivotX,
+                            bone.pivotY,
+                            bone.pivotZ,
+                            bone.bindX,
+                            bone.bindY,
+                            bone.bindZ,
+                            bone.bindRotation,
+                            bone.bindEulerRotation,
+                            parseLocators(sourceBone, bone),
+                            cubes,
+                            ownCubeBounds,
+                            polyMeshes,
+                            cubes.length > 0,
+                            TreeGeometryWriter.hasTriangles(polyMeshes));
         }
         return result;
     }
 
-    private static ICube[] createCubes(BonesItem boneItem, CompileBone bone, int texWidth, int texHeight) {
+    private static ICube[] createCubes(
+            BonesItem boneItem, CompileBone bone, int texWidth, int texHeight) {
         if (boneItem.getCubes() == null) return new ICube[0];
         ArrayList<ICube> cubes = new ArrayList<>();
         for (CubesItem cube : boneItem.getCubes()) {
@@ -89,7 +124,9 @@ public class TreeBedrockModelBaker {
                 cubeRotation[0] = (float) -Math.toRadians(cubeRotation[0]);
                 cubeRotation[1] = (float) -Math.toRadians(cubeRotation[1]);
                 cubeRotation[2] = (float) Math.toRadians(cubeRotation[2]);
-                rotation = new Quaternionf().rotateZYX(cubeRotation[2], cubeRotation[1], cubeRotation[0]);
+                rotation =
+                        new Quaternionf()
+                                .rotateZYX(cubeRotation[2], cubeRotation[1], cubeRotation[0]);
             }
             float inflate = cube.getInflate();
             float x = (origin[0] - bone.absolutePivotX - inflate) / 16.0f;
@@ -106,9 +143,35 @@ public class TreeBedrockModelBaker {
             if (cube.getFaceUv() == null) {
                 float[] uv = cube.getUv();
                 boolean mirror = cube.isHasMirror() ? cube.isMirror() : boneItem.isMirror();
-                cubes.add(new CubeBox(x, y, z, width, height, depth, 0.0f, createBoxUvs(uv[0], uv[1], size[0], size[1], size[2], texWidth, texHeight), mirror ? UV_ORDER_MIRRORED : UV_ORDER_NO_MIRROR, pivot, rotation));
+                cubes.add(
+                        new CubeBox(
+                                x,
+                                y,
+                                z,
+                                width,
+                                height,
+                                depth,
+                                0.0f,
+                                createBoxUvs(
+                                        uv[0], uv[1], size[0], size[1], size[2], texWidth,
+                                        texHeight),
+                                mirror ? UV_ORDER_MIRRORED : UV_ORDER_NO_MIRROR,
+                                pivot,
+                                rotation));
             } else {
-                cubes.add(new CubePerFace(x, y, z, width, height, depth, 0.0f, createPerFaceUvs(cube.getFaceUv(), texWidth, texHeight), createEmptyFacesMask(cube.getFaceUv()), pivot, rotation));
+                cubes.add(
+                        new CubePerFace(
+                                x,
+                                y,
+                                z,
+                                width,
+                                height,
+                                depth,
+                                0.0f,
+                                createPerFaceUvs(cube.getFaceUv(), texWidth, texHeight),
+                                createEmptyFacesMask(cube.getFaceUv()),
+                                pivot,
+                                rotation));
             }
         }
         return cubes.toArray(ICube[]::new);
@@ -126,18 +189,33 @@ public class TreeBedrockModelBaker {
                 cubeTransform.rotate(rotation);
                 cubeTransform.translate(-pivot[0], -pivot[1], -pivot[2]);
             }
-            bounds.includeCube(cube.x(), cube.y(), cube.z(), cube.width(), cube.height(), cube.depth(), cubeTransform);
+            bounds.includeCube(
+                    cube.x(),
+                    cube.y(),
+                    cube.z(),
+                    cube.width(),
+                    cube.height(),
+                    cube.depth(),
+                    cubeTransform);
         }
         return bounds.build();
     }
 
-    private static PolyMesh[] createPolyMeshes(BonesItem boneItem, CompileBone bone, int texWidth, int texHeight) {
+    private static PolyMesh[] createPolyMeshes(
+            BonesItem boneItem, CompileBone bone, int texWidth, int texHeight) {
         PolyMeshItem polyMesh = boneItem.getPolyMesh();
         if (polyMesh == null) return new PolyMesh[0];
-        return new PolyMesh[]{createPolyMesh(polyMesh, bone, texWidth, texHeight)};
+        return new PolyMesh[] {createPolyMesh(polyMesh, bone, texWidth, texHeight)};
     }
 
-    private static float[] createBoxUvs(float texOffX, float texOffY, float width, float height, float depth, float texWidth, float texHeight) {
+    private static float[] createBoxUvs(
+            float texOffX,
+            float texOffY,
+            float width,
+            float height,
+            float depth,
+            float texWidth,
+            float texHeight) {
         float dx = (float) Math.floor(width);
         float dy = (float) Math.floor(height);
         float dz = (float) Math.floor(depth);
@@ -179,20 +257,34 @@ public class TreeBedrockModelBaker {
     private static boolean isEmptyFace(FaceItem face) {
         float[] uv = face.getUv();
         float[] uvSize = face.getUvSize();
-        return uv == null || uv.length < 2 || uvSize == null || uvSize.length < 2
-                || Math.abs(uvSize[0]) < 1.0E-9f || Math.abs(uvSize[1]) < 1.0E-9f;
+        return uv == null
+                || uv.length < 2
+                || uvSize == null
+                || uvSize.length < 2
+                || Math.abs(uvSize[0]) < 1.0E-9f
+                || Math.abs(uvSize[1]) < 1.0E-9f;
     }
 
     private static float[] getRotatedUVs(FaceItem face, float texWidth, float texHeight) {
         return face.getRotatedUVs(texWidth, texHeight);
     }
 
-    private static PolyMesh createPolyMesh(PolyMeshItem polyMesh, CompileBone bone, float texWidth, float texHeight) {
+    private static PolyMesh createPolyMesh(
+            PolyMeshItem polyMesh, CompileBone bone, float texWidth, float texHeight) {
         ArrayList<PolyMesh.Triangle> triangles = new ArrayList<>();
         float[][] positions = polyMesh.getPositions();
         JsonElement polys = polyMesh.getPolys();
         if (positions != null && polys != null && !polys.isJsonNull()) {
-            bakePolys(polyMesh, bone, texWidth, texHeight, positions, polyMesh.getNormals(), polyMesh.getUvs(), polys, triangles);
+            bakePolys(
+                    polyMesh,
+                    bone,
+                    texWidth,
+                    texHeight,
+                    positions,
+                    polyMesh.getNormals(),
+                    polyMesh.getUvs(),
+                    polys,
+                    triangles);
         }
         PolyMesh.Triangle[] triangleArray = triangles.toArray(PolyMesh.Triangle[]::new);
         if (triangleArray.length == 0) return new PolyMesh(triangleArray, 0, 0, 0, 0, 0, 0);
@@ -217,34 +309,74 @@ public class TreeBedrockModelBaker {
         return new PolyMesh(triangleArray, minX, minY, minZ, maxX - minX, maxY - minY, maxZ - minZ);
     }
 
-    private static void bakePolys(PolyMeshItem polyMesh, CompileBone bone, float texWidth, float texHeight, float[][] positions, float[][] normals,
-                                  float[][] uvs, JsonElement polys, List<PolyMesh.Triangle> triangles) {
+    private static void bakePolys(
+            PolyMeshItem polyMesh,
+            CompileBone bone,
+            float texWidth,
+            float texHeight,
+            float[][] positions,
+            float[][] normals,
+            float[][] uvs,
+            JsonElement polys,
+            List<PolyMesh.Triangle> triangles) {
         if (polys.isJsonPrimitive() && polys.getAsJsonPrimitive().isString()) {
             String mode = polys.getAsString();
-            if ("tri_list".equals(mode)) bakeListMode(polyMesh, bone, texWidth, texHeight, positions, normals, uvs, triangles, 3);
-            else if ("quad_list".equals(mode)) bakeListMode(polyMesh, bone, texWidth, texHeight, positions, normals, uvs, triangles, 4);
+            if ("tri_list".equals(mode))
+                bakeListMode(
+                        polyMesh, bone, texWidth, texHeight, positions, normals, uvs, triangles, 3);
+            else if ("quad_list".equals(mode))
+                bakeListMode(
+                        polyMesh, bone, texWidth, texHeight, positions, normals, uvs, triangles, 4);
         } else if (polys.isJsonArray()) {
             for (JsonElement polyElement : polys.getAsJsonArray()) {
                 if (polyElement != null && polyElement.isJsonArray()) {
-                    bakeIndexedPolygon(polyMesh, bone, texWidth, texHeight, positions, normals, uvs, polyElement.getAsJsonArray(), triangles);
+                    bakeIndexedPolygon(
+                            polyMesh,
+                            bone,
+                            texWidth,
+                            texHeight,
+                            positions,
+                            normals,
+                            uvs,
+                            polyElement.getAsJsonArray(),
+                            triangles);
                 }
             }
         }
     }
 
-    private static void bakeListMode(PolyMeshItem polyMesh, CompileBone bone, float texWidth, float texHeight, float[][] positions, float[][] normals,
-                                     float[][] uvs, List<PolyMesh.Triangle> triangles, int stride) {
+    private static void bakeListMode(
+            PolyMeshItem polyMesh,
+            CompileBone bone,
+            float texWidth,
+            float texHeight,
+            float[][] positions,
+            float[][] normals,
+            float[][] uvs,
+            List<PolyMesh.Triangle> triangles,
+            int stride) {
         for (int i = 0; i + stride - 1 < positions.length; i += stride) {
             ArrayList<PolyMesh.Vertex> polygon = new ArrayList<>(stride);
             for (int j = 0; j < stride; j++) {
-                polygon.add(createVertex(polyMesh, bone, texWidth, texHeight, positions, normals, uvs, i + j, i + j, i + j));
+                polygon.add(
+                        createVertex(
+                                polyMesh, bone, texWidth, texHeight, positions, normals, uvs, i + j,
+                                i + j, i + j));
             }
             bakePolygon(polygon, triangles);
         }
     }
 
-    private static void bakeIndexedPolygon(PolyMeshItem polyMesh, CompileBone bone, float texWidth, float texHeight, float[][] positions, float[][] normals,
-                                           float[][] uvs, JsonArray poly, List<PolyMesh.Triangle> triangles) {
+    private static void bakeIndexedPolygon(
+            PolyMeshItem polyMesh,
+            CompileBone bone,
+            float texWidth,
+            float texHeight,
+            float[][] positions,
+            float[][] normals,
+            float[][] uvs,
+            JsonArray poly,
+            List<PolyMesh.Triangle> triangles) {
         ArrayList<PolyMesh.Vertex> polygon = new ArrayList<>(poly.size());
         for (JsonElement vertexElement : poly) {
             if (vertexElement == null || !vertexElement.isJsonArray()) continue;
@@ -253,14 +385,35 @@ public class TreeBedrockModelBaker {
             int positionIndex = indices.get(0).getAsInt();
             int normalIndex = indices.size() > 1 ? indices.get(1).getAsInt() : positionIndex;
             int uvIndex = indices.size() > 2 ? indices.get(2).getAsInt() : positionIndex;
-            polygon.add(createVertex(polyMesh, bone, texWidth, texHeight, positions, normals, uvs, positionIndex, normalIndex, uvIndex));
+            polygon.add(
+                    createVertex(
+                            polyMesh,
+                            bone,
+                            texWidth,
+                            texHeight,
+                            positions,
+                            normals,
+                            uvs,
+                            positionIndex,
+                            normalIndex,
+                            uvIndex));
         }
-        if (polygon.size() > 1 && samePosition(polygon.get(0), polygon.get(polygon.size() - 1))) polygon.remove(polygon.size() - 1);
+        if (polygon.size() > 1 && samePosition(polygon.get(0), polygon.get(polygon.size() - 1)))
+            polygon.remove(polygon.size() - 1);
         bakePolygon(polygon, triangles);
     }
 
-    private static PolyMesh.Vertex createVertex(PolyMeshItem polyMesh, CompileBone bone, float texWidth, float texHeight, float[][] positions, float[][] normals,
-                                                float[][] uvs, int positionIndex, int normalIndex, int uvIndex) {
+    private static PolyMesh.Vertex createVertex(
+            PolyMeshItem polyMesh,
+            CompileBone bone,
+            float texWidth,
+            float texHeight,
+            float[][] positions,
+            float[][] normals,
+            float[][] uvs,
+            int positionIndex,
+            int normalIndex,
+            int uvIndex) {
         float[] position = getArray(positions, positionIndex);
         float x = (-get(position, 0) - bone.absolutePivotX) / 16.0f;
         float y = (get(position, 1) - bone.absolutePivotY) / 16.0f;
@@ -297,7 +450,8 @@ public class TreeBedrockModelBaker {
         return new PolyMesh.Vertex(x, y, z, u, v, nx, ny, nz);
     }
 
-    private static void bakePolygon(List<PolyMesh.Vertex> polygon, List<PolyMesh.Triangle> triangles) {
+    private static void bakePolygon(
+            List<PolyMesh.Vertex> polygon, List<PolyMesh.Triangle> triangles) {
         if (polygon.size() < 3) return;
         if (polygon.size() == 4) {
             bakeTriangle(polygon.get(0), polygon.get(1), polygon.get(2), triangles);
@@ -309,15 +463,32 @@ public class TreeBedrockModelBaker {
         }
     }
 
-    private static void bakeTriangle(PolyMesh.Vertex a, PolyMesh.Vertex b, PolyMesh.Vertex c, List<PolyMesh.Triangle> triangles) {
+    private static void bakeTriangle(
+            PolyMesh.Vertex a,
+            PolyMesh.Vertex b,
+            PolyMesh.Vertex c,
+            List<PolyMesh.Triangle> triangles) {
         if (samePosition(a, b) || samePosition(b, c) || samePosition(c, a)) return;
         Vector3f normal = computeNormal(a, b, c);
-        triangles.add(new PolyMesh.Triangle(withFallbackNormal(a, normal), withFallbackNormal(b, normal), withFallbackNormal(c, normal)));
+        triangles.add(
+                new PolyMesh.Triangle(
+                        withFallbackNormal(a, normal),
+                        withFallbackNormal(b, normal),
+                        withFallbackNormal(c, normal)));
     }
 
     private static PolyMesh.Vertex withFallbackNormal(PolyMesh.Vertex vertex, Vector3f normal) {
-        if (vertex.nx() * vertex.nx() + vertex.ny() * vertex.ny() + vertex.nz() * vertex.nz() > 1.0E-12f) return vertex;
-        return new PolyMesh.Vertex(vertex.x(), vertex.y(), vertex.z(), vertex.u(), vertex.v(), normal.x, normal.y, normal.z);
+        if (vertex.nx() * vertex.nx() + vertex.ny() * vertex.ny() + vertex.nz() * vertex.nz()
+                > 1.0E-12f) return vertex;
+        return new PolyMesh.Vertex(
+                vertex.x(),
+                vertex.y(),
+                vertex.z(),
+                vertex.u(),
+                vertex.v(),
+                normal.x,
+                normal.y,
+                normal.z);
     }
 
     private static Vector3f computeNormal(PolyMesh.Vertex a, PolyMesh.Vertex b, PolyMesh.Vertex c) {
@@ -344,25 +515,48 @@ public class TreeBedrockModelBaker {
         return values != null && index >= 0 && index < values.length ? values[index] : 0;
     }
 
-    private static TreeBoneDefinition[] applySubtreeGeometryFlags(TreeBoneDefinition[] definitions) {
+    private static TreeBoneDefinition[] applySubtreeGeometryFlags(
+            TreeBoneDefinition[] definitions) {
         boolean[] hasQuadsInTree = new boolean[definitions.length];
         boolean[] hasVerticesInTree = new boolean[definitions.length];
         boolean[] visited = new boolean[definitions.length];
         for (int i = 0; i < definitions.length; i++) {
-            if (definitions[i].parentIndex() < 0) computeFlags(definitions, i, hasQuadsInTree, hasVerticesInTree, visited);
+            if (definitions[i].parentIndex() < 0)
+                computeFlags(definitions, i, hasQuadsInTree, hasVerticesInTree, visited);
         }
         TreeBoneDefinition[] result = new TreeBoneDefinition[definitions.length];
         for (int i = 0; i < definitions.length; i++) {
             TreeBoneDefinition def = definitions[i];
-            result[i] = new TreeBoneDefinition(def.name(), def.index(), def.parentIndex(), def.children(),
-                    def.pivotX(), def.pivotY(), def.pivotZ(), def.bindX(), def.bindY(), def.bindZ(),
-                    def.bindRotation(), def.bindEulerRotation(), def.locators(), def.cubes(), def.ownCubeBounds(), def.polyMeshes(),
-                    hasQuadsInTree[i], hasVerticesInTree[i]);
+            result[i] =
+                    new TreeBoneDefinition(
+                            def.name(),
+                            def.index(),
+                            def.parentIndex(),
+                            def.children(),
+                            def.pivotX(),
+                            def.pivotY(),
+                            def.pivotZ(),
+                            def.bindX(),
+                            def.bindY(),
+                            def.bindZ(),
+                            def.bindRotation(),
+                            def.bindEulerRotation(),
+                            def.locators(),
+                            def.cubes(),
+                            def.ownCubeBounds(),
+                            def.polyMeshes(),
+                            hasQuadsInTree[i],
+                            hasVerticesInTree[i]);
         }
         return result;
     }
 
-    private static void computeFlags(TreeBoneDefinition[] definitions, int index, boolean[] quads, boolean[] vertices, boolean[] visited) {
+    private static void computeFlags(
+            TreeBoneDefinition[] definitions,
+            int index,
+            boolean[] quads,
+            boolean[] vertices,
+            boolean[] visited) {
         if (visited[index]) return;
         visited[index] = true;
         boolean q = definitions[index].hasQuads();
@@ -379,8 +573,12 @@ public class TreeBedrockModelBaker {
     private static Pose createBindPose(TreeBoneDefinition[] bones) {
         PoseBuilder poseBuilder = new ArrayPoseBuilder();
         for (TreeBoneDefinition bone : bones) {
-            poseBuilder.addBoneTransform(new BoneTransform(bone.index(), new Vector3f(bone.bindX(), bone.bindY(), bone.bindZ()),
-                    new BindRotationView(bone.bindRotation(), bone.bindEulerRotation()), new Vector3f(1, 1, 1)));
+            poseBuilder.addBoneTransform(
+                    new BoneTransform(
+                            bone.index(),
+                            new Vector3f(bone.bindX(), bone.bindY(), bone.bindZ()),
+                            new BindRotationView(bone.bindRotation(), bone.bindEulerRotation()),
+                            new Vector3f(1, 1, 1)));
         }
         return poseBuilder.toPose();
     }
@@ -391,7 +589,8 @@ public class TreeBedrockModelBaker {
             BonesItem bone = bones[i];
             CompileBone compileBone = new CompileBone(bone.getName(), i);
             float[] pivot = bone.getPivot() != null ? Arrays.copyOf(bone.getPivot(), 3) : null;
-            float[] rotation = bone.getRotation() != null ? Arrays.copyOf(bone.getRotation(), 3) : null;
+            float[] rotation =
+                    bone.getRotation() != null ? Arrays.copyOf(bone.getRotation(), 3) : null;
             if (pivot != null) {
                 compileBone.absolutePivotX = -pivot[0];
                 compileBone.absolutePivotY = pivot[1];
@@ -448,14 +647,31 @@ public class TreeBedrockModelBaker {
         if (element == null || element.isJsonNull()) return LocatorData.EMPTY;
         if (element.isJsonArray()) {
             float[] absOffset = parseArray(element.getAsJsonArray());
-            return new LocatorData(new float[]{(-absOffset[0] - bone.absolutePivotX) / 16.0f, (absOffset[1] - bone.absolutePivotY) / 16.0f, (absOffset[2] - bone.absolutePivotZ) / 16.0f}, new float[3]);
+            return new LocatorData(
+                    new float[] {
+                        (-absOffset[0] - bone.absolutePivotX) / 16.0f,
+                        (absOffset[1] - bone.absolutePivotY) / 16.0f,
+                        (absOffset[2] - bone.absolutePivotZ) / 16.0f
+                    },
+                    new float[3]);
         }
         if (element.isJsonObject()) {
             JsonObject object = element.getAsJsonObject();
-            float[] absOffset = object.has("offset") ? parseArray(object.getAsJsonArray("offset")) : new float[3];
-            float[] rotation = object.has("rotation") ? parseArray(object.getAsJsonArray("rotation")) : new float[3];
-            return new LocatorData(new float[]{(-absOffset[0] - bone.absolutePivotX) / 16.0f, (absOffset[1] - bone.absolutePivotY) / 16.0f, (absOffset[2] - bone.absolutePivotZ) / 16.0f},
-                    new float[]{-rotation[0], -rotation[1], rotation[2]});
+            float[] absOffset =
+                    object.has("offset")
+                            ? parseArray(object.getAsJsonArray("offset"))
+                            : new float[3];
+            float[] rotation =
+                    object.has("rotation")
+                            ? parseArray(object.getAsJsonArray("rotation"))
+                            : new float[3];
+            return new LocatorData(
+                    new float[] {
+                        (-absOffset[0] - bone.absolutePivotX) / 16.0f,
+                        (absOffset[1] - bone.absolutePivotY) / 16.0f,
+                        (absOffset[2] - bone.absolutePivotZ) / 16.0f
+                    },
+                    new float[] {-rotation[0], -rotation[1], rotation[2]});
         }
         return LocatorData.EMPTY;
     }
@@ -471,14 +687,27 @@ public class TreeBedrockModelBaker {
         if (BedrockVersion.isLegacyVersion(pojo)) {
             GeometryModelLegacy legacy = pojo.getGeometryModelLegacy();
             legacy.deco();
-            return new ModelSource(legacy.getBones(), legacy.getTextureWidth(), legacy.getTextureHeight(), bounds(legacy.getVisibleBoundsOffset(), legacy.getVisibleBoundsWidth(), legacy.getVisibleBoundsHeight()));
+            return new ModelSource(
+                    legacy.getBones(),
+                    legacy.getTextureWidth(),
+                    legacy.getTextureHeight(),
+                    bounds(
+                            legacy.getVisibleBoundsOffset(),
+                            legacy.getVisibleBoundsWidth(),
+                            legacy.getVisibleBoundsHeight()));
         }
         GeometryModelNew modern = pojo.getGeometryModelNew();
         modern.deco();
         Description description = modern.getDescription();
         int texWidth = description == null ? 0 : description.getTextureWidth();
         int texHeight = description == null ? 0 : description.getTextureHeight();
-        AABB bounds = description == null ? null : bounds(description.getVisibleBoundsOffset(), description.getVisibleBoundsWidth(), description.getVisibleBoundsHeight());
+        AABB bounds =
+                description == null
+                        ? null
+                        : bounds(
+                                description.getVisibleBoundsOffset(),
+                                description.getVisibleBoundsWidth(),
+                                description.getVisibleBoundsHeight());
         return new ModelSource(modern.getBones(), texWidth, texHeight, bounds);
     }
 
@@ -486,10 +715,17 @@ public class TreeBedrockModelBaker {
         if (offset == null) return null;
         float width = widthValue / 2.0f;
         float height = heightValue / 2.0f;
-        return new AABB(offset[0] - width, offset[1] - height, offset[2] - width, offset[0] + width, offset[1] + height, offset[2] + width);
+        return new AABB(
+                offset[0] - width,
+                offset[1] - height,
+                offset[2] - width,
+                offset[0] + width,
+                offset[1] + height,
+                offset[2] + width);
     }
 
-    private record ModelSource(BonesItem[] bones, int texWidth, int texHeight, AABB renderBoundingBox) {}
+    private record ModelSource(
+            BonesItem[] bones, int texWidth, int texHeight, AABB renderBoundingBox) {}
 
     private static final class CompileBone {
         final String name;
@@ -513,13 +749,21 @@ public class TreeBedrockModelBaker {
         }
     }
 
-    private record BindRotationView(Quaternionfc quaternion, Vector3fc euler) implements RotationView {
+    private record BindRotationView(Quaternionfc quaternion, Vector3fc euler)
+            implements RotationView {
         private BindRotationView(Quaternionfc quaternion, Vector3fc euler) {
             this.quaternion = new Quaternionf(quaternion);
             this.euler = new Vector3f(euler);
         }
 
-        @Override public Vector3fc asEulerAngle() { return euler; }
-        @Override public Quaternionfc asQuaternion() { return quaternion; }
+        @Override
+        public Vector3fc asEulerAngle() {
+            return euler;
+        }
+
+        @Override
+        public Quaternionfc asQuaternion() {
+            return quaternion;
+        }
     }
 }

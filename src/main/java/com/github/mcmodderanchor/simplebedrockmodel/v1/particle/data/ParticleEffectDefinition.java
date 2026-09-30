@@ -3,13 +3,16 @@ package com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.component.*;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.curve.ParticleCurve;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.event.IEventNode;
+
 import net.minecraft.resources.ResourceLocation;
+
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
 /**
  * 对应基岩版 particle_effect JSON 的顶层定义。
+ *
  * <pre>
  * {
  *   "format_version": "1.10.0",
@@ -34,10 +37,12 @@ public class ParticleEffectDefinition {
     private final Map<String, ParticleCurve> curves;
     private final Map<String, List<IEventNode>> events;
 
-    public ParticleEffectDefinition(ResourceLocation identifier, ParticleDescription description,
-                                    List<IComponent> components,
-                                    @Nullable Map<String, ParticleCurve> curves,
-                                    @Nullable Map<String, List<IEventNode>> events) {
+    public ParticleEffectDefinition(
+            ResourceLocation identifier,
+            ParticleDescription description,
+            List<IComponent> components,
+            @Nullable Map<String, ParticleCurve> curves,
+            @Nullable Map<String, List<IEventNode>> events) {
         this.identifier = identifier;
         this.description = description;
         this.componentMap = buildComponentMap(components);
@@ -68,16 +73,12 @@ public class ParticleEffectDefinition {
         return description;
     }
 
-    /**
-     * 获取发射器预设
-     */
+    /** 获取发射器预设 */
     public EmitterPreset emitterPreset() {
         return emitterPreset;
     }
 
-    /**
-     * 获取粒子预设
-     */
+    /** 获取粒子预设 */
     public ParticlePreset particlePreset() {
         return particlePreset;
     }
@@ -90,9 +91,7 @@ public class ParticleEffectDefinition {
         return events;
     }
 
-    /**
-     * 按类型查找组件
-     */
+    /** 按类型查找组件 */
     @Nullable
     @SuppressWarnings("unchecked")
     public <T extends IComponent> T findComponent(Class<T> type) {
@@ -101,10 +100,11 @@ public class ParticleEffectDefinition {
 
     /**
      * 构建组件类型映射。
-     * <p>
-     * 同时注册具体实现类和父接口两个 key，使得通过父接口也能查找到组件。
+     *
+     * <p>同时注册具体实现类和父接口两个 key，使得通过父接口也能查找到组件。
      */
-    private static Map<Class<? extends IComponent>, IComponent> buildComponentMap(List<IComponent> components) {
+    private static Map<Class<? extends IComponent>, IComponent> buildComponentMap(
+            List<IComponent> components) {
         Map<Class<? extends IComponent>, IComponent> map = new HashMap<>();
         for (IComponent c : components) {
             Class<? extends IComponent> clazz = c.getClass();

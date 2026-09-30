@@ -13,11 +13,15 @@ public class RenderFrameEvent extends BaseEvent {
     public final Phase phase;
     private final DeltaTracker.Timer timer;
 
-    public static final Event<Callback> EVENT = EventFactory.createArrayBacked(Callback.class, callbacks -> event -> {
-        for (Callback callback : callbacks) {
-            callback.post(event);
-        }
-    });
+    public static final Event<Callback> EVENT =
+            EventFactory.createArrayBacked(
+                    Callback.class,
+                    callbacks ->
+                            event -> {
+                                for (Callback callback : callbacks) {
+                                    callback.post(event);
+                                }
+                            });
 
     public RenderFrameEvent(Minecraft client, Phase phase, DeltaTracker.Timer timer) {
         this.client = client;
@@ -38,6 +42,7 @@ public class RenderFrameEvent extends BaseEvent {
     }
 
     public enum Phase {
-        START, END;
+        START,
+        END;
     }
 }

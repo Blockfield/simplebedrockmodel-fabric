@@ -1,6 +1,7 @@
 package cn.sh1rocu.simplebedrockmodel.api.event;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.client.player.AbstractClientPlayer;
@@ -15,12 +16,20 @@ public class RenderArmEvent extends BaseEvent implements ICancellableEvent {
     private final AbstractClientPlayer player;
     private final HumanoidArm arm;
 
-    public static final Event<Callback> EVENT = EventFactory.createArrayBacked(Callback.class, callbacks -> event -> {
-        for (final Callback callback : callbacks)
-            callback.post(event);
-    });
+    public static final Event<Callback> EVENT =
+            EventFactory.createArrayBacked(
+                    Callback.class,
+                    callbacks ->
+                            event -> {
+                                for (final Callback callback : callbacks) callback.post(event);
+                            });
 
-    public RenderArmEvent(PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight, AbstractClientPlayer player, HumanoidArm arm) {
+    public RenderArmEvent(
+            PoseStack poseStack,
+            MultiBufferSource multiBufferSource,
+            int packedLight,
+            AbstractClientPlayer player,
+            HumanoidArm arm) {
         this.poseStack = poseStack;
         this.multiBufferSource = multiBufferSource;
         this.packedLight = packedLight;

@@ -9,12 +9,14 @@ import com.github.mcmodderanchor.simplebedrockmodel.v2.common.model.runtime.Tree
 import com.maydaymemory.mae.basic.Pose;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.world.phys.AABB;
+
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
@@ -32,9 +34,12 @@ public class TreeBedrockModel implements BoneIndexProvider {
     private final Pose bindPose;
     private final AABB renderBoundingBox;
 
-    public TreeBedrockModel(TreeBoneDefinition[] bones, Map<String, Integer> boneIndexByName,
-                            Map<String, Map.Entry<Integer, LocatorData>> locatorByName, Pose bindPose,
-                            AABB renderBoundingBox) {
+    public TreeBedrockModel(
+            TreeBoneDefinition[] bones,
+            Map<String, Integer> boneIndexByName,
+            Map<String, Map.Entry<Integer, LocatorData>> locatorByName,
+            Pose bindPose,
+            AABB renderBoundingBox) {
         this.bones = bones;
         for (TreeBoneDefinition bone : bones) {
             bone.linkReferences(bones);
@@ -92,72 +97,256 @@ public class TreeBedrockModel implements BoneIndexProvider {
     }
 
     @Environment(EnvType.CLIENT)
-    public void renderToBuffer(TreeModelInstance instance, PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay) {
+    public void renderToBuffer(
+            TreeModelInstance instance,
+            PoseStack poseStack,
+            VertexConsumer buffer,
+            int packedLight,
+            int packedOverlay) {
         renderToBuffer(instance, poseStack, buffer, packedLight, packedOverlay, 1, 1, 1, 1);
     }
 
     @Environment(EnvType.CLIENT)
-    public void renderToBuffer(TreeModelInstance instance, PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay,
-                               float red, float green, float blue, float alpha) {
-        renderToBuffer(instance, poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha, false);
+    public void renderToBuffer(
+            TreeModelInstance instance,
+            PoseStack poseStack,
+            VertexConsumer buffer,
+            int packedLight,
+            int packedOverlay,
+            float red,
+            float green,
+            float blue,
+            float alpha) {
+        renderToBuffer(
+                instance,
+                poseStack,
+                buffer,
+                packedLight,
+                packedOverlay,
+                red,
+                green,
+                blue,
+                alpha,
+                false);
     }
 
     @Environment(EnvType.CLIENT)
-    public void renderToBuffer(TreeModelInstance instance, PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay,
-                               float red, float green, float blue, float alpha, boolean skipNormalVisibilityCull) {
-        renderBoneTree(instance, poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha, true, skipNormalVisibilityCull);
+    public void renderToBuffer(
+            TreeModelInstance instance,
+            PoseStack poseStack,
+            VertexConsumer buffer,
+            int packedLight,
+            int packedOverlay,
+            float red,
+            float green,
+            float blue,
+            float alpha,
+            boolean skipNormalVisibilityCull) {
+        renderBoneTree(
+                instance,
+                poseStack,
+                buffer,
+                packedLight,
+                packedOverlay,
+                red,
+                green,
+                blue,
+                alpha,
+                true,
+                skipNormalVisibilityCull);
     }
 
     @Environment(EnvType.CLIENT)
-    public void renderToBuffer(TreeModelInstance instance, PoseStack poseStack, MultiBufferSource bufferSource, RenderType quadRenderType,
-                               RenderType triangleRenderType, int packedLight, int packedOverlay) {
-        renderToBuffer(instance, poseStack, bufferSource, quadRenderType, triangleRenderType, packedLight, packedOverlay, 1, 1, 1, 1);
+    public void renderToBuffer(
+            TreeModelInstance instance,
+            PoseStack poseStack,
+            MultiBufferSource bufferSource,
+            RenderType quadRenderType,
+            RenderType triangleRenderType,
+            int packedLight,
+            int packedOverlay) {
+        renderToBuffer(
+                instance,
+                poseStack,
+                bufferSource,
+                quadRenderType,
+                triangleRenderType,
+                packedLight,
+                packedOverlay,
+                1,
+                1,
+                1,
+                1);
     }
 
     @Environment(EnvType.CLIENT)
-    public void renderToBuffer(TreeModelInstance instance, PoseStack poseStack, MultiBufferSource bufferSource, RenderType quadRenderType,
-                               RenderType triangleRenderType, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
-        renderToBuffer(instance, poseStack, bufferSource, quadRenderType, triangleRenderType, packedLight, packedOverlay,
-                red, green, blue, alpha, false);
+    public void renderToBuffer(
+            TreeModelInstance instance,
+            PoseStack poseStack,
+            MultiBufferSource bufferSource,
+            RenderType quadRenderType,
+            RenderType triangleRenderType,
+            int packedLight,
+            int packedOverlay,
+            float red,
+            float green,
+            float blue,
+            float alpha) {
+        renderToBuffer(
+                instance,
+                poseStack,
+                bufferSource,
+                quadRenderType,
+                triangleRenderType,
+                packedLight,
+                packedOverlay,
+                red,
+                green,
+                blue,
+                alpha,
+                false);
     }
 
     @Environment(EnvType.CLIENT)
-    public void renderToBuffer(TreeModelInstance instance, PoseStack poseStack, MultiBufferSource bufferSource, RenderType quadRenderType,
-                               RenderType triangleRenderType, int packedLight, int packedOverlay, float red, float green, float blue, float alpha,
-                               boolean skipNormalVisibilityCull) {
-        renderBoneTree(instance, poseStack, bufferSource.getBuffer(quadRenderType), packedLight, packedOverlay, red, green, blue, alpha, true, skipNormalVisibilityCull);
-        renderBoneTree(instance, poseStack, bufferSource.getBuffer(triangleRenderType), packedLight, packedOverlay, red, green, blue, alpha, false, skipNormalVisibilityCull);
+    public void renderToBuffer(
+            TreeModelInstance instance,
+            PoseStack poseStack,
+            MultiBufferSource bufferSource,
+            RenderType quadRenderType,
+            RenderType triangleRenderType,
+            int packedLight,
+            int packedOverlay,
+            float red,
+            float green,
+            float blue,
+            float alpha,
+            boolean skipNormalVisibilityCull) {
+        renderBoneTree(
+                instance,
+                poseStack,
+                bufferSource.getBuffer(quadRenderType),
+                packedLight,
+                packedOverlay,
+                red,
+                green,
+                blue,
+                alpha,
+                true,
+                skipNormalVisibilityCull);
+        renderBoneTree(
+                instance,
+                poseStack,
+                bufferSource.getBuffer(triangleRenderType),
+                packedLight,
+                packedOverlay,
+                red,
+                green,
+                blue,
+                alpha,
+                false,
+                skipNormalVisibilityCull);
     }
 
     @Environment(EnvType.CLIENT)
-    public void renderBoneTree(TreeModelInstance instance, PoseStack poseStack, VertexConsumer consumer,
-                               int packedLight, int packedOverlay, float red, float green, float blue, float alpha,
-                               boolean quadsPass) {
-        renderBoneTree(instance, poseStack, consumer, packedLight, packedOverlay, red, green, blue, alpha, quadsPass, false);
+    public void renderBoneTree(
+            TreeModelInstance instance,
+            PoseStack poseStack,
+            VertexConsumer consumer,
+            int packedLight,
+            int packedOverlay,
+            float red,
+            float green,
+            float blue,
+            float alpha,
+            boolean quadsPass) {
+        renderBoneTree(
+                instance,
+                poseStack,
+                consumer,
+                packedLight,
+                packedOverlay,
+                red,
+                green,
+                blue,
+                alpha,
+                quadsPass,
+                false);
     }
 
     @Environment(EnvType.CLIENT)
-    public void renderBoneTree(TreeModelInstance instance, PoseStack poseStack, VertexConsumer consumer,
-                               int packedLight, int packedOverlay, float red, float green, float blue, float alpha,
-                               boolean quadsPass, boolean skipNormalVisibilityCull) {
+    public void renderBoneTree(
+            TreeModelInstance instance,
+            PoseStack poseStack,
+            VertexConsumer consumer,
+            int packedLight,
+            int packedOverlay,
+            float red,
+            float green,
+            float blue,
+            float alpha,
+            boolean quadsPass,
+            boolean skipNormalVisibilityCull) {
         for (TreeBoneDefinition bone : bones) {
             if (bone.parentIndex() < 0) {
-                renderBone(instance, bone.index(), poseStack, consumer, packedLight, packedOverlay, red, green, blue, alpha, quadsPass, skipNormalVisibilityCull);
+                renderBone(
+                        instance,
+                        bone.index(),
+                        poseStack,
+                        consumer,
+                        packedLight,
+                        packedOverlay,
+                        red,
+                        green,
+                        blue,
+                        alpha,
+                        quadsPass,
+                        skipNormalVisibilityCull);
             }
         }
     }
 
     @Environment(EnvType.CLIENT)
-    public void renderBone(TreeModelInstance instance, int boneIndex, PoseStack poseStack, VertexConsumer consumer,
-                           int packedLight, int packedOverlay, float red, float green, float blue, float alpha,
-                           boolean quadsPass) {
-        renderBone(instance, boneIndex, poseStack, consumer, packedLight, packedOverlay, red, green, blue, alpha, quadsPass, false);
+    public void renderBone(
+            TreeModelInstance instance,
+            int boneIndex,
+            PoseStack poseStack,
+            VertexConsumer consumer,
+            int packedLight,
+            int packedOverlay,
+            float red,
+            float green,
+            float blue,
+            float alpha,
+            boolean quadsPass) {
+        renderBone(
+                instance,
+                boneIndex,
+                poseStack,
+                consumer,
+                packedLight,
+                packedOverlay,
+                red,
+                green,
+                blue,
+                alpha,
+                quadsPass,
+                false);
     }
 
     @Environment(EnvType.CLIENT)
-    public void renderBone(TreeModelInstance instance, int boneIndex, PoseStack poseStack, VertexConsumer consumer,
-                           int packedLight, int packedOverlay, float red, float green, float blue, float alpha,
-                           boolean quadsPass, boolean skipNormalVisibilityCull) {
+    public void renderBone(
+            TreeModelInstance instance,
+            int boneIndex,
+            PoseStack poseStack,
+            VertexConsumer consumer,
+            int packedLight,
+            int packedOverlay,
+            float red,
+            float green,
+            float blue,
+            float alpha,
+            boolean quadsPass,
+            boolean skipNormalVisibilityCull) {
         TreeBoneDefinition def = bones[boneIndex];
         if (quadsPass ? !def.hasQuadsInTree() : !def.hasVerticesInTree()) return;
         BoneState bone = instance.getBone(boneIndex);
@@ -168,50 +357,118 @@ public class TreeBedrockModel implements BoneIndexProvider {
         bone.translateAndRotateAndScale(poseStack);
 
         if (quadsPass) {
-            renderBoneCubes(def, poseStack.last(), consumer, light, packedOverlay, red, green, blue, alpha, skipNormalVisibilityCull);
+            renderBoneCubes(
+                    def,
+                    poseStack.last(),
+                    consumer,
+                    light,
+                    packedOverlay,
+                    red,
+                    green,
+                    blue,
+                    alpha,
+                    skipNormalVisibilityCull);
         } else {
-            renderBonePolyMeshes(def, poseStack.last(), consumer, light, packedOverlay, red, green, blue, alpha);
+            renderBonePolyMeshes(
+                    def, poseStack.last(), consumer, light, packedOverlay, red, green, blue, alpha);
         }
 
         for (int childIndex : def.children()) {
-            renderBone(instance, childIndex, poseStack, consumer, light, packedOverlay, red, green, blue, alpha, quadsPass, skipNormalVisibilityCull);
+            renderBone(
+                    instance,
+                    childIndex,
+                    poseStack,
+                    consumer,
+                    light,
+                    packedOverlay,
+                    red,
+                    green,
+                    blue,
+                    alpha,
+                    quadsPass,
+                    skipNormalVisibilityCull);
         }
         poseStack.popPose();
     }
 
     @Environment(EnvType.CLIENT)
-    private static void renderBoneCubes(TreeBoneDefinition def, PoseStack.Pose pose, VertexConsumer consumer,
-                                        int light, int overlay, float red, float green, float blue, float alpha,
-                                        boolean skipNormalVisibilityCull) {
+    private static void renderBoneCubes(
+            TreeBoneDefinition def,
+            PoseStack.Pose pose,
+            VertexConsumer consumer,
+            int light,
+            int overlay,
+            float red,
+            float green,
+            float blue,
+            float alpha,
+            boolean skipNormalVisibilityCull) {
         ICube[] cubes = def.cubes();
         if (cubes.length == 0) return;
-        if (AcceleratedRenderingCompat.renderCubes(def, consumer, pose, light, overlay, red, green, blue, alpha)) {
+        if (AcceleratedRenderingCompat.renderCubes(
+                def, consumer, pose, light, overlay, red, green, blue, alpha)) {
             return;
         }
-        TreeGeometryWriter.writeCubes(cubes, consumer, pose.pose(), pose.normal(), light, overlay, red, green, blue, alpha, skipNormalVisibilityCull);
+        TreeGeometryWriter.writeCubes(
+                cubes,
+                consumer,
+                pose.pose(),
+                pose.normal(),
+                light,
+                overlay,
+                red,
+                green,
+                blue,
+                alpha,
+                skipNormalVisibilityCull);
     }
 
     @Environment(EnvType.CLIENT)
-    private static void renderBonePolyMeshes(TreeBoneDefinition def, PoseStack.Pose pose, VertexConsumer consumer,
-                                             int light, int overlay, float red, float green, float blue, float alpha) {
+    private static void renderBonePolyMeshes(
+            TreeBoneDefinition def,
+            PoseStack.Pose pose,
+            VertexConsumer consumer,
+            int light,
+            int overlay,
+            float red,
+            float green,
+            float blue,
+            float alpha) {
         PolyMesh[] polyMeshes = def.polyMeshes();
         if (polyMeshes.length == 0) return;
-        if (AcceleratedRenderingCompat.renderPolyMeshes(def, consumer, pose, light, overlay, red, green, blue, alpha)) {
+        if (AcceleratedRenderingCompat.renderPolyMeshes(
+                def, consumer, pose, light, overlay, red, green, blue, alpha)) {
             return;
         }
-        TreeGeometryWriter.writePolyMeshes(polyMeshes, consumer, pose.pose(), pose.normal(), light, overlay, red, green, blue, alpha);
+        TreeGeometryWriter.writePolyMeshes(
+                polyMeshes,
+                consumer,
+                pose.pose(),
+                pose.normal(),
+                light,
+                overlay,
+                red,
+                green,
+                blue,
+                alpha);
     }
 
     public static void applyLocatorLocalTransform(Matrix4f transform, LocatorData locator) {
         float[] offset = locator.offset();
-        if (offset[0] != 0 || offset[1] != 0 || offset[2] != 0) transform.translate(offset[0], offset[1], offset[2]);
+        if (offset[0] != 0 || offset[1] != 0 || offset[2] != 0)
+            transform.translate(offset[0], offset[1], offset[2]);
         float[] rotation = locator.rotation();
         if (rotation[0] != 0 || rotation[1] != 0 || rotation[2] != 0) {
-            transform.rotate(new Quaternionf().rotateZ((float) Math.toRadians(rotation[2])).rotateY((float) Math.toRadians(rotation[1])).rotateX((float) Math.toRadians(rotation[0])));
+            transform.rotate(
+                    new Quaternionf()
+                            .rotateZ((float) Math.toRadians(rotation[2]))
+                            .rotateY((float) Math.toRadians(rotation[1]))
+                            .rotateX((float) Math.toRadians(rotation[0])));
         }
     }
 
-    public static Map.Entry<Integer, LocatorData> locatorEntry(int boneIndex, LocatorData locatorData) {
+    public static Map.Entry<Integer, LocatorData> locatorEntry(
+            int boneIndex, LocatorData locatorData) {
         return new AbstractMap.SimpleImmutableEntry<>(boneIndex, locatorData);
     }
 }

@@ -35,6 +35,7 @@ import com.github.mcmodderanchor.simplebedrockmodel.v1.molang.runtime.compiled.M
 import com.github.mcmodderanchor.simplebedrockmodel.v1.molang.runtime.value.MutableObjectBinding;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.molang.runtime.value.NumberValue;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.molang.runtime.value.Value;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -170,7 +171,8 @@ final class MochaEngineImpl<T> implements MochaEngine<T> {
     }
 
     @Override
-    public <F extends MochaCompiledFunction> @NotNull F compile(final @NotNull Reader reader, final @NotNull Class<F> interfaceType) {
+    public <F extends MochaCompiledFunction> @NotNull F compile(
+            final @NotNull Reader reader, final @NotNull Class<F> interfaceType) {
         List<Expression> parsed;
         try {
             parsed = parse(reader);
@@ -199,7 +201,11 @@ final class MochaEngineImpl<T> implements MochaEngine<T> {
     }
 
     @Override
-    public <B> void bindInstance(final @NotNull Class<? super B> clazz, final @NotNull B instance, final @NotNull String name, final @NotNull String @NotNull ... aliases) {
+    public <B> void bindInstance(
+            final @NotNull Class<? super B> clazz,
+            final @NotNull B instance,
+            final @NotNull String name,
+            final @NotNull String @NotNull ... aliases) {
         final JavaObjectBinding javaObjectBinding = JavaObjectBinding.of(clazz, instance, null);
         scope.set(name, javaObjectBinding);
         for (final String alias : aliases) {
@@ -213,21 +219,23 @@ final class MochaEngineImpl<T> implements MochaEngine<T> {
     }
 
     @Override
-    public @NotNull MochaEngine<T> warnOnReflectiveFunctionUsage(final boolean warnOnReflectiveFunctionUsage) {
+    public @NotNull MochaEngine<T> warnOnReflectiveFunctionUsage(
+            final boolean warnOnReflectiveFunctionUsage) {
         this.warnOnReflectiveFunctionUsage = warnOnReflectiveFunctionUsage;
         return this;
     }
 
     @Override
-    public @NotNull MochaEngine<T> handleParseExceptions(final @Nullable Consumer<@NotNull ParseException> exceptionHandler) {
+    public @NotNull MochaEngine<T> handleParseExceptions(
+            final @Nullable Consumer<@NotNull ParseException> exceptionHandler) {
         this.parseExceptionHandler = exceptionHandler;
         return this;
     }
 
     @Override
-    public @NotNull MochaEngine<T> postCompile(final @Nullable Consumer<byte @NotNull []> bytecodeConsumer) {
+    public @NotNull MochaEngine<T> postCompile(
+            final @Nullable Consumer<byte @NotNull []> bytecodeConsumer) {
         compiler.postCompile(bytecodeConsumer);
         return this;
     }
-
 }

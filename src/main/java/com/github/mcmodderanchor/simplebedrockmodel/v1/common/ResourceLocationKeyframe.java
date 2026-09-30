@@ -1,6 +1,7 @@
 package com.github.mcmodderanchor.simplebedrockmodel.v1.common;
 
 import com.maydaymemory.mae.basic.BaseKeyframe;
+
 import net.minecraft.resources.ResourceLocation;
 
 public class ResourceLocationKeyframe extends BaseKeyframe<ResourceLocation> {

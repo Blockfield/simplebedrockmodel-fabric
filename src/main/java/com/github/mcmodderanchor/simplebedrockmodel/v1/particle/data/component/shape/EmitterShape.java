@@ -1,5 +1,7 @@
 package com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.component.shape;
 
+import static com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.ParticleJsonUtils.*;
+
 import com.github.mcmodderanchor.simplebedrockmodel.v1.molang.runtime.MolangContext;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.molang.runtime.MolangExpression;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.component.IEmitterComponent;
@@ -9,15 +11,12 @@ import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.runtime.Particle
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Random;
 
-import static com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.ParticleJsonUtils.*;
-
-/**
- * 发射器形状组件接口，决定粒子的初始位置和方向。
- */
+/** 发射器形状组件接口，决定粒子的初始位置和方向。 */
 public interface EmitterShape extends IEmitterComponentDefinition, IEmitterComponent {
 
     @Override
@@ -25,19 +24,30 @@ public interface EmitterShape extends IEmitterComponentDefinition, IEmitterCompo
         return 0;
     }
 
-    enum PlaneNormal {X, Y, Z, CUSTOM}
+    enum PlaneNormal {
+        X,
+        Y,
+        Z,
+        CUSTOM
+    }
 
-    enum DirectionMode {OUTWARDS, INWARDS, CUSTOM}
+    enum DirectionMode {
+        OUTWARDS,
+        INWARDS,
+        CUSTOM
+    }
 
     MolangExpression[] offset();
 
-    @Nullable MolangExpression[] direction();
+    @Nullable
+    MolangExpression[] direction();
 
     DirectionMode directionMode();
 
     void applyPosition(ParticleInstance p, MolangContext<?> ctx, Random random);
 
-    default void applyDirection(ParticleInstance p, MolangContext<?> ctx, Random random, float speed) {
+    default void applyDirection(
+            ParticleInstance p, MolangContext<?> ctx, Random random, float speed) {
         if (speed == 0) return;
         float dx, dy, dz;
         DirectionMode dirMode = directionMode();
@@ -77,27 +87,36 @@ public interface EmitterShape extends IEmitterComponentDefinition, IEmitterCompo
 
     // ===== JSON parsing helpers =====
 
-    record DirectionParseResult(@Nullable MolangExpression[] direction, DirectionMode mode) {
-    }
+    record DirectionParseResult(@Nullable MolangExpression[] direction, DirectionMode mode) {}
 
     static MolangExpression[] compileArray3(ParticleMolangEnvironment molang, String[] exprs) {
-        return new MolangExpression[]{
-                molang.compile(exprs[0]), molang.compile(exprs[1]), molang.compile(exprs[2])};
+        return new MolangExpression[] {
+            molang.compile(exprs[0]), molang.compile(exprs[1]), molang.compile(exprs[2])
+        };
     }
 
-    static DirectionParseResult parseShapeDirection(JsonObject obj, ParticleMolangEnvironment molang) {
+    static DirectionParseResult parseShapeDirection(
+            JsonObject obj, ParticleMolangEnvironment molang) {
         if (!obj.has("direction")) return new DirectionParseResult(null, DirectionMode.OUTWARDS);
         JsonElement elem = obj.get("direction");
         if (elem.isJsonPrimitive() && elem.getAsJsonPrimitive().isString()) {
-            return new DirectionParseResult(null,
-                    "inwards".equalsIgnoreCase(elem.getAsString()) ? DirectionMode.INWARDS : DirectionMode.OUTWARDS);
+            return new DirectionParseResult(
+                    null,
+                    "inwards".equalsIgnoreCase(elem.getAsString())
+                            ? DirectionMode.INWARDS
+                            : DirectionMode.OUTWARDS);
         }
         if (elem.isJsonArray()) {
             JsonArray arr = elem.getAsJsonArray();
-            return new DirectionParseResult(compileArray3(molang, new String[]{
-                    molangFromElement(arr.size() > 0 ? arr.get(0) : null, "0"),
-                    molangFromElement(arr.size() > 1 ? arr.get(1) : null, "0"),
-                    molangFromElement(arr.size() > 2 ? arr.get(2) : null, "0")}), DirectionMode.CUSTOM);
+            return new DirectionParseResult(
+                    compileArray3(
+                            molang,
+                            new String[] {
+                                molangFromElement(arr.size() > 0 ? arr.get(0) : null, "0"),
+                                molangFromElement(arr.size() > 1 ? arr.get(1) : null, "0"),
+                                molangFromElement(arr.size() > 2 ? arr.get(2) : null, "0")
+                            }),
+                    DirectionMode.CUSTOM);
         }
         return new DirectionParseResult(null, DirectionMode.OUTWARDS);
     }
@@ -117,24 +136,43 @@ public interface EmitterShape extends IEmitterComponentDefinition, IEmitterCompo
 
     static EmitterShape fromJson(String key, JsonElement value, ParticleMolangEnvironment molang) {
         JsonObject obj = value.getAsJsonObject();
-        MolangExpression[] offset = compileArray3(molang, getMolangArray3(obj, "offset", "0", "0", "0"));
+        MolangExpression[] offset =
+                compileArray3(molang, getMolangArray3(obj, "offset", "0", "0", "0"));
         DirectionParseResult dirResult = parseShapeDirection(obj, molang);
 
         return switch (key) {
-            case "minecraft:emitter_shape_point" -> new EmitterShapePoint(offset, dirResult.direction, dirResult.mode);
+            case "minecraft:emitter_shape_point" ->
+                    new EmitterShapePoint(offset, dirResult.direction, dirResult.mode);
             case "minecraft:emitter_shape_sphere" ->
-                    new EmitterShapeSphere(offset, molang.compile(getMolang(obj, "radius", "1")),
-                            getBoolean(obj, "surface_only", false), dirResult.direction, dirResult.mode);
+                    new EmitterShapeSphere(
+                            offset,
+                            molang.compile(getMolang(obj, "radius", "1")),
+                            getBoolean(obj, "surface_only", false),
+                            dirResult.direction,
+                            dirResult.mode);
             case "minecraft:emitter_shape_box" ->
-                    new EmitterShapeBox(offset, compileArray3(molang, getMolangArray3(obj, "half_dimensions", "0.5", "0.5", "0.5")),
-                            getBoolean(obj, "surface_only", false), dirResult.direction, dirResult.mode);
+                    new EmitterShapeBox(
+                            offset,
+                            compileArray3(
+                                    molang,
+                                    getMolangArray3(obj, "half_dimensions", "0.5", "0.5", "0.5")),
+                            getBoolean(obj, "surface_only", false),
+                            dirResult.direction,
+                            dirResult.mode);
             case "minecraft:emitter_shape_disc" ->
-                    new EmitterShapeDisc(offset, molang.compile(getMolang(obj, "radius", "1")),
-                            parsePlaneNormal(obj), getBoolean(obj, "surface_only", false),
-                            dirResult.direction, dirResult.mode);
+                    new EmitterShapeDisc(
+                            offset,
+                            molang.compile(getMolang(obj, "radius", "1")),
+                            parsePlaneNormal(obj),
+                            getBoolean(obj, "surface_only", false),
+                            dirResult.direction,
+                            dirResult.mode);
             case "minecraft:emitter_shape_entity_aabb" ->
-                    new EmitterShapeEntityAABB(offset, getBoolean(obj, "surface_only", false),
-                            dirResult.direction, dirResult.mode);
+                    new EmitterShapeEntityAABB(
+                            offset,
+                            getBoolean(obj, "surface_only", false),
+                            dirResult.direction,
+                            dirResult.mode);
             default -> throw new IllegalArgumentException("Unknown emitter shape key: " + key);
         };
     }

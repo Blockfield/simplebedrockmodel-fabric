@@ -1,5 +1,8 @@
 package com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.component.motion;
 
+import static com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.ParticleJsonUtils.getBoolean;
+import static com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.ParticleJsonUtils.getMolang;
+
 import com.github.mcmodderanchor.simplebedrockmodel.v1.molang.runtime.MolangExpression;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.component.IParticleComponent;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.component.IParticleComponentDefinition;
@@ -7,25 +10,21 @@ import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.runtime.Particle
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.ParticleJsonUtils.getBoolean;
-import static com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.ParticleJsonUtils.getMolang;
-
-/**
- * 粒子碰撞运动组件。对应 "minecraft:particle_motion_collision"。
- */
+/** 粒子碰撞运动组件。对应 "minecraft:particle_motion_collision"。 */
 public record ParticleMotionCollision(
         @Nullable MolangExpression enabled,
         float collisionDrag,
         float coefficientOfRestitution,
         float collisionRadius,
         boolean expireOnContact,
-        List<CollisionEvent> events
-) implements IParticleComponentDefinition, IParticleComponent {
+        List<CollisionEvent> events)
+        implements IParticleComponentDefinition, IParticleComponent {
 
     @Override
     public int order() {
@@ -37,17 +36,22 @@ public record ParticleMotionCollision(
         return enabled != null || !events.isEmpty();
     }
 
-    public record CollisionEvent(String event, float minSpeed) {
-    }
+    public record CollisionEvent(String event, float minSpeed) {}
 
-    public static ParticleMotionCollision fromJson(String key, JsonElement value, ParticleMolangEnvironment molang) {
+    public static ParticleMotionCollision fromJson(
+            String key, JsonElement value, ParticleMolangEnvironment molang) {
         JsonObject obj = value.getAsJsonObject();
-        MolangExpression enabled = obj.has("enabled") ? molang.compile(getMolang(obj, "enabled", "1")) : null;
+        MolangExpression enabled =
+                obj.has("enabled") ? molang.compile(getMolang(obj, "enabled", "1")) : null;
         float drag = obj.has("collision_drag") ? obj.get("collision_drag").getAsFloat() : 0;
-        float restitution = obj.has("coefficient_of_restitution") ? obj.get("coefficient_of_restitution").getAsFloat() : 0;
+        float restitution =
+                obj.has("coefficient_of_restitution")
+                        ? obj.get("coefficient_of_restitution").getAsFloat()
+                        : 0;
         float radius = obj.has("collision_radius") ? obj.get("collision_radius").getAsFloat() : 0;
         boolean expire = getBoolean(obj, "expire_on_contact", false);
-        return new ParticleMotionCollision(enabled, drag, restitution, radius, expire, parseEvents(obj));
+        return new ParticleMotionCollision(
+                enabled, drag, restitution, radius, expire, parseEvents(obj));
     }
 
     private static List<CollisionEvent> parseEvents(JsonObject obj) {
@@ -58,7 +62,8 @@ public record ParticleMotionCollision(
             if (e.isJsonObject()) {
                 JsonObject eventObj = e.getAsJsonObject();
                 String event = eventObj.has("event") ? eventObj.get("event").getAsString() : "";
-                float minSpeed = eventObj.has("min_speed") ? eventObj.get("min_speed").getAsFloat() : 2f;
+                float minSpeed =
+                        eventObj.has("min_speed") ? eventObj.get("min_speed").getAsFloat() : 2f;
                 if (!event.isEmpty()) list.add(new CollisionEvent(event, minSpeed));
             }
         }

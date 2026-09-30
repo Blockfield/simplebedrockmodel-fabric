@@ -26,19 +26,19 @@ package com.github.mcmodderanchor.simplebedrockmodel.v1.molang.parser.ast;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * An {@link Expression} visitor. Provides a way to add
- * functionalities to the expression interface and all
- * of its implementations.
+ * An {@link Expression} visitor. Provides a way to add functionalities to the expression interface
+ * and all of its implementations.
  *
- * <p>See the following example on visiting an expression:</p>
+ * <p>See the following example on visiting an expression:
+ *
  * <pre>{@code
- *      Expression expr = ...;
- *      String str = expr.visit(new ToStringVisitor());
+ * Expression expr = ...;
+ * String str = expr.visit(new ToStringVisitor());
  * }</pre>
  *
- * <p>Please note that users MUST use {@link Expression#visit(ExpressionVisitor)}
- * and NOT ExpressionVisitor's {@link ExpressionVisitor#visit(Expression)}, because
- * it will not work as intended.</p>
+ * <p>Please note that users MUST use {@link Expression#visit(ExpressionVisitor)} and NOT
+ * ExpressionVisitor's {@link ExpressionVisitor#visit(Expression)}, because it will not work as
+ * intended.
  *
  * @param <R> The visit result type
  * @since 3.0.0
@@ -174,5 +174,4 @@ public interface ExpressionVisitor<R> {
     default R visitStatement(final @NotNull StatementExpression expression) {
         return visit(expression);
     }
-
 }

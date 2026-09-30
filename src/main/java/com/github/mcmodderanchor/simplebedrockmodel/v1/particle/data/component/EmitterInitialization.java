@@ -1,17 +1,18 @@
 package com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.component;
 
+import static com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.ParticleJsonUtils.getMolang;
+
 import com.github.mcmodderanchor.simplebedrockmodel.v1.molang.runtime.MolangExpression;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.runtime.ParticleEmitterInstance;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.runtime.ParticleMolangEnvironment;
 import com.google.gson.JsonObject;
-import org.jetbrains.annotations.Nullable;
 
-import static com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.ParticleJsonUtils.getMolang;
+import org.jetbrains.annotations.Nullable;
 
 public record EmitterInitialization(
         @Nullable MolangExpression creationExpression,
-        @Nullable MolangExpression perUpdateExpression
-) implements IEmitterComponentDefinition, IEmitterComponent {
+        @Nullable MolangExpression perUpdateExpression)
+        implements IEmitterComponentDefinition, IEmitterComponent {
 
     @Override
     public int order() {

@@ -1,5 +1,7 @@
 package com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.component.rate;
 
+import static com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.ParticleJsonUtils.getMolang;
+
 import com.github.mcmodderanchor.simplebedrockmodel.v1.molang.runtime.MolangContext;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.molang.runtime.MolangExpression;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.component.IEmitterComponent;
@@ -8,11 +10,7 @@ import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.runtime.Particle
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import static com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.ParticleJsonUtils.getMolang;
-
-/**
- * 一次性发射。对应 "minecraft:emitter_rate_instant"。
- */
+/** 一次性发射。对应 "minecraft:emitter_rate_instant"。 */
 public record EmitterRateInstant(MolangExpression amount) implements RateComponent {
 
     @Override
@@ -30,7 +28,8 @@ public record EmitterRateInstant(MolangExpression amount) implements RateCompone
         return new Runtime(amount);
     }
 
-    public static EmitterRateInstant fromJson(String key, JsonElement value, ParticleMolangEnvironment molang) {
+    public static EmitterRateInstant fromJson(
+            String key, JsonElement value, ParticleMolangEnvironment molang) {
         JsonObject obj = value.getAsJsonObject();
         return new EmitterRateInstant(molang.compile(getMolang(obj, "num_particles", "10")));
     }

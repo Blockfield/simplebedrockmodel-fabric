@@ -1,10 +1,14 @@
 package com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.curve;
 
+import static com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.ParticleJsonUtils.getMolang;
+import static com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.ParticleJsonUtils.molangFromElement;
+
 import com.github.mcmodderanchor.simplebedrockmodel.v1.molang.runtime.MolangExpression;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.runtime.ParticleMolangEnvironment;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -12,32 +16,28 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
-import static com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.ParticleJsonUtils.getMolang;
-import static com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.ParticleJsonUtils.molangFromElement;
-
 /**
  * 粒子曲线定义。对应 JSON 中 {@code particle_effect.curves} 下的每条曲线。
- * <p>
- * 曲线将 Molang 输入值映射为输出值，结果写入 variable 命名空间供其他表达式引用。
  *
- * @param type            曲线插值类型
- * @param input           输入值（Molang 表达式）
+ * <p>曲线将 Molang 输入值映射为输出值，结果写入 variable 命名空间供其他表达式引用。
+ *
+ * @param type 曲线插值类型
+ * @param input 输入值（Molang 表达式）
  * @param horizontalRange 水平范围（Molang 表达式），输入值会除以此值归一化到 [0,1]
- * @param nodes           节点值数组（LINEAR/BEZIER/CATMULL_ROM 使用）
- * @param chainNodes      Bezier Chain 节点数组（BEZIER_CHAIN 使用）
+ * @param nodes 节点值数组（LINEAR/BEZIER/CATMULL_ROM 使用）
+ * @param chainNodes Bezier Chain 节点数组（BEZIER_CHAIN 使用）
  */
 public record ParticleCurve(
         CurveType type,
         MolangExpression input,
         MolangExpression horizontalRange,
         float[] nodes,
-        @Nullable CurveNode[] chainNodes
-) {
+        @Nullable CurveNode[] chainNodes) {
 
     /**
      * 从 JSON 解析单条曲线定义。
      *
-     * @param obj    曲线 JSON 对象
+     * @param obj 曲线 JSON 对象
      * @param molang Molang 编译环境
      * @return 解析后的曲线定义
      */
@@ -59,7 +59,8 @@ public record ParticleCurve(
                 // Bezier Chain: nodes 是对象，每个 key 是位置，value 是 {value, slope}
                 JsonObject nodesObj = nodesElem.getAsJsonObject();
                 List<Map.Entry<String, JsonElement>> entries = new ArrayList<>(nodesObj.entrySet());
-                entries.sort(Comparator.comparingDouble(entry -> Double.parseDouble(entry.getKey())));
+                entries.sort(
+                        Comparator.comparingDouble(entry -> Double.parseDouble(entry.getKey())));
                 chainNodes = new CurveNode[entries.size()];
                 nodes = new float[entries.size()]; // 存储位置 key
                 int i = 0;
@@ -87,7 +88,8 @@ public record ParticleCurve(
                 // 对象格式的普通节点（带 key 的 CurveNode）
                 JsonObject nodesObj = nodesElem.getAsJsonObject();
                 List<Map.Entry<String, JsonElement>> entries = new ArrayList<>(nodesObj.entrySet());
-                entries.sort(Comparator.comparingDouble(entry -> Double.parseDouble(entry.getKey())));
+                entries.sort(
+                        Comparator.comparingDouble(entry -> Double.parseDouble(entry.getKey())));
                 chainNodes = new CurveNode[entries.size()];
                 nodes = new float[entries.size()];
                 int i = 0;
@@ -96,9 +98,14 @@ public record ParticleCurve(
                     JsonElement val = entry.getValue();
                     if (val.isJsonObject()) {
                         JsonObject nodeObj = val.getAsJsonObject();
-                        chainNodes[i] = new CurveNode(
-                                nodeObj.has("value") ? nodeObj.get("value").getAsFloat() : 1f,
-                                nodeObj.has("slope") ? nodeObj.get("slope").getAsFloat() : 1f);
+                        chainNodes[i] =
+                                new CurveNode(
+                                        nodeObj.has("value")
+                                                ? nodeObj.get("value").getAsFloat()
+                                                : 1f,
+                                        nodeObj.has("slope")
+                                                ? nodeObj.get("slope").getAsFloat()
+                                                : 1f);
                     } else {
                         chainNodes[i] = new CurveNode(val.getAsFloat(), 1f);
                     }

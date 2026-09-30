@@ -8,8 +8,8 @@ import java.util.Set;
 
 /**
  * 粒子方块过期组件。对应 "minecraft:particle_expire_if_not_in_blocks"。
- * <p>
- * 当粒子不在指定方块内时过期。
+ *
+ * <p>当粒子不在指定方块内时过期。
  *
  * @param blocks 方块 ID 集合（如 "minecraft:water"）
  */

@@ -1,6 +1,7 @@
 package com.github.mcmodderanchor.simplebedrockmodel.v1.network;
 
 import com.github.mcmodderanchor.simplebedrockmodel.v1.network.message.ServerMessageSwapItem;
+
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -19,22 +20,23 @@ public class NetworkHandler {
     }
 
     private static void registerS2CPackets() {
-        PayloadTypeRegistry.playS2C().register(ServerMessageSwapItem.TYPE, ServerMessageSwapItem.STREAM_CODEC);
+        PayloadTypeRegistry.playS2C()
+                .register(ServerMessageSwapItem.TYPE, ServerMessageSwapItem.STREAM_CODEC);
     }
 
     @Environment(EnvType.CLIENT)
     public static void registerS2CReceivers() {
-        ClientPlayNetworking.registerGlobalReceiver(ServerMessageSwapItem.TYPE, ServerMessageSwapItem::handle);
+        ClientPlayNetworking.registerGlobalReceiver(
+                ServerMessageSwapItem.TYPE, ServerMessageSwapItem::handle);
     }
 
     public static void sendToClientPlayer(CustomPacketPayload message, ServerPlayer player) {
         ServerPlayNetworking.send(player, message);
     }
 
-    /**
-     * 发送给所有监听此实体的玩家
-     */
-    public static void sendToTrackingEntityAndSelf(Entity centerEntity, CustomPacketPayload message) {
+    /** 发送给所有监听此实体的玩家 */
+    public static void sendToTrackingEntityAndSelf(
+            Entity centerEntity, CustomPacketPayload message) {
         sendToTrackingEntity(message, centerEntity);
 
         if (centerEntity instanceof ServerPlayer serverPlayer) {
@@ -48,7 +50,8 @@ public class NetworkHandler {
         }
     }
 
-    public static void sendToTrackingEntity(CustomPacketPayload message, final Entity centerEntity) {
+    public static void sendToTrackingEntity(
+            CustomPacketPayload message, final Entity centerEntity) {
         for (ServerPlayer serverPlayer : PlayerLookup.tracking(centerEntity)) {
             sendToClientPlayer(message, serverPlayer);
         }

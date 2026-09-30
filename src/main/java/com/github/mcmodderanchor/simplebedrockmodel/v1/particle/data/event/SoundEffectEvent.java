@@ -5,5 +5,4 @@ package com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.event;
  *
  * @param eventName 音效事件名称
  */
-public record SoundEffectEvent(String eventName) implements IEventNode {
-}
+public record SoundEffectEvent(String eventName) implements IEventNode {}

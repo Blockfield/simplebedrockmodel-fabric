@@ -1,5 +1,7 @@
 package com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.component.lifetime;
 
+import static com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.ParticleJsonUtils.getMolang;
+
 import com.github.mcmodderanchor.simplebedrockmodel.v1.molang.runtime.MolangContext;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.molang.runtime.MolangExpression;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.component.IEmitterComponent;
@@ -8,11 +10,7 @@ import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.runtime.Particle
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import static com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.ParticleJsonUtils.getMolang;
-
-/**
- * 单次发射生命周期。对应 "minecraft:emitter_lifetime_once"。
- */
+/** 单次发射生命周期。对应 "minecraft:emitter_lifetime_once"。 */
 public record EmitterLifetimeOnce(MolangExpression activeTime) implements LifetimeComponent {
 
     @Override
@@ -30,7 +28,8 @@ public record EmitterLifetimeOnce(MolangExpression activeTime) implements Lifeti
         return new Runtime(activeTime);
     }
 
-    public static EmitterLifetimeOnce fromJson(String key, JsonElement value, ParticleMolangEnvironment molang) {
+    public static EmitterLifetimeOnce fromJson(
+            String key, JsonElement value, ParticleMolangEnvironment molang) {
         JsonObject obj = value.getAsJsonObject();
         return new EmitterLifetimeOnce(molang.compile(getMolang(obj, "active_time", "1")));
     }

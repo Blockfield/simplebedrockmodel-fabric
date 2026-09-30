@@ -2,6 +2,7 @@ package com.github.mcmodderanchor.simplebedrockmodel.v1.common.resource.pojo;
 
 import com.github.mcmodderanchor.simplebedrockmodel.v1.common.resource.exclusion.NeedForRootMotion;
 import com.google.gson.annotations.SerializedName;
+
 import org.jetbrains.annotations.Nullable;
 
 public class BedrockModelPOJO {

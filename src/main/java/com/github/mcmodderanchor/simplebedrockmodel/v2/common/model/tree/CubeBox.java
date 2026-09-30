@@ -16,15 +16,17 @@ public record CubeBox(
         float[] uvs,
         int[][] uvOrder,
         float @Nullable [] pivot,
-        @Nullable Quaternionf rotation
-) implements ICube {
+        @Nullable Quaternionf rotation)
+        implements ICube {
     public CubeBox {
         uvs = uvs == null ? new float[9] : Arrays.copyOf(uvs, 9);
         int[][] orderCopy = new int[6][4];
         if (uvOrder != null) {
             int faceCount = Math.min(uvOrder.length, orderCopy.length);
             for (int i = 0; i < faceCount; i++) {
-                if (uvOrder[i] != null) System.arraycopy(uvOrder[i], 0, orderCopy[i], 0, Math.min(uvOrder[i].length, 4));
+                if (uvOrder[i] != null)
+                    System.arraycopy(
+                            uvOrder[i], 0, orderCopy[i], 0, Math.min(uvOrder[i].length, 4));
             }
         }
         uvOrder = orderCopy;
@@ -40,7 +42,8 @@ public record CubeBox(
     @Override
     public int[][] uvOrder() {
         int[][] copy = new int[uvOrder.length][];
-        for (int i = 0; i < uvOrder.length; i++) copy[i] = Arrays.copyOf(uvOrder[i], uvOrder[i].length);
+        for (int i = 0; i < uvOrder.length; i++)
+            copy[i] = Arrays.copyOf(uvOrder[i], uvOrder[i].length);
         return copy;
     }
 

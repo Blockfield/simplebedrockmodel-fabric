@@ -9,17 +9,15 @@ import com.github.mcmodderanchor.simplebedrockmodel.v1.molang.runtime.value.Numb
 
 /**
  * 粒子系统专用的 Molang 运行时环境。
- * <p>
- * 管理一个共享的 {@link MochaEngine}，并提供粒子/发射器相关的变量绑定。
- * 在每次求值前，通过 {@link #bindEmitter}/{@link #bindParticle} 更新当前上下文。
+ *
+ * <p>管理一个共享的 {@link MochaEngine}，并提供粒子/发射器相关的变量绑定。 在每次求值前，通过 {@link #bindEmitter}/{@link
+ * #bindParticle} 更新当前上下文。
  */
 public class ParticleMolangEnvironment {
     private final MochaEngine<?> engine;
     private final MolangContext<?> context;
 
-    /**
-     * 创建独立的 Molang 环境
-     */
+    /** 创建独立的 Molang 环境 */
     public ParticleMolangEnvironment() {
         this.context = new MolangContext<>();
         this.engine = MolangEngineHelper.createEngine(context);
@@ -43,9 +41,7 @@ public class ParticleMolangEnvironment {
         variableStorage.set("particle_random_4", NumberValue.of(0));
     }
 
-    /**
-     * 绑定发射器状态到 Molang 变量。在发射器相关表达式求值前调用。
-     */
+    /** 绑定发射器状态到 Molang 变量。在发射器相关表达式求值前调用。 */
     public void bindEmitter(float age, float lifetime, int r1, int r2, int r3, int r4) {
         MutableObjectBinding variableStorage = context.getVariableStorage();
         variableStorage.set("emitter_age", NumberValue.of(age));
@@ -56,9 +52,7 @@ public class ParticleMolangEnvironment {
         variableStorage.set("emitter_random_4", NumberValue.of(r4));
     }
 
-    /**
-     * 绑定粒子状态到 Molang 变量。在粒子相关表达式求值前调用。
-     */
+    /** 绑定粒子状态到 Molang 变量。在粒子相关表达式求值前调用。 */
     public void bindParticle(float age, float lifetime, float r1, float r2, float r3, float r4) {
         MutableObjectBinding variableStorage = context.getVariableStorage();
         variableStorage.set("particle_age", NumberValue.of(age));
@@ -69,30 +63,22 @@ public class ParticleMolangEnvironment {
         variableStorage.set("particle_random_4", NumberValue.of(r4));
     }
 
-    /**
-     * 编译 Molang 表达式字符串为 {@link MolangExpression}。
-     */
+    /** 编译 Molang 表达式字符串为 {@link MolangExpression}。 */
     public MolangExpression compile(String expression) {
         return MolangEngineHelper.compileExpression(engine, expression);
     }
 
-    /**
-     * 直接求值 Molang 表达式字符串。
-     */
+    /** 直接求值 Molang 表达式字符串。 */
     public double eval(String expression) {
         return engine.eval(expression);
     }
 
-    /**
-     * 获取此环境的 MolangContext。
-     */
+    /** 获取此环境的 MolangContext。 */
     public MolangContext<?> getContext() {
         return context;
     }
 
-    /**
-     * 获取 variable 存储，允许外部设置自定义变量。
-     */
+    /** 获取 variable 存储，允许外部设置自定义变量。 */
     public MutableObjectBinding getVariableStorage() {
         return context.getVariableStorage();
     }

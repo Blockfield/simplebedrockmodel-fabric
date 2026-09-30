@@ -6,10 +6,11 @@ import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.runtime.Particle
 /**
  * Molang 表达式事件节点。触发时执行 Molang 表达式。
  *
- * @param expression         原始表达式字符串（调试用）
+ * @param expression 原始表达式字符串（调试用）
  * @param compiledExpression 预编译的表达式
  */
-public record MolangExpressionEvent(String expression, MolangExpression compiledExpression) implements IEventNode {
+public record MolangExpressionEvent(String expression, MolangExpression compiledExpression)
+        implements IEventNode {
 
     public static MolangExpressionEvent of(String expression, ParticleMolangEnvironment molang) {
         if (expression == null || expression.isEmpty()) {

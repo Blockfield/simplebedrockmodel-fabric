@@ -36,28 +36,28 @@ import java.util.List;
 /**
  * Lexical analyzer for the Molang language.
  *
- * <p>The lexical analyzer converts character streams
- * to token streams</p>
+ * <p>The lexical analyzer converts character streams to token streams
  *
- * <p>Note that this is a stream-based lexer, this means
- * that it will not consume the entire reader if it doesn't
- * continue having next() calls</p>
+ * <p>Note that this is a stream-based lexer, this means that it will not consume the entire reader
+ * if it doesn't continue having next() calls
  *
- * <p>See the following example on correctly lexing a string:</p>
+ * <p>See the following example on correctly lexing a string:
+ *
  * <pre>{@code
- *     MolangLexer lexer = MolangLexer.lexer(new StringReader("1 + 1"));
- *     List<Token> tokens = new ArrayList<>();
- *     Token token;
- *     while ((token = lexer.next()).kind() != TokenKind.EOF) {
- *         tokens.add(token);
- *     }
- *     // tokens: [ Double, Plus, Double ]
+ * MolangLexer lexer = MolangLexer.lexer(new StringReader("1 + 1"));
+ * List<Token> tokens = new ArrayList<>();
+ * Token token;
+ * while ((token = lexer.next()).kind() != TokenKind.EOF) {
+ *     tokens.add(token);
+ * }
+ * // tokens: [ Double, Plus, Double ]
  * }</pre>
  *
- * <p>Or using the shorter, convenience method:</p>
+ * <p>Or using the shorter, convenience method:
+ *
  * <pre>{@code
- *      List<Token> tokens = MolangLexer.tokenizeAll("1 + 1");
- *      // tokens: [ Double, Plus, Double ]
+ * List<Token> tokens = MolangLexer.tokenizeAll("1 + 1");
+ * // tokens: [ Double, Plus, Double ]
  * }</pre>
  *
  * @since 3.0.0
@@ -65,8 +65,7 @@ import java.util.List;
 @ApiStatus.NonExtendable
 public /* sealed */ interface MolangLexer /* permits MolangLexerImpl */ extends Closeable {
     /**
-     * Creates a new lexer that will read the characters from the
-     * given reader.
+     * Creates a new lexer that will read the characters from the given reader.
      *
      * @param reader The reader to use.
      * @return The created lexer
@@ -78,8 +77,7 @@ public /* sealed */ interface MolangLexer /* permits MolangLexerImpl */ extends 
     }
 
     /**
-     * Creates a new lexer that will read the characters from
-     * the given string.
+     * Creates a new lexer that will read the characters from the given string.
      *
      * @param string The string to tokenize.
      * @return The created lexer
@@ -119,49 +117,48 @@ public /* sealed */ interface MolangLexer /* permits MolangLexerImpl */ extends 
     }
 
     /**
-     * Returns the cursor for this lexer, the cursor maintains
-     * track of the current line and column, it is used for
-     * error reporting.
+     * Returns the cursor for this lexer, the cursor maintains track of the current line and column,
+     * it is used for error reporting.
      *
      * @return The lexer cursor
      * @since 3.0.0
      */
-    @NotNull Cursor cursor();
+    @NotNull
+    Cursor cursor();
 
     /**
-     * Returns the last emitted token (the last token value
-     * returned when calling {@link MolangLexer#next()})
+     * Returns the last emitted token (the last token value returned when calling {@link
+     * MolangLexer#next()})
      *
-     * <p>Requires the user to call {@link MolangLexer#next()}
-     * at least once first.</p>
+     * <p>Requires the user to call {@link MolangLexer#next()} at least once first.
      *
      * @return The last emitted token
      * @throws IllegalStateException If there is no current token
      * @since 3.0.0
      */
-    @NotNull Token current();
+    @NotNull
+    Token current();
 
     /**
-     * Reads the internal reader until it gets a token and
-     * then returns it.
+     * Reads the internal reader until it gets a token and then returns it.
      *
-     * <p>The returned token will never be null, but it can
-     * be of kind {@link TokenKind#EOF} or {@link TokenKind#ERROR}.</p>
+     * <p>The returned token will never be null, but it can be of kind {@link TokenKind#EOF} or
+     * {@link TokenKind#ERROR}.
      *
-     * <p>We can stop lexing when we find a {@link TokenKind#EOF} token
-     * for the first time, since following tokens will be EOF too.</p>
+     * <p>We can stop lexing when we find a {@link TokenKind#EOF} token for the first time, since
+     * following tokens will be EOF too.
      *
      * @return The emitted token after reading characters from the internal reader
      * @throws IOException If reading fails
      * @since 3.0.0
      */
-    @NotNull Token next() throws IOException;
+    @NotNull
+    Token next() throws IOException;
 
     /**
      * Reads all the tokens until it finds a {@link TokenKind#EOF}.
      *
-     * <p>After this method is called, the lexer should be
-     * done and all next tokens should be EOF</p>
+     * <p>After this method is called, the lexer should be done and all next tokens should be EOF
      *
      * @return All the read tokens
      * @throws IOException If reading fails

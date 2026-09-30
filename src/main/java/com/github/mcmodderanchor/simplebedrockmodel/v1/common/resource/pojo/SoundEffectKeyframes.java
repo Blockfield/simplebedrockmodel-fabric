@@ -1,6 +1,7 @@
 package com.github.mcmodderanchor.simplebedrockmodel.v1.common.resource.pojo;
 
 import it.unimi.dsi.fastutil.doubles.Double2ObjectRBTreeMap;
+
 import net.minecraft.resources.ResourceLocation;
 
 public class SoundEffectKeyframes {

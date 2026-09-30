@@ -28,15 +28,12 @@ import org.jetbrains.annotations.NotNull;
 import java.lang.annotation.*;
 
 /**
- * Gives a name to a type (class, interface, enum), method or field
- * to be used from Molang scripts.
+ * Gives a name to a type (class, interface, enum), method or field to be used from Molang scripts.
  *
- * <p>Binding names are concatenated with dots (.) to access
- * nested types, methods or fields.</p>
+ * <p>Binding names are concatenated with dots (.) to access nested types, methods or fields.
  *
- * <p>For example, if you have a class named {@code Foo} with a
- * field named {@code bar} and a method named {@code baz}, you
- * can bind them as follows:</p>
+ * <p>For example, if you have a class named {@code Foo} with a field named {@code bar} and a method
+ * named {@code baz}, you can bind them as follows:
  *
  * <pre>
  * {@literal @}Binding("foo")
@@ -49,17 +46,16 @@ import java.lang.annotation.*;
  *  }
  * </pre>
  *
- * <p>Then, you can access them from Molang scripts as follows:</p>
+ * <p>Then, you can access them from Molang scripts as follows:
  *
  * <pre>
  *     foo.baz
  *     foo.bar()
  * </pre>
  *
- * <p>Note that for non-static bindings, the instance name will be used
- * instead.</p>
+ * <p>Note that for non-static bindings, the instance name will be used instead.
  *
- * <p>A class annotated with {@link Binding} can also implement</p>
+ * <p>A class annotated with {@link Binding} can also implement
  *
  * @since 3.0.0
  */
@@ -73,20 +69,17 @@ public @interface Binding {
      * @return The names for this binding.
      * @since 3.0.0
      */
-    @NotNull String[] value();
+    @NotNull
+    String[] value();
 
     /**
-     * Returns whether this binding should be skipped
-     * from the binding checking/normalizing process.
+     * Returns whether this binding should be skipped from the binding checking/normalizing process.
      *
-     * <p>For example, functions that return a double
-     * value must be checked in order to replace NaN and
-     * Infinity values by zero. If a function already
-     * does that, then it can be skipped from the automatic
-     * process.</p>
+     * <p>For example, functions that return a double value must be checked in order to replace NaN
+     * and Infinity values by zero. If a function already does that, then it can be skipped from the
+     * automatic process.
      *
-     * @return Whether this binding should be skipped
-     * from the binding checking/normalizing process.
+     * @return Whether this binding should be skipped from the binding checking/normalizing process.
      * @since 3.0.0
      */
     boolean skipChecking() default false;
@@ -94,16 +87,16 @@ public @interface Binding {
     /**
      * (For methods only) Determines if this method is pure or not.
      *
-     * <p>A pure method is a method that has the following properties:</p>
+     * <p>A pure method is a method that has the following properties:
+     *
      * <ol>
-     *     <li>The method return values are <b>identical for identical
-     *     arguments</b>, and</li>
-     *     <li>The method has <b>no side effects</b></li>
+     *   <li>The method return values are <b>identical for identical arguments</b>, and
+     *   <li>The method has <b>no side effects</b>
      * </ol>
      *
-     * <p>The compiler or interpreter may pre-evaluate these functions ahead
-     * of time. In case of compiling, the function may be called during compile
-     * time, to use the function's result instead.</p>
+     * <p>The compiler or interpreter may pre-evaluate these functions ahead of time. In case of
+     * compiling, the function may be called during compile time, to use the function's result
+     * instead.
      *
      * @return If this function is pure or not.
      * @since 3.0.0

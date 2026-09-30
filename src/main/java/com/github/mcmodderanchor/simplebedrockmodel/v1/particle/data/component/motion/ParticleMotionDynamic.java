@@ -1,5 +1,8 @@
 package com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.component.motion;
 
+import static com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.ParticleJsonUtils.getMolang;
+import static com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.ParticleJsonUtils.getMolangArray3;
+
 import com.github.mcmodderanchor.simplebedrockmodel.v1.molang.runtime.MolangContext;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.molang.runtime.MolangExpression;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.component.IParticleComponent;
@@ -8,20 +11,16 @@ import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.runtime.Particle
 import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.runtime.ParticleMolangEnvironment;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+
 import org.jetbrains.annotations.Nullable;
 
-import static com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.ParticleJsonUtils.getMolang;
-import static com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.ParticleJsonUtils.getMolangArray3;
-
-/**
- * 动力学运动。对应 "minecraft:particle_motion_dynamic"。
- */
+/** 动力学运动。对应 "minecraft:particle_motion_dynamic"。 */
 public record ParticleMotionDynamic(
         @Nullable MolangExpression[] linearAcceleration,
         @Nullable MolangExpression linearDragCoefficient,
         @Nullable MolangExpression rotationAcceleration,
-        @Nullable MolangExpression rotationDragCoefficient
-) implements IParticleComponentDefinition, IParticleComponent {
+        @Nullable MolangExpression rotationDragCoefficient)
+        implements IParticleComponentDefinition, IParticleComponent {
 
     @Override
     public int order() {
@@ -34,7 +33,9 @@ public record ParticleMotionDynamic(
     }
 
     @Override
-    public void apply(ParticleInstance p) { /* 首次由 update 处理 */ }
+    public void apply(ParticleInstance p) {
+        /* 首次由 update 处理 */
+    }
 
     @Override
     public void update(ParticleInstance p) {
@@ -42,9 +43,7 @@ public record ParticleMotionDynamic(
         applyLegacy(p, p.emitter.getMolang().getContext(), 1f / 20f);
     }
 
-    /**
-     * 兼容旧调用方（Phase 4 后移除）
-     */
+    /** 兼容旧调用方（Phase 4 后移除） */
     public void applyLegacy(ParticleInstance p, MolangContext<?> ctx, float dt) {
         if (linearAcceleration != null) {
             p.vx += (float) linearAcceleration[0].evaluate(ctx) * dt;
@@ -66,20 +65,29 @@ public record ParticleMotionDynamic(
         }
     }
 
-    public static ParticleMotionDynamic fromJson(String key, JsonElement value, ParticleMolangEnvironment molang) {
+    public static ParticleMotionDynamic fromJson(
+            String key, JsonElement value, ParticleMolangEnvironment molang) {
         JsonObject obj = value.getAsJsonObject();
         return new ParticleMotionDynamic(
                 obj.has("linear_acceleration")
-                        ? compileArray3(molang, getMolangArray3(obj, "linear_acceleration", "0", "0", "0")) : null,
+                        ? compileArray3(
+                                molang, getMolangArray3(obj, "linear_acceleration", "0", "0", "0"))
+                        : null,
                 obj.has("linear_drag_coefficient")
-                        ? molang.compile(getMolang(obj, "linear_drag_coefficient", "0")) : null,
+                        ? molang.compile(getMolang(obj, "linear_drag_coefficient", "0"))
+                        : null,
                 obj.has("rotation_acceleration")
-                        ? molang.compile(getMolang(obj, "rotation_acceleration", "0")) : null,
+                        ? molang.compile(getMolang(obj, "rotation_acceleration", "0"))
+                        : null,
                 obj.has("rotation_drag_coefficient")
-                        ? molang.compile(getMolang(obj, "rotation_drag_coefficient", "0")) : null);
+                        ? molang.compile(getMolang(obj, "rotation_drag_coefficient", "0"))
+                        : null);
     }
 
-    private static MolangExpression[] compileArray3(ParticleMolangEnvironment molang, String[] exprs) {
-        return new MolangExpression[]{molang.compile(exprs[0]), molang.compile(exprs[1]), molang.compile(exprs[2])};
+    private static MolangExpression[] compileArray3(
+            ParticleMolangEnvironment molang, String[] exprs) {
+        return new MolangExpression[] {
+            molang.compile(exprs[0]), molang.compile(exprs[1]), molang.compile(exprs[2])
+        };
     }
 }

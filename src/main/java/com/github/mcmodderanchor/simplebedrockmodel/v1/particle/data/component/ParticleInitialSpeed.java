@@ -1,5 +1,7 @@
 package com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.component;
 
+import static com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.ParticleJsonUtils.molangFromElement;
+
 import com.github.mcmodderanchor.simplebedrockmodel.v1.molang.runtime.MolangContext;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.molang.runtime.MolangExpression;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.component.shape.EmitterShape;
@@ -8,8 +10,6 @@ import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.runtime.Particle
 import com.google.gson.JsonElement;
 
 import java.util.Random;
-
-import static com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.ParticleJsonUtils.molangFromElement;
 
 public record ParticleInitialSpeed(MolangExpression speed)
         implements IParticleComponentDefinition, IParticleComponent {
@@ -31,7 +31,8 @@ public record ParticleInitialSpeed(MolangExpression speed)
         }
     }
 
-    public static ParticleInitialSpeed fromJson(JsonElement value, ParticleMolangEnvironment molang) {
+    public static ParticleInitialSpeed fromJson(
+            JsonElement value, ParticleMolangEnvironment molang) {
         return new ParticleInitialSpeed(molang.compile(molangFromElement(value, "0")));
     }
 }

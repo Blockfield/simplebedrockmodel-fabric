@@ -30,8 +30,8 @@ import java.util.Objects;
 /**
  * String literal expression implementation for Molang.
  *
- * <p>Example string expressions: {@code 'hello world'},
- * {@code 'hey there'}, {@code 'name'}, {@code 'the game'}</p>
+ * <p>Example string expressions: {@code 'hello world'}, {@code 'hey there'}, {@code 'name'}, {@code
+ * 'the game'}
  *
  * @since 3.0.0
  */
@@ -75,5 +75,4 @@ public final class StringExpression implements Expression {
     public int hashCode() {
         return value.hashCode();
     }
-
 }

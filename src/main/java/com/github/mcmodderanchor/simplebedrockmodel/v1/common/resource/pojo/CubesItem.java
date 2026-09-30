@@ -3,6 +3,7 @@ package com.github.mcmodderanchor.simplebedrockmodel.v1.common.resource.pojo;
 import com.google.gson.*;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Type;
@@ -58,9 +59,7 @@ public class CubesItem {
         return inflate;
     }
 
-    /**
-     * 基岩版这货居然可以为浮点数，服了
-     */
+    /** 基岩版这货居然可以为浮点数，服了 */
     public float[] getSize() {
         return size;
     }
@@ -81,8 +80,14 @@ public class CubesItem {
 
     public static class Deserializer implements JsonDeserializer<CubesItem> {
         @Override
-        public CubesItem deserialize(JsonElement json, Type type, JsonDeserializationContext context) throws JsonParseException {
-            CubesItem cube = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create().fromJson(json, CubesItem.class);
+        public CubesItem deserialize(
+                JsonElement json, Type type, JsonDeserializationContext context)
+                throws JsonParseException {
+            CubesItem cube =
+                    new GsonBuilder()
+                            .excludeFieldsWithoutExposeAnnotation()
+                            .create()
+                            .fromJson(json, CubesItem.class);
             if (json.isJsonObject()) {
                 JsonObject obj = json.getAsJsonObject();
 

@@ -1,5 +1,8 @@
 package com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data;
 
+import static com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.ParticleJsonUtils.getString;
+import static com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.ParticleJsonUtils.resolveTexturePath;
+
 import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.component.IComponent;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.curve.ParticleCurve;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.event.*;
@@ -8,6 +11,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.ArrayList;
@@ -15,20 +19,17 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.ParticleJsonUtils.getString;
-import static com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.ParticleJsonUtils.resolveTexturePath;
-
 /**
  * 基岩版粒子效果 JSON 解析器。
- * <p>
- * 解析时接收 {@link ParticleMolangEnvironment}，在反序列化阶段直接编译 Molang 表达式到组件中。
+ *
+ * <p>解析时接收 {@link ParticleMolangEnvironment}，在反序列化阶段直接编译 Molang 表达式到组件中。
  */
 public class ParticleEffectDeserializer {
 
     /**
      * 解析粒子效果定义 JSON。
      *
-     * @param json   完整的粒子效果 JSON
+     * @param json 完整的粒子效果 JSON
      * @param molang Molang 编译环境
      * @return 解析后的粒子效果定义
      */
@@ -43,17 +44,21 @@ public class ParticleEffectDeserializer {
 
         // components
         JsonObject compObj = effect.getAsJsonObject("components");
-        List<IComponent> components = compObj != null ? parseComponents(compObj, molang) : List.of();
+        List<IComponent> components =
+                compObj != null ? parseComponents(compObj, molang) : List.of();
 
         // curves
         JsonObject curvesObj = effect.getAsJsonObject("curves");
-        Map<String, ParticleCurve> curves = curvesObj != null ? parseCurves(curvesObj, molang) : null;
+        Map<String, ParticleCurve> curves =
+                curvesObj != null ? parseCurves(curvesObj, molang) : null;
 
         // events
         JsonObject eventsObj = effect.getAsJsonObject("events");
-        Map<String, List<IEventNode>> events = eventsObj != null ? parseEvents(eventsObj, molang) : null;
+        Map<String, List<IEventNode>> events =
+                eventsObj != null ? parseEvents(eventsObj, molang) : null;
 
-        return new ParticleEffectDefinition(description.getIdentifier(), description, components, curves, events);
+        return new ParticleEffectDefinition(
+                description.getIdentifier(), description, components, curves, events);
     }
 
     private ParticleDescription parseDescription(JsonObject obj) {
@@ -62,17 +67,20 @@ public class ParticleEffectDeserializer {
 
         JsonObject renderParams = obj.getAsJsonObject("basic_render_parameters");
         ParticleDescription.Material material = ParticleDescription.Material.PARTICLES_BLEND;
-        ResourceLocation texture = ResourceLocation.fromNamespaceAndPath("minecraft", "textures/particle/generic_0.png");
+        ResourceLocation texture =
+                ResourceLocation.fromNamespaceAndPath(
+                        "minecraft", "textures/particle/generic_0.png");
         int texW = 0, texH = 0;
 
         if (renderParams != null) {
             String mat = getString(renderParams, "material", "particles_blend");
-            material = switch (mat) {
-                case "particles_opaque" -> ParticleDescription.Material.PARTICLES_OPAQUE;
-                case "particles_alpha" -> ParticleDescription.Material.PARTICLES_ALPHA;
-                case "particles_add" -> ParticleDescription.Material.PARTICLES_ADD;
-                default -> ParticleDescription.Material.PARTICLES_BLEND;
-            };
+            material =
+                    switch (mat) {
+                        case "particles_opaque" -> ParticleDescription.Material.PARTICLES_OPAQUE;
+                        case "particles_alpha" -> ParticleDescription.Material.PARTICLES_ALPHA;
+                        case "particles_add" -> ParticleDescription.Material.PARTICLES_ADD;
+                        default -> ParticleDescription.Material.PARTICLES_BLEND;
+                    };
             String texRaw = getString(renderParams, "texture", "textures/particle/generic_0");
             texture = resolveTexturePath(texRaw);
         }
@@ -83,7 +91,8 @@ public class ParticleEffectDeserializer {
     private List<IComponent> parseComponents(JsonObject obj, ParticleMolangEnvironment molang) {
         List<IComponent> components = new ArrayList<>();
         for (Map.Entry<String, JsonElement> entry : obj.entrySet()) {
-            IComponent component = ParticleComponentRegistry.deserialize(entry.getKey(), entry.getValue(), molang);
+            IComponent component =
+                    ParticleComponentRegistry.deserialize(entry.getKey(), entry.getValue(), molang);
             if (component != null) {
                 components.add(component);
             }
@@ -93,11 +102,14 @@ public class ParticleEffectDeserializer {
 
     // ---- Curves ----
 
-    private Map<String, ParticleCurve> parseCurves(JsonObject obj, ParticleMolangEnvironment molang) {
+    private Map<String, ParticleCurve> parseCurves(
+            JsonObject obj, ParticleMolangEnvironment molang) {
         Map<String, ParticleCurve> curves = new LinkedHashMap<>();
         for (Map.Entry<String, JsonElement> entry : obj.entrySet()) {
             if (entry.getValue().isJsonObject()) {
-                curves.put(entry.getKey(), ParticleCurve.fromJson(entry.getValue().getAsJsonObject(), molang));
+                curves.put(
+                        entry.getKey(),
+                        ParticleCurve.fromJson(entry.getValue().getAsJsonObject(), molang));
             }
         }
         return curves.isEmpty() ? null : curves;
@@ -105,7 +117,8 @@ public class ParticleEffectDeserializer {
 
     // ---- Events ----
 
-    private Map<String, List<IEventNode>> parseEvents(JsonObject obj, ParticleMolangEnvironment molang) {
+    private Map<String, List<IEventNode>> parseEvents(
+            JsonObject obj, ParticleMolangEnvironment molang) {
         Map<String, List<IEventNode>> events = new LinkedHashMap<>();
         for (Map.Entry<String, JsonElement> entry : obj.entrySet()) {
             List<IEventNode> nodes = new ArrayList<>();
@@ -127,10 +140,9 @@ public class ParticleEffectDeserializer {
         return events.isEmpty() ? null : events;
     }
 
-    /**
-     * 解析单个事件定义对象。
-     */
-    private List<IEventNode> parseEventNodeObject(JsonObject obj, ParticleMolangEnvironment molang) {
+    /** 解析单个事件定义对象。 */
+    private List<IEventNode> parseEventNodeObject(
+            JsonObject obj, ParticleMolangEnvironment molang) {
         List<IEventNode> nodes = new ArrayList<>();
 
         if (obj.has("particle_effect")) {
@@ -155,13 +167,17 @@ public class ParticleEffectDeserializer {
         return nodes;
     }
 
-    private ParticleEffectEvent parseParticleEffectEvent(JsonObject obj, ParticleMolangEnvironment molang) {
+    private ParticleEffectEvent parseParticleEffectEvent(
+            JsonObject obj, ParticleMolangEnvironment molang) {
         String effect = obj.has("effect") ? obj.get("effect").getAsString() : "";
         ParticleEffectEvent.Type type = ParticleEffectEvent.Type.EMITTER;
         if (obj.has("type")) {
             type = ParticleEffectEvent.Type.fromString(obj.get("type").getAsString());
         }
-        String preExpr = obj.has("pre_effect_expression") ? obj.get("pre_effect_expression").getAsString() : null;
+        String preExpr =
+                obj.has("pre_effect_expression")
+                        ? obj.get("pre_effect_expression").getAsString()
+                        : null;
         return ParticleEffectEvent.of(effect, type, preExpr, molang);
     }
 

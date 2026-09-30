@@ -1,8 +1,10 @@
 package com.github.mcmodderanchor.simplebedrockmodel.v1.util;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+
 import org.joml.Matrix4f;
 
 @Environment(EnvType.CLIENT)
@@ -18,7 +20,10 @@ public final class RenderDistance {
             return false;
         }
         Matrix4f matrix4f = poseStack.last().pose();
-        float viewDistance = matrix4f.m30() * matrix4f.m30() + matrix4f.m31() * matrix4f.m31() + matrix4f.m32() * matrix4f.m32();
+        float viewDistance =
+                matrix4f.m30() * matrix4f.m30()
+                        + matrix4f.m31() * matrix4f.m31()
+                        + matrix4f.m32() * matrix4f.m32();
         return viewDistance < distance * distance;
     }
 

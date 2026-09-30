@@ -25,11 +25,11 @@ package com.github.mcmodderanchor.simplebedrockmodel.v1.molang.runtime;
 
 import com.github.mcmodderanchor.simplebedrockmodel.v1.molang.runtime.value.ObjectValue;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.molang.runtime.value.Value;
+
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Represents a scope, which is just a virtual object that
- * contains bindings (properties) to values.
+ * Represents a scope, which is just a virtual object that contains bindings (properties) to values.
  *
  * @since 3.0.0
  */
@@ -43,15 +43,15 @@ public interface Scope extends ObjectValue {
     }
 
     /**
-     * Creates a shallow copy of this scope. The copy will
-     * contain the same bindings as this scope, but it will
-     * be a different object, and changes (only) to the copy
-     * properties will not affect this scope.
+     * Creates a shallow copy of this scope. The copy will contain the same bindings as this scope,
+     * but it will be a different object, and changes (only) to the copy properties will not affect
+     * this scope.
      *
      * @return The shallow copy of this scope.
      * @since 3.0.0
      */
-    @NotNull Scope copy();
+    @NotNull
+    Scope copy();
 
     void readOnly(final boolean readOnly);
 

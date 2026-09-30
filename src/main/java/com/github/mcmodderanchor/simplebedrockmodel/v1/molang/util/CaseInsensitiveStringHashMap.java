@@ -31,11 +31,10 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
- * A {@link HashMap} implementation that uses case-insensitive
- * {@link String}s as keys. In this kind of map, all keys are
- * lower-cased before they are added.
+ * A {@link HashMap} implementation that uses case-insensitive {@link String}s as keys. In this kind
+ * of map, all keys are lower-cased before they are added.
  *
- * <p>Listing keys will return all the keys in lowercase.</p>
+ * <p>Listing keys will return all the keys in lowercase.
  *
  * @param <V> The value type
  * @see HashMap
@@ -53,8 +52,7 @@ public class CaseInsensitiveStringHashMap<V> extends HashMap<String, V> {
         super(initialCapacity);
     }
 
-    public CaseInsensitiveStringHashMap() {
-    }
+    public CaseInsensitiveStringHashMap() {}
 
     public CaseInsensitiveStringHashMap(Map<String, ? extends V> m) {
         super(lowercaseMap(m));
@@ -65,7 +63,8 @@ public class CaseInsensitiveStringHashMap<V> extends HashMap<String, V> {
         return key instanceof String ? ((T) ((String) key).toLowerCase()) : key;
     }
 
-    private static <V> Map<? extends String, ? extends V> lowercaseMap(Map<? extends String, ? extends V> m) {
+    private static <V> Map<? extends String, ? extends V> lowercaseMap(
+            Map<? extends String, ? extends V> m) {
         final Map<String, V> lowercased = new HashMap<>();
         for (Entry<? extends String, ? extends V> entry : m.entrySet()) {
             lowercased.put(lowercase(entry.getKey()), entry.getValue());
@@ -111,7 +110,9 @@ public class CaseInsensitiveStringHashMap<V> extends HashMap<String, V> {
     @Override
     public Set<Entry<String, V>> entrySet() {
         Set<Entry<String, V>> es;
-        return (es = entrySet) == null ? (entrySet = new CaseInsensitiveEntrySet(super.entrySet())) : es;
+        return (es = entrySet) == null
+                ? (entrySet = new CaseInsensitiveEntrySet(super.entrySet()))
+                : es;
     }
 
     @Override
@@ -140,22 +141,30 @@ public class CaseInsensitiveStringHashMap<V> extends HashMap<String, V> {
     }
 
     @Override
-    public V computeIfAbsent(String key, @NotNull Function<? super String, ? extends V> mappingFunction) {
+    public V computeIfAbsent(
+            String key, @NotNull Function<? super String, ? extends V> mappingFunction) {
         return super.computeIfAbsent(lowercase(key), mappingFunction);
     }
 
     @Override
-    public V computeIfPresent(String key, @NotNull BiFunction<? super String, ? super V, ? extends V> remappingFunction) {
+    public V computeIfPresent(
+            String key,
+            @NotNull BiFunction<? super String, ? super V, ? extends V> remappingFunction) {
         return super.computeIfPresent(lowercase(key), remappingFunction);
     }
 
     @Override
-    public V compute(String key, @NotNull BiFunction<? super String, ? super V, ? extends V> remappingFunction) {
+    public V compute(
+            String key,
+            @NotNull BiFunction<? super String, ? super V, ? extends V> remappingFunction) {
         return super.compute(lowercase(key), remappingFunction);
     }
 
     @Override
-    public V merge(String key, @NotNull V value, @NotNull BiFunction<? super V, ? super V, ? extends V> remappingFunction) {
+    public V merge(
+            String key,
+            @NotNull V value,
+            @NotNull BiFunction<? super V, ? super V, ? extends V> remappingFunction) {
         return super.merge(lowercase(key), value, remappingFunction);
     }
 
@@ -230,8 +239,7 @@ public class CaseInsensitiveStringHashMap<V> extends HashMap<String, V> {
         }
 
         private Object convertEntry(Object o) {
-            if (!(o instanceof Map.Entry<?, ?> e))
-                return o;
+            if (!(o instanceof Map.Entry<?, ?> e)) return o;
             final Object key = lowercase(e.getKey());
             final Object value = e.getValue();
             return new SimpleEntry<>(key, value);

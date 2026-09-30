@@ -6,8 +6,8 @@ import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.component.I
 import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.component.IParticleComponentDefinition;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.runtime.ParticleInstance;
 
-public record ParticleTintingGradient(MolangExpression interpolant, float[] stops,
-                                      MolangExpression[][] colors)
+public record ParticleTintingGradient(
+        MolangExpression interpolant, float[] stops, MolangExpression[][] colors)
         implements IParticleComponentDefinition, IParticleComponent {
 
     @Override

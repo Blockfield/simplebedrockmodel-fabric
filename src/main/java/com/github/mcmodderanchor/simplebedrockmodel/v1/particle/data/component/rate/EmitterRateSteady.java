@@ -1,5 +1,7 @@
 package com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.component.rate;
 
+import static com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.ParticleJsonUtils.getMolang;
+
 import com.github.mcmodderanchor.simplebedrockmodel.v1.molang.runtime.MolangContext;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.molang.runtime.MolangExpression;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.component.IEmitterComponent;
@@ -8,11 +10,7 @@ import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.runtime.Particle
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import static com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.ParticleJsonUtils.getMolang;
-
-/**
- * 持续发射。对应 "minecraft:emitter_rate_steady"。
- */
+/** 持续发射。对应 "minecraft:emitter_rate_steady"。 */
 public record EmitterRateSteady(MolangExpression spawnRate, MolangExpression maxParticles)
         implements RateComponent {
 
@@ -31,7 +29,8 @@ public record EmitterRateSteady(MolangExpression spawnRate, MolangExpression max
         return new Runtime(spawnRate, maxParticles);
     }
 
-    public static EmitterRateSteady fromJson(String key, JsonElement value, ParticleMolangEnvironment molang) {
+    public static EmitterRateSteady fromJson(
+            String key, JsonElement value, ParticleMolangEnvironment molang) {
         JsonObject obj = value.getAsJsonObject();
         return new EmitterRateSteady(
                 molang.compile(getMolang(obj, "spawn_rate", "1")),
@@ -62,8 +61,7 @@ public record EmitterRateSteady(MolangExpression spawnRate, MolangExpression max
             int maxP = (int) maxParticles.evaluate(ctx);
             float rate = (float) spawnRate.evaluate(ctx);
             spawnAccumulator += rate * emitter.getDt();
-            while (spawnAccumulator >= 1f
-                    && emitter.getParticleCount() < maxP) {
+            while (spawnAccumulator >= 1f && emitter.getParticleCount() < maxP) {
                 spawnAccumulator -= 1f;
                 emitter.spawnParticle();
             }

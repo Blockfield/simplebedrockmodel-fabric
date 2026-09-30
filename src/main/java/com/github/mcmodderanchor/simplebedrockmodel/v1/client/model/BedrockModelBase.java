@@ -4,7 +4,9 @@ import com.github.mcmodderanchor.simplebedrockmodel.v1.common.model.BedrockBone;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.common.model.BedrockModel;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.common.resource.pojo.BedrockModelPOJO;
 import com.mojang.blaze3d.vertex.PoseStack;
+
 import net.minecraft.world.item.ItemDisplayContext;
+
 import org.jetbrains.annotations.Nullable;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
@@ -44,7 +46,10 @@ public class BedrockModelBase extends BedrockModel implements PositionableModel 
         }
     }
 
-    private void applyOriginTransform(@Nullable PositionPointTransform transform, @Nullable Vector3f scaleVector, PoseStack poseStack) {
+    private void applyOriginTransform(
+            @Nullable PositionPointTransform transform,
+            @Nullable Vector3f scaleVector,
+            PoseStack poseStack) {
         if (transform != null) {
             Vector3f translation = transform.translation.mul(scaleVector, new Vector3f());
             poseStack.translate(translation.x, translation.y, translation.z);
@@ -58,11 +63,12 @@ public class BedrockModelBase extends BedrockModel implements PositionableModel 
     private @Nullable PositionPointTransform getTransform(BedrockBone bone) {
         return Optional.ofNullable(bone)
                 .map(origin -> origin.getGlobalTransform().invert())
-                .map(matrix -> {
-                    Vector3f translation = matrix.getTranslation(new Vector3f());
-                    Quaternionf rotation = matrix.getNormalizedRotation(new Quaternionf());
-                    return new PositionPointTransform(translation, rotation);
-                })
+                .map(
+                        matrix -> {
+                            Vector3f translation = matrix.getTranslation(new Vector3f());
+                            Quaternionf rotation = matrix.getNormalizedRotation(new Quaternionf());
+                            return new PositionPointTransform(translation, rotation);
+                        })
                 .orElse(null);
     }
 

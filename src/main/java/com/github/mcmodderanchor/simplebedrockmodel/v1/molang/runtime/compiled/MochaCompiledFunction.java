@@ -28,14 +28,12 @@ import com.github.mcmodderanchor.simplebedrockmodel.v1.molang.runtime.MolangComp
 /**
  * Marker interface for Molang compiled functions.
  *
- * <p>This interface is supposed to be extended by
- * user-defined interfaces with a single method, that
- * they will be able to call to directly execute the
- * function.</p>
+ * <p>This interface is supposed to be extended by user-defined interfaces with a single method,
+ * that they will be able to call to directly execute the function.
  *
- * <p>See the following example on compiling a function
- * that computes how a player's level is computed from
- * their experience:</p>
+ * <p>See the following example on compiling a function that computes how a player's level is
+ * computed from their experience:
+ *
  * <pre>{@code
  * interface PlayerLevelFunction extends MolangFunction {
  *     int computeLevel(@Named("xp") int experience);
@@ -49,17 +47,15 @@ import com.github.mcmodderanchor.simplebedrockmodel.v1.molang.runtime.MolangComp
  * function.computeLevel(100); // 31
  * }</pre>
  *
- * <p>Note that all the parameters from the function method <b>must</b>
- * have a name, they can either be annotated with the {@link Named}
- * annotation or have a name in runtime (Compiler's -parameters flag)</p>
+ * <p>Note that all the parameters from the function method <b>must</b> have a name, they can either
+ * be annotated with the {@link Named} annotation or have a name in runtime (Compiler's -parameters
+ * flag)
  *
- * <p>Also note that the function's returned value can take a null-like
- * value depending on the specified return type. For numbers, it will be
- * zero, and for objects it will be {@code null}</p>
+ * <p>Also note that the function's returned value can take a null-like value depending on the
+ * specified return type. For numbers, it will be zero, and for objects it will be {@code null}
  *
  * @see MolangCompiler
  * @see Named
  * @since 3.0.0
  */
-public interface MochaCompiledFunction {
-}
+public interface MochaCompiledFunction {}

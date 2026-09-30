@@ -24,12 +24,11 @@
 /**
  * Package containing classes for Molang abstract syntax trees.
  *
- * <p>Syntax trees are structures made out of expressions. Some
- * expressions may be simple and others may be composed by more
- * expressions.</p>
+ * <p>Syntax trees are structures made out of expressions. Some expressions may be simple and others
+ * may be composed by more expressions.
  *
- * <p>Note that Molang is a expression-based language and there
- * are no distinctions between expressions and statements.</p>
+ * <p>Note that Molang is a expression-based language and there are no distinctions between
+ * expressions and statements.
  *
  * @since 3.0.0
  */

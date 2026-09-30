@@ -23,14 +23,15 @@
  */
 package com.github.mcmodderanchor.simplebedrockmodel.v1.molang.runtime;
 
+import static java.util.Objects.requireNonNull;
+
 import com.github.mcmodderanchor.simplebedrockmodel.v1.molang.util.CaseInsensitiveStringHashMap;
+
 import org.jetbrains.annotations.NotNull;
 import org.objectweb.asm.MethodVisitor;
 
 import java.lang.reflect.Method;
 import java.util.Map;
-
-import static java.util.Objects.requireNonNull;
 
 final class FunctionCompileState {
     private final MolangCompiler compiler;
@@ -54,14 +55,14 @@ final class FunctionCompileState {
             Scope scope,
             Map<String, Integer> argumentParameterIndexes,
             int entityParameterLoadIndex,
-            Class<?> entityParameterType
-    ) {
+            Class<?> entityParameterType) {
         this.compiler = requireNonNull(compiler, "compiler");
         this.className = requireNonNull(className, "className");
         this.mv = requireNonNull(mv, "mv");
         this.method = requireNonNull(method, "method");
         this.scope = requireNonNull(scope, "scope");
-        this.argumentParameterIndexes = requireNonNull(argumentParameterIndexes, "argumentParameterIndexes");
+        this.argumentParameterIndexes =
+                requireNonNull(argumentParameterIndexes, "argumentParameterIndexes");
         this.entityParameterLoadIndex = entityParameterLoadIndex;
         this.entityParameterType = entityParameterType;
     }

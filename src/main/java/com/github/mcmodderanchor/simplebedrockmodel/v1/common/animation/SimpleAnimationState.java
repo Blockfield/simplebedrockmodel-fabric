@@ -4,6 +4,7 @@ import com.maydaymemory.mae.basic.DummyPose;
 import com.maydaymemory.mae.basic.Pose;
 import com.maydaymemory.mae.control.statemachine.IAnimationState;
 import com.maydaymemory.mae.control.statemachine.IAnimationTransition;
+
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.ArrayList;
@@ -24,10 +25,11 @@ public class SimpleAnimationState<T> implements IAnimationState<T> {
     private final Consumer<T> onUpdate;
     private final Function<T, Pose> evaluatePose;
 
-    public SimpleAnimationState(BiConsumer<T, IAnimationState<T>> onEnter,
-                                BiConsumer<T, IAnimationTransition<T>> onExit,
-                                Consumer<T> onUpdate,
-                                Function<T, Pose> evaluatePose) {
+    public SimpleAnimationState(
+            BiConsumer<T, IAnimationState<T>> onEnter,
+            BiConsumer<T, IAnimationTransition<T>> onExit,
+            Consumer<T> onUpdate,
+            Function<T, Pose> evaluatePose) {
         this.onEnter = onEnter;
         this.onExit = onExit;
         this.onUpdate = onUpdate;
@@ -60,12 +62,9 @@ public class SimpleAnimationState<T> implements IAnimationState<T> {
     }
 
     public static class Builder<T> {
-        private BiConsumer<T, IAnimationState<T>> onEnter = (ctx, from) -> {
-        };
-        private BiConsumer<T, IAnimationTransition<T>> onExit = (ctx, transition) -> {
-        };
-        private Consumer<T> onUpdate = (ctx) -> {
-        };
+        private BiConsumer<T, IAnimationState<T>> onEnter = (ctx, from) -> {};
+        private BiConsumer<T, IAnimationTransition<T>> onExit = (ctx, transition) -> {};
+        private Consumer<T> onUpdate = (ctx) -> {};
         private Function<T, Pose> evaluatePose = (ctx) -> DummyPose.INSTANCE;
 
         public Builder<T> onEnter(BiConsumer<T, IAnimationState<T>> onEnter) {

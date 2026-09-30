@@ -13,8 +13,7 @@ public record EventRandomize(List<WeightedEntry> entries) implements IEventNode 
      * 加权事件条目。
      *
      * @param weight 权重
-     * @param node   事件节点
+     * @param node 事件节点
      */
-    public record WeightedEntry(float weight, IEventNode node) {
-    }
+    public record WeightedEntry(float weight, IEventNode node) {}
 }

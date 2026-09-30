@@ -7,16 +7,17 @@ import com.maydaymemory.mae.basic.IEvaluationContext;
 import com.maydaymemory.mae.basic.InterpolatableKeyframe;
 import com.maydaymemory.mae.basic.Interpolator;
 import com.maydaymemory.mae.basic.Rotation;
+
 import org.joml.Vector3f;
 
 /**
- * 支持 Molang 表达式的 Rotation 关键帧。
- * 每次获取 pre/post 值时，会实时求值 Molang 表达式并转换为弧度。
- * <p>
- * 必须通过 {@link IEvaluationContext} 参数传入上下文（{@link #getPre(IEvaluationContext)} /
- * {@link #getPost(IEvaluationContext)}）。无参版本返回零旋转。
+ * 支持 Molang 表达式的 Rotation 关键帧。 每次获取 pre/post 值时，会实时求值 Molang 表达式并转换为弧度。
+ *
+ * <p>必须通过 {@link IEvaluationContext} 参数传入上下文（{@link #getPre(IEvaluationContext)} / {@link
+ * #getPost(IEvaluationContext)}）。无参版本返回零旋转。
  */
-public class MolangRotationKeyframe extends BaseKeyframe<Rotation> implements InterpolatableKeyframe<Rotation> {
+public class MolangRotationKeyframe extends BaseKeyframe<Rotation>
+        implements InterpolatableKeyframe<Rotation> {
     private static final float DEGREE_TO_RADIAN = (float) (Math.PI / 180);
     private static final Rotation ZERO = new Rotation(new Vector3f());
 
@@ -26,19 +27,22 @@ public class MolangRotationKeyframe extends BaseKeyframe<Rotation> implements In
     private final Interpolator<Rotation> interpolator;
 
     /**
-     * @param timeS         关键帧时间（秒）
-     * @param preFunctions  pre 值的 3 个 Molang 表达式 (x, y, z)，求值结果为角度
+     * @param timeS 关键帧时间（秒）
+     * @param preFunctions pre 值的 3 个 Molang 表达式 (x, y, z)，求值结果为角度
      * @param postFunctions post 值的 3 个 Molang 表达式 (x, y, z)，求值结果为角度
-     * @param mulX          x 轴符号乘数（用于坐标系转换）
-     * @param mulY          y 轴符号乘数
-     * @param mulZ          z 轴符号乘数
-     * @param interpolator  插值器
+     * @param mulX x 轴符号乘数（用于坐标系转换）
+     * @param mulY y 轴符号乘数
+     * @param mulZ z 轴符号乘数
+     * @param interpolator 插值器
      */
-    public MolangRotationKeyframe(float timeS,
-                                  MolangExpression[] preFunctions,
-                                  MolangExpression[] postFunctions,
-                                  float mulX, float mulY, float mulZ,
-                                  Interpolator<Rotation> interpolator) {
+    public MolangRotationKeyframe(
+            float timeS,
+            MolangExpression[] preFunctions,
+            MolangExpression[] postFunctions,
+            float mulX,
+            float mulY,
+            float mulZ,
+            Interpolator<Rotation> interpolator) {
         super(timeS);
         this.preFunctions = preFunctions;
         this.postFunctions = postFunctions;

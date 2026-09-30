@@ -23,19 +23,18 @@
  */
 package com.github.mcmodderanchor.simplebedrockmodel.v1.molang.runtime.value;
 
+import static java.util.Objects.requireNonNull;
+
 import com.github.mcmodderanchor.simplebedrockmodel.v1.molang.util.CaseInsensitiveStringHashMap;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
-import static java.util.Objects.requireNonNull;
-
 /**
- * Represents an object-like binding,
- * these objects can have properties
- * (or fields) that can be read and
- * sometimes written
+ * Represents an object-like binding, these objects can have properties (or fields) that can be read
+ * and sometimes written
  */
 public class MutableObjectBinding implements ObjectValue {
     private final Map<String, ObjectProperty> properties = new CaseInsensitiveStringHashMap<>();
@@ -47,9 +46,8 @@ public class MutableObjectBinding implements ObjectValue {
     }
 
     /**
-     * Sets the property with the given
-     * {@code name} to the specified {@code value},
-     * may not be supported
+     * Sets the property with the given {@code name} to the specified {@code value}, may not be
+     * supported
      */
     @Override
     public boolean set(final @NotNull String name, final @Nullable Value value) {
@@ -82,5 +80,4 @@ public class MutableObjectBinding implements ObjectValue {
         }
         blocked = true;
     }
-
 }

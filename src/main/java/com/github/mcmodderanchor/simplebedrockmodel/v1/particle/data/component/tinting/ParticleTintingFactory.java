@@ -1,5 +1,7 @@
 package com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.component.tinting;
 
+import static com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.ParticleJsonUtils.*;
+
 import com.github.mcmodderanchor.simplebedrockmodel.v1.molang.runtime.MolangExpression;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.component.IParticleComponentDefinition;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.runtime.ParticleMolangEnvironment;
@@ -12,17 +14,13 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
-import static com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.ParticleJsonUtils.*;
-
-/**
- * Tinting 组件工厂。根据 JSON 结构分派到 StaticColor 或 GradientColor。
- */
+/** Tinting 组件工厂。根据 JSON 结构分派到 StaticColor 或 GradientColor。 */
 public final class ParticleTintingFactory {
 
-    private ParticleTintingFactory() {
-    }
+    private ParticleTintingFactory() {}
 
-    public static IParticleComponentDefinition fromJson(String key, JsonElement value, ParticleMolangEnvironment molang) {
+    public static IParticleComponentDefinition fromJson(
+            String key, JsonElement value, ParticleMolangEnvironment molang) {
         JsonObject obj = value.getAsJsonObject();
         if (obj.has("color")) {
             JsonElement colorElem = obj.get("color");
@@ -55,18 +53,30 @@ public final class ParticleTintingFactory {
                         MolangExpression.constant(rgba[2]), MolangExpression.constant(rgba[3]));
             }
         }
-        return new ParticleTintingStatic(MolangExpression.constant(1), MolangExpression.constant(1),
-                MolangExpression.constant(1), null);
+        return new ParticleTintingStatic(
+                MolangExpression.constant(1),
+                MolangExpression.constant(1),
+                MolangExpression.constant(1),
+                null);
     }
 
-    private static ParticleTintingGradient parseGradientColor(JsonObject obj, ParticleMolangEnvironment molang) {
+    private static ParticleTintingGradient parseGradientColor(
+            JsonObject obj, ParticleMolangEnvironment molang) {
         MolangExpression interpolant = molang.compile(getMolang(obj, "interpolant", "0"));
         JsonElement gradientElem = obj.get("gradient");
 
         if (gradientElem == null) {
-            return new ParticleTintingGradient(interpolant, new float[]{0},
-                    new MolangExpression[][]{{MolangExpression.constant(1), MolangExpression.constant(1),
-                            MolangExpression.constant(1), MolangExpression.constant(1)}});
+            return new ParticleTintingGradient(
+                    interpolant,
+                    new float[] {0},
+                    new MolangExpression[][] {
+                        {
+                            MolangExpression.constant(1),
+                            MolangExpression.constant(1),
+                            MolangExpression.constant(1),
+                            MolangExpression.constant(1)
+                        }
+                    });
         }
 
         List<Float> stopList = new ArrayList<>();
@@ -91,26 +101,33 @@ public final class ParticleTintingFactory {
 
         float[] stops = new float[stopList.size()];
         for (int i = 0; i < stopList.size(); i++) stops[i] = stopList.get(i);
-        return new ParticleTintingGradient(interpolant, stops, colorList.toArray(new MolangExpression[0][]));
+        return new ParticleTintingGradient(
+                interpolant, stops, colorList.toArray(new MolangExpression[0][]));
     }
 
-    private static MolangExpression[] parseColorField(JsonElement elem, ParticleMolangEnvironment molang) {
+    private static MolangExpression[] parseColorField(
+            JsonElement elem, ParticleMolangEnvironment molang) {
         if (elem.isJsonPrimitive() && elem.getAsJsonPrimitive().isString()) {
             float[] rgba = parseHexColor(elem.getAsString());
-            return new MolangExpression[]{
-                    MolangExpression.constant(rgba[0]), MolangExpression.constant(rgba[1]),
-                    MolangExpression.constant(rgba[2]), MolangExpression.constant(rgba[3])};
+            return new MolangExpression[] {
+                MolangExpression.constant(rgba[0]), MolangExpression.constant(rgba[1]),
+                MolangExpression.constant(rgba[2]), MolangExpression.constant(rgba[3])
+            };
         }
         if (elem.isJsonArray()) {
             JsonArray arr = elem.getAsJsonArray();
-            return new MolangExpression[]{
-                    molang.compile(molangFromElement(arr.get(0), "1")),
-                    molang.compile(molangFromElement(arr.get(1), "1")),
-                    molang.compile(molangFromElement(arr.get(2), "1")),
-                    arr.size() > 3 ? molang.compile(molangFromElement(arr.get(3), "1")) : MolangExpression.constant(1)};
+            return new MolangExpression[] {
+                molang.compile(molangFromElement(arr.get(0), "1")),
+                molang.compile(molangFromElement(arr.get(1), "1")),
+                molang.compile(molangFromElement(arr.get(2), "1")),
+                arr.size() > 3
+                        ? molang.compile(molangFromElement(arr.get(3), "1"))
+                        : MolangExpression.constant(1)
+            };
         }
-        return new MolangExpression[]{
-                MolangExpression.constant(1), MolangExpression.constant(1),
-                MolangExpression.constant(1), MolangExpression.constant(1)};
+        return new MolangExpression[] {
+            MolangExpression.constant(1), MolangExpression.constant(1),
+            MolangExpression.constant(1), MolangExpression.constant(1)
+        };
     }
 }

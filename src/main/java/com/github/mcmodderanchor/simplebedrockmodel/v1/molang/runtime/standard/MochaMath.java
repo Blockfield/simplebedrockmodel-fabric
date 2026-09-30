@@ -29,27 +29,66 @@ import com.github.mcmodderanchor.simplebedrockmodel.v1.molang.runtime.value.Numb
 import com.github.mcmodderanchor.simplebedrockmodel.v1.molang.runtime.value.ObjectProperty;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.molang.runtime.value.ObjectValue;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.molang.util.CaseInsensitiveStringHashMap;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 import java.util.Random;
 
-/**
- * Math function bindings inside an object
- * binding, commonly named 'math'
- */
+/** Math function bindings inside an object binding, commonly named 'math' */
 @Binding("math")
-@BindExternalFunction(at = Math.class, name = "abs", args = {double.class}, pure = true)
-@BindExternalFunction(at = Math.class, name = "log", args = {double.class}, as = "ln", pure = true)
-@BindExternalFunction(at = Math.class, name = "max", args = {double.class, double.class}, pure = true)
-@BindExternalFunction(at = Math.class, name = "min", args = {double.class, double.class}, pure = true)
-@BindExternalFunction(at = Math.class, name = "round", args = {double.class}, pure = true)
-@BindExternalFunction(at = Math.class, name = "sqrt", args = {double.class}, pure = true)
-@BindExternalFunction(at = Math.class, name = "pow", args = {double.class, double.class}, pure = true)
-@BindExternalFunction(at = Math.class, name = "exp", args = {double.class}, pure = true)
-@BindExternalFunction(at = Math.class, name = "floor", args = {double.class}, pure = true)
-@BindExternalFunction(at = Math.class, name = "ceil", args = {double.class}, pure = true)
+@BindExternalFunction(
+        at = Math.class,
+        name = "abs",
+        args = {double.class},
+        pure = true)
+@BindExternalFunction(
+        at = Math.class,
+        name = "log",
+        args = {double.class},
+        as = "ln",
+        pure = true)
+@BindExternalFunction(
+        at = Math.class,
+        name = "max",
+        args = {double.class, double.class},
+        pure = true)
+@BindExternalFunction(
+        at = Math.class,
+        name = "min",
+        args = {double.class, double.class},
+        pure = true)
+@BindExternalFunction(
+        at = Math.class,
+        name = "round",
+        args = {double.class},
+        pure = true)
+@BindExternalFunction(
+        at = Math.class,
+        name = "sqrt",
+        args = {double.class},
+        pure = true)
+@BindExternalFunction(
+        at = Math.class,
+        name = "pow",
+        args = {double.class, double.class},
+        pure = true)
+@BindExternalFunction(
+        at = Math.class,
+        name = "exp",
+        args = {double.class},
+        pure = true)
+@BindExternalFunction(
+        at = Math.class,
+        name = "floor",
+        args = {double.class},
+        pure = true)
+@BindExternalFunction(
+        at = Math.class,
+        name = "ceil",
+        args = {double.class},
+        pure = true)
 public final class MochaMath implements ObjectValue {
     @Binding("pi")
     public static final double PI = Math.PI;
@@ -181,10 +220,8 @@ public final class MochaMath implements ObjectValue {
 
     @Binding(value = "min_angle", pure = true)
     public static double minAngle(double angle) {
-        while (angle > 180)
-            angle -= 360;
-        while (angle < -180)
-            angle += 360;
+        while (angle > 180) angle -= 360;
+        while (angle < -180) angle += 360;
         return angle;
     }
 

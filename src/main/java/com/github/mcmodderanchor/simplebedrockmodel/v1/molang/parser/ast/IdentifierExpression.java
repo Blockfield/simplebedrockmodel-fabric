@@ -30,11 +30,9 @@ import java.util.Objects;
 /**
  * Identifier expression implementation for Molang.
  *
- * <p>Note that, identifiers in Molang are always
- * <b>case-insensitive</b></p>
+ * <p>Note that, identifiers in Molang are always <b>case-insensitive</b>
  *
- * <p>Example identifier expressions: {@code math},
- * {@code name}, {@code this}, {@code print}</p>
+ * <p>Example identifier expressions: {@code math}, {@code name}, {@code this}, {@code print}
  *
  * @since 3.0.0
  */
@@ -80,5 +78,4 @@ public final class IdentifierExpression implements Expression {
     public int hashCode() {
         return name.hashCode();
     }
-
 }

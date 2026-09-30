@@ -119,3 +119,6 @@ runs/
 .narrafork/
 .worktrees/
 /.claude/
+
+.cache/quality/
+__pycache__/

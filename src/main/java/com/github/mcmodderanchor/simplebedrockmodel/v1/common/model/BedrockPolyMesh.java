@@ -6,6 +6,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
@@ -24,7 +25,8 @@ public class BedrockPolyMesh implements BedrockMesh {
     private final float height;
     private final float depth;
 
-    public BedrockPolyMesh(PolyMeshItem polyMesh, BedrockBone part, float texWidth, float texHeight) {
+    public BedrockPolyMesh(
+            PolyMeshItem polyMesh, BedrockBone part, float texWidth, float texHeight) {
         List<Triangle> bakedTriangles = new ArrayList<>();
         float[][] positions = polyMesh.getPositions();
         float[][] normals = polyMesh.getNormals();
@@ -32,7 +34,16 @@ public class BedrockPolyMesh implements BedrockMesh {
         JsonElement polys = polyMesh.getPolys();
 
         if (positions != null && polys != null && !polys.isJsonNull()) {
-            bakePolys(polyMesh, part, texWidth, texHeight, positions, normals, uvs, polys, bakedTriangles);
+            bakePolys(
+                    polyMesh,
+                    part,
+                    texWidth,
+                    texHeight,
+                    positions,
+                    normals,
+                    uvs,
+                    polys,
+                    bakedTriangles);
         }
 
         this.triangles = bakedTriangles.toArray(Triangle[]::new);
@@ -70,40 +81,94 @@ public class BedrockPolyMesh implements BedrockMesh {
         }
     }
 
-    private void bakePolys(PolyMeshItem polyMesh, BedrockBone part, float texWidth, float texHeight, float[][] positions, float[][] normals,
-                           float[][] uvs, JsonElement polys, List<Triangle> bakedTriangles) {
+    private void bakePolys(
+            PolyMeshItem polyMesh,
+            BedrockBone part,
+            float texWidth,
+            float texHeight,
+            float[][] positions,
+            float[][] normals,
+            float[][] uvs,
+            JsonElement polys,
+            List<Triangle> bakedTriangles) {
         if (polys.isJsonPrimitive()) {
             JsonPrimitive primitive = polys.getAsJsonPrimitive();
             if (primitive.isString()) {
                 String mode = primitive.getAsString();
                 if ("tri_list".equals(mode)) {
-                    bakeListMode(polyMesh, part, texWidth, texHeight, positions, normals, uvs, bakedTriangles, 3);
+                    bakeListMode(
+                            polyMesh,
+                            part,
+                            texWidth,
+                            texHeight,
+                            positions,
+                            normals,
+                            uvs,
+                            bakedTriangles,
+                            3);
                 } else if ("quad_list".equals(mode)) {
-                    bakeListMode(polyMesh, part, texWidth, texHeight, positions, normals, uvs, bakedTriangles, 4);
+                    bakeListMode(
+                            polyMesh,
+                            part,
+                            texWidth,
+                            texHeight,
+                            positions,
+                            normals,
+                            uvs,
+                            bakedTriangles,
+                            4);
                 }
             }
         } else if (polys.isJsonArray()) {
             for (JsonElement polyElement : polys.getAsJsonArray()) {
                 if (polyElement != null && polyElement.isJsonArray()) {
-                    bakeIndexedPolygon(polyMesh, part, texWidth, texHeight, positions, normals, uvs, polyElement.getAsJsonArray(), bakedTriangles);
+                    bakeIndexedPolygon(
+                            polyMesh,
+                            part,
+                            texWidth,
+                            texHeight,
+                            positions,
+                            normals,
+                            uvs,
+                            polyElement.getAsJsonArray(),
+                            bakedTriangles);
                 }
             }
         }
     }
 
-    private void bakeListMode(PolyMeshItem polyMesh, BedrockBone part, float texWidth, float texHeight, float[][] positions, float[][] normals,
-                              float[][] uvs, List<Triangle> bakedTriangles, int stride) {
+    private void bakeListMode(
+            PolyMeshItem polyMesh,
+            BedrockBone part,
+            float texWidth,
+            float texHeight,
+            float[][] positions,
+            float[][] normals,
+            float[][] uvs,
+            List<Triangle> bakedTriangles,
+            int stride) {
         for (int i = 0; i + stride - 1 < positions.length; i += stride) {
             List<Vertex> polygon = new ArrayList<>(stride);
             for (int j = 0; j < stride; j++) {
-                polygon.add(createVertex(polyMesh, part, texWidth, texHeight, positions, normals, uvs, i + j, i + j, i + j));
+                polygon.add(
+                        createVertex(
+                                polyMesh, part, texWidth, texHeight, positions, normals, uvs, i + j,
+                                i + j, i + j));
             }
             bakePolygon(polygon, bakedTriangles);
         }
     }
 
-    private void bakeIndexedPolygon(PolyMeshItem polyMesh, BedrockBone part, float texWidth, float texHeight, float[][] positions, float[][] normals,
-                                    float[][] uvs, JsonArray poly, List<Triangle> bakedTriangles) {
+    private void bakeIndexedPolygon(
+            PolyMeshItem polyMesh,
+            BedrockBone part,
+            float texWidth,
+            float texHeight,
+            float[][] positions,
+            float[][] normals,
+            float[][] uvs,
+            JsonArray poly,
+            List<Triangle> bakedTriangles) {
         List<Vertex> polygon = new ArrayList<>(poly.size());
         for (JsonElement vertexElement : poly) {
             if (vertexElement == null || !vertexElement.isJsonArray()) {
@@ -116,7 +181,18 @@ public class BedrockPolyMesh implements BedrockMesh {
             int positionIndex = getIndex(indices, 0);
             int normalIndex = indices.size() > 1 ? getIndex(indices, 1) : positionIndex;
             int uvIndex = indices.size() > 2 ? getIndex(indices, 2) : positionIndex;
-            polygon.add(createVertex(polyMesh, part, texWidth, texHeight, positions, normals, uvs, positionIndex, normalIndex, uvIndex));
+            polygon.add(
+                    createVertex(
+                            polyMesh,
+                            part,
+                            texWidth,
+                            texHeight,
+                            positions,
+                            normals,
+                            uvs,
+                            positionIndex,
+                            normalIndex,
+                            uvIndex));
         }
         if (polygon.size() > 1 && samePosition(polygon.get(0), polygon.get(polygon.size() - 1))) {
             polygon.remove(polygon.size() - 1);
@@ -128,8 +204,17 @@ public class BedrockPolyMesh implements BedrockMesh {
         return indices.get(index).getAsInt();
     }
 
-    private Vertex createVertex(PolyMeshItem polyMesh, BedrockBone part, float texWidth, float texHeight, float[][] positions, float[][] normals,
-                                float[][] uvs, int positionIndex, int normalIndex, int uvIndex) {
+    private Vertex createVertex(
+            PolyMeshItem polyMesh,
+            BedrockBone part,
+            float texWidth,
+            float texHeight,
+            float[][] positions,
+            float[][] normals,
+            float[][] uvs,
+            int positionIndex,
+            int normalIndex,
+            int uvIndex) {
         float[] position = getArray(positions, positionIndex);
         float x = (-get(position, 0) - part.x) * INV_BLOCK;
         float y = (get(position, 1) - part.y) * INV_BLOCK;
@@ -202,7 +287,11 @@ public class BedrockPolyMesh implements BedrockMesh {
             return;
         }
         Vector3f normal = computeNormal(a, b, c);
-        bakedTriangles.add(new Triangle(a.withFallbackNormal(normal), b.withFallbackNormal(normal), c.withFallbackNormal(normal)));
+        bakedTriangles.add(
+                new Triangle(
+                        a.withFallbackNormal(normal),
+                        b.withFallbackNormal(normal),
+                        c.withFallbackNormal(normal)));
     }
 
     private Vector3f computeNormal(Vertex a, Vertex b, Vertex c) {
@@ -218,26 +307,59 @@ public class BedrockPolyMesh implements BedrockMesh {
     }
 
     @Override
-    public void compileTriangles(PoseStack.Pose pose, VertexConsumer consumer, int lightmap, int overlay, float red, float green, float blue, float alpha) {
+    public void compileTriangles(
+            PoseStack.Pose pose,
+            VertexConsumer consumer,
+            int lightmap,
+            int overlay,
+            float red,
+            float green,
+            float blue,
+            float alpha) {
         Matrix4f positionMatrix = pose.pose();
         Matrix3f normalMatrix = pose.normal();
         for (Triangle triangle : triangles) {
             for (Vertex vertex : triangle.vertices) {
-                emit(consumer, transform(vertex, positionMatrix, normalMatrix), red, green, blue, alpha, overlay, lightmap);
+                emit(
+                        consumer,
+                        transform(vertex, positionMatrix, normalMatrix),
+                        red,
+                        green,
+                        blue,
+                        alpha,
+                        overlay,
+                        lightmap);
             }
         }
     }
 
-    private TransformedVertex transform(Vertex vertex, Matrix4f positionMatrix, Matrix3f normalMatrix) {
+    private TransformedVertex transform(
+            Vertex vertex, Matrix4f positionMatrix, Matrix3f normalMatrix) {
         Vector3f position = new Vector3f(vertex.x, vertex.y, vertex.z).mulPosition(positionMatrix);
         Vector3f normal = new Vector3f(vertex.nx, vertex.ny, vertex.nz).mul(normalMatrix);
         if (normal.lengthSquared() > 1.0E-12f) {
             normal.normalize();
         }
-        return new TransformedVertex(position.x, position.y, position.z, vertex.u, vertex.v, normal.x, normal.y, normal.z);
+        return new TransformedVertex(
+                position.x,
+                position.y,
+                position.z,
+                vertex.u,
+                vertex.v,
+                normal.x,
+                normal.y,
+                normal.z);
     }
 
-    private void emit(VertexConsumer consumer, TransformedVertex vertex, float red, float green, float blue, float alpha, int overlay, int lightmap) {
+    private void emit(
+            VertexConsumer consumer,
+            TransformedVertex vertex,
+            float red,
+            float green,
+            float blue,
+            float alpha,
+            int overlay,
+            int lightmap) {
         consumer.addVertex(vertex.x, vertex.y, vertex.z)
                 .setColor(red, green, blue, alpha)
                 .setUv(vertex.u, vertex.v)
@@ -276,22 +398,21 @@ public class BedrockPolyMesh implements BedrockMesh {
         return z;
     }
 
-
-    protected record Vertex(float x, float y, float z, float u, float v, float nx, float ny, float nz) {
+    protected record Vertex(
+            float x, float y, float z, float u, float v, float nx, float ny, float nz) {
         private Vertex withFallbackNormal(Vector3f normal) {
             if (nx * nx + ny * ny + nz * nz > 1.0E-12f) {
                 return this;
             }
             return new Vertex(x, y, z, u, v, normal.x, normal.y, normal.z);
         }
-
     }
 
     protected static class Triangle {
         protected final Vertex[] vertices;
 
         private Triangle(Vertex a, Vertex b, Vertex c) {
-            this.vertices = new Vertex[]{a, b, c};
+            this.vertices = new Vertex[] {a, b, c};
         }
 
         public Vertex[] vertices() {
@@ -299,6 +420,6 @@ public class BedrockPolyMesh implements BedrockMesh {
         }
     }
 
-    private record TransformedVertex(float x, float y, float z, float u, float v, float nx, float ny, float nz) {
-    }
+    private record TransformedVertex(
+            float x, float y, float z, float u, float v, float nx, float ny, float nz) {}
 }

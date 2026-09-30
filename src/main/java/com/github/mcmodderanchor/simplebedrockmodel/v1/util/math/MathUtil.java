@@ -1,10 +1,14 @@
 package com.github.mcmodderanchor.simplebedrockmodel.v1.util.math;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import org.joml.*;
+
+import org.joml.Matrix3f;
+import org.joml.Matrix4f;
+import org.joml.Matrix4fc;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 
 import javax.annotation.Nonnull;
-import java.lang.Math;
 
 public class MathUtil {
     public static final float[] QUATERNION_ONE = {0, 0, 0, 1};
@@ -24,9 +28,10 @@ public class MathUtil {
         return Math.tan(Math.toRadians(originFov / 2)) / Math.tan(Math.toRadians(currentFov / 2));
     }
 
-    public static double zoomSensitivityRatio(double currentFov, double originFov, double coefficient) {
-        return Math.atan(Math.tan(Math.toRadians(currentFov / 2)) * coefficient) /
-                Math.atan(Math.tan(Math.toRadians(originFov / 2)) * coefficient);
+    public static double zoomSensitivityRatio(
+            double currentFov, double originFov, double coefficient) {
+        return Math.atan(Math.tan(Math.toRadians(currentFov / 2)) * coefficient)
+                / Math.atan(Math.tan(Math.toRadians(originFov / 2)) * coefficient);
     }
 
     public static void mulMatrix(PoseStack poseStack, Matrix4fc matrix) {
@@ -41,8 +46,8 @@ public class MathUtil {
      * 按照 z(roll) -> y(yaw) -> x(pitch) 的旋转顺序，求四元数。
      *
      * @param pitch 绕 x 轴旋转的弧度
-     * @param yaw   绕 y 轴旋转的弧度
-     * @param roll  绕 z 轴旋转的弧度
+     * @param yaw 绕 y 轴旋转的弧度
+     * @param roll 绕 z 轴旋转的弧度
      * @return 四元数，前三个数是虚部，最后一个数是实部。
      */
     public static float[] toQuaternion(float pitch, float yaw, float roll) {
@@ -52,23 +57,24 @@ public class MathUtil {
         double sp = Math.sin(yaw * 0.5);
         double cr = Math.cos(pitch * 0.5);
         double sr = Math.sin(pitch * 0.5);
-        return new float[]{
-                (float) (cy * cp * sr - sy * sp * cr),
-                (float) (sy * cp * sr + cy * sp * cr),
-                (float) (sy * cp * cr - cy * sp * sr),
-                (float) (cy * cp * cr + sy * sp * sr)
+        return new float[] {
+            (float) (cy * cp * sr - sy * sp * cr),
+            (float) (sy * cp * sr + cy * sp * cr),
+            (float) (sy * cp * cr - cy * sp * sr),
+            (float) (cy * cp * cr + sy * sp * sr)
         };
     }
 
     /**
      * 按照 z(roll) -> y(yaw) -> x(pitch) 的旋转顺序，求四元数。
      *
-     * @param pitch      绕 x 轴旋转的弧度
-     * @param yaw        绕 y 轴旋转的弧度
-     * @param roll       绕 z 轴旋转的弧度
+     * @param pitch 绕 x 轴旋转的弧度
+     * @param yaw 绕 y 轴旋转的弧度
+     * @param roll 绕 z 轴旋转的弧度
      * @param quaternion 求解的结果将写入这个四元数中。
      */
-    public static void toQuaternion(float pitch, float yaw, float roll, @Nonnull Quaternionf quaternion) {
+    public static void toQuaternion(
+            float pitch, float yaw, float roll, @Nonnull Quaternionf quaternion) {
         double cy = Math.cos(roll * 0.5);
         double sy = Math.sin(roll * 0.5);
         double cp = Math.cos(yaw * 0.5);
@@ -80,8 +86,7 @@ public class MathUtil {
                 (float) (cy * cp * sr - sy * sp * cr),
                 (float) (sy * cp * sr + cy * sp * cr),
                 (float) (sy * cp * cr - cy * sp * sr),
-                (float) (cy * cp * cr + sy * sp * sr)
-        );
+                (float) (cy * cp * cr + sy * sp * sr));
     }
 
     /**
@@ -227,10 +232,10 @@ public class MathUtil {
             -ai*ci -aj*cj -ak*ck +aw*cw = bw
         */
         float[][] coefficients = {
-                {qa[3], -qa[2], qa[1], qa[0]},
-                {qa[2], qa[3], -qa[0], qa[1]},
-                {-qa[1], qa[0], qa[3], qa[2]},
-                {-qa[0], -qa[1], -qa[2], qa[3]},
+            {qa[3], -qa[2], qa[1], qa[0]},
+            {qa[2], qa[3], -qa[0], qa[1]},
+            {-qa[1], qa[0], qa[3], qa[2]},
+            {-qa[0], -qa[1], -qa[2], qa[3]},
         };
         float[] constants = {qb[0], qb[1], qb[2], qb[3]};
         return solveEquations(coefficients, constants);
@@ -246,10 +251,10 @@ public class MathUtil {
             -ai*ci -aj*cj -ak*ck +aw*cw = bw
         */
         float[][] coefficients = {
-                {qa.w(), -qa.z(), qa.y(), qa.x()},
-                {qa.z(), qa.w(), -qa.x(), qa.y()},
-                {-qa.y(), qa.x(), qa.w(), qa.z()},
-                {-qa.x(), -qa.y(), -qa.z(), qa.w()},
+            {qa.w(), -qa.z(), qa.y(), qa.x()},
+            {qa.z(), qa.w(), -qa.x(), qa.y()},
+            {-qa.y(), qa.x(), qa.w(), qa.z()},
+            {-qa.x(), -qa.y(), -qa.z(), qa.w()},
         };
         float[] constants = {qb.x(), qb.y(), qb.z(), qb.w()};
         float[] result = solveEquations(coefficients, constants);
@@ -261,9 +266,14 @@ public class MathUtil {
      *
      * @param resultMatrix 输出结果将乘进此矩阵
      */
-    public static void applyMatrixLerp(Matrix4f fromMatrix, Matrix4f toMatrix, Matrix4f resultMatrix, float alpha) {
+    public static void applyMatrixLerp(
+            Matrix4f fromMatrix, Matrix4f toMatrix, Matrix4f resultMatrix, float alpha) {
         // 计算位移的插值
-        Vector3f translation = new Vector3f(toMatrix.m30() - fromMatrix.m30(), toMatrix.m31() - fromMatrix.m31(), toMatrix.m32() - fromMatrix.m32());
+        Vector3f translation =
+                new Vector3f(
+                        toMatrix.m30() - fromMatrix.m30(),
+                        toMatrix.m31() - fromMatrix.m31(),
+                        toMatrix.m32() - fromMatrix.m32());
         translation.mul(alpha);
         // 计算旋转的插值
         Vector3f fromRotation = MathUtil.getEulerAngles(fromMatrix);
@@ -271,7 +281,8 @@ public class MathUtil {
         Vector3f toRotation = MathUtil.getEulerAngles(toMatrix);
         float[] qTo = MathUtil.toQuaternion(toRotation.x(), toRotation.y(), toRotation.z());
         float[] qRelative = getRelativeQuaternion(qFrom, qTo);
-        Quaternionf qLerped = MathUtil.toQuaternion(MathUtil.slerp(QUATERNION_ONE, qRelative, alpha));
+        Quaternionf qLerped =
+                MathUtil.toQuaternion(MathUtil.slerp(QUATERNION_ONE, qRelative, alpha));
         // 应用位移和旋转
         resultMatrix.m30(resultMatrix.m30() + translation.x);
         resultMatrix.m31(resultMatrix.m31() + translation.y);
@@ -281,7 +292,8 @@ public class MathUtil {
 
     public static float splineCurve(float[] y, float tension, float alpha) {
         if (y.length != 4) {
-            throw new IllegalArgumentException("y value length must be 4 when doing catmull-rom spline");
+            throw new IllegalArgumentException(
+                    "y value length must be 4 when doing catmull-rom spline");
         }
         if (tension < 0 || tension > 1) {
             throw new IllegalArgumentException("tension must be 0~1 when doing catmull-rom spline");
@@ -298,7 +310,7 @@ public class MathUtil {
     }
 
     /**
-     * 计算从单位向量 from 到单位向量 to 的最短旋转四元数。<br/>
+     * 计算从单位向量 from 到单位向量 to 的最短旋转四元数。<br>
      * 参考自 ParticleStorm
      */
     public static Quaternionf setFromUnitVectors(Vector3f from, Vector3f to, Quaternionf dest) {
@@ -314,8 +326,7 @@ public class MathUtil {
                     from.y * to.z - from.z * to.y,
                     from.z * to.x - from.x * to.z,
                     from.x * to.y - from.y * to.x,
-                    dot
-            );
+                    dot);
         }
         return dest.normalize();
     }

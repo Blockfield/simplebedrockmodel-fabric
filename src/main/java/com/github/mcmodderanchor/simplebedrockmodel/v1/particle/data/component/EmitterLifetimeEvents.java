@@ -6,20 +6,19 @@ import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.runtime.Particle
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+
 import org.joml.Matrix4f;
 
 import java.util.*;
 
-/**
- * 发射器生命周期事件组件。对应 "minecraft:emitter_lifetime_events"。
- */
+/** 发射器生命周期事件组件。对应 "minecraft:emitter_lifetime_events"。 */
 public record EmitterLifetimeEvents(
         List<String> creationEvent,
         List<String> expirationEvent,
         TreeMap<Float, List<String>> timeline,
         TreeMap<Float, List<String>> travelDistanceEvents,
-        List<LoopingTravelDistanceEvent> loopingTravelDistanceEvents
-) implements IEmitterComponentDefinition {
+        List<LoopingTravelDistanceEvent> loopingTravelDistanceEvents)
+        implements IEmitterComponentDefinition {
 
     @Override
     public int order() {
@@ -28,20 +27,24 @@ public record EmitterLifetimeEvents(
 
     @Override
     public boolean requireUpdate() {
-        return !timeline.isEmpty() || !travelDistanceEvents.isEmpty() || !loopingTravelDistanceEvents.isEmpty();
+        return !timeline.isEmpty()
+                || !travelDistanceEvents.isEmpty()
+                || !loopingTravelDistanceEvents.isEmpty();
     }
 
     @Override
     public IEmitterComponent createRuntime() {
-        return new Runtime(creationEvent, expirationEvent, timeline, travelDistanceEvents, loopingTravelDistanceEvents);
+        return new Runtime(
+                creationEvent,
+                expirationEvent,
+                timeline,
+                travelDistanceEvents,
+                loopingTravelDistanceEvents);
     }
 
-    public record LoopingTravelDistanceEvent(float distance, List<String> effects) {
-    }
+    public record LoopingTravelDistanceEvent(float distance, List<String> effects) {}
 
-    /**
-     * 运行时组件。持有事件追踪状态。
-     */
+    /** 运行时组件。持有事件追踪状态。 */
     static final class Runtime implements IEmitterComponent {
         private final List<String> creationEvent;
         private final List<String> expirationEvent;
@@ -57,7 +60,9 @@ public record EmitterLifetimeEvents(
         private float prevEmitterX, prevEmitterY, prevEmitterZ;
         private boolean hasPrevPosition;
 
-        Runtime(List<String> creationEvent, List<String> expirationEvent,
+        Runtime(
+                List<String> creationEvent,
+                List<String> expirationEvent,
                 TreeMap<Float, List<String>> timeline,
                 TreeMap<Float, List<String>> travelDistanceEvents,
                 List<LoopingTravelDistanceEvent> loopingEvents) {
@@ -149,9 +154,7 @@ public record EmitterLifetimeEvents(
             hasPrevPosition = true;
         }
 
-        /**
-         * 触发创建事件
-         */
+        /** 触发创建事件 */
         void fireCreation(ParticleEmitterInstance emitter) {
             EventExecutor.EventContext ctx = emitter.getEventContext();
             if (ctx != null && !creationEvent.isEmpty()) {
@@ -159,9 +162,7 @@ public record EmitterLifetimeEvents(
             }
         }
 
-        /**
-         * 触发过期事件
-         */
+        /** 触发过期事件 */
         void fireExpiration(ParticleEmitterInstance emitter) {
             EventExecutor.EventContext ctx = emitter.getEventContext();
             if (ctx != null && !expirationEvent.isEmpty()) {

@@ -28,10 +28,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 
 /**
- * Literal double expression implementation for Molang
- * numerical values.
+ * Literal double expression implementation for Molang numerical values.
  *
- * <p>Example double expressions: {@code 2.0}, {@code 59}, {@code 20}, {@code 5.002}</p>
+ * <p>Example double expressions: {@code 2.0}, {@code 59}, {@code 20}, {@code 5.002}
  *
  * @since 3.0.0
  */
@@ -77,5 +76,4 @@ public final class DoubleExpression implements Expression {
     public int hashCode() {
         return Objects.hash(value);
     }
-
 }

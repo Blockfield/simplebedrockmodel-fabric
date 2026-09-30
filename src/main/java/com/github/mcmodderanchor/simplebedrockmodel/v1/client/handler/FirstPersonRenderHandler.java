@@ -2,6 +2,7 @@ package com.github.mcmodderanchor.simplebedrockmodel.v1.client.handler;
 
 import cn.sh1rocu.simplebedrockmodel.api.event.RenderFrameEvent;
 import cn.sh1rocu.simplebedrockmodel.api.event.RenderHandEvent;
+
 import com.github.mcmodderanchor.simplebedrockmodel.v1.client.animation.IFPAnimationInstance;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.client.event.SwapItemWithOffHand;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.client.renderer.IFPGeoItemRenderer;
@@ -9,6 +10,7 @@ import com.github.mcmodderanchor.simplebedrockmodel.v1.common.time.AnimationCloc
 import com.github.mcmodderanchor.simplebedrockmodel.v1.common.time.AnimationClocks;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.firstperson.FirstPersonParticleSystem;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.render.CameraStateCache;
+
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.rendering.v1.BuiltinItemRendererRegistry;
@@ -19,6 +21,7 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+
 import org.joml.Matrix4f;
 
 import java.util.Optional;
@@ -27,46 +30,38 @@ import java.util.Optional;
 public class FirstPersonRenderHandler {
     private static final AnimationClock CLOCK = AnimationClocks.client();
 
-    /**
-     * 全局第一人称粒子系统。所有自定义物品共享此实例，统一管理粒子生命周期和渲染。
-     */
-    private static final FirstPersonParticleSystem PARTICLE_SYSTEM = new FirstPersonParticleSystem();
+    /** 全局第一人称粒子系统。所有自定义物品共享此实例，统一管理粒子生命周期和渲染。 */
+    private static final FirstPersonParticleSystem PARTICLE_SYSTEM =
+            new FirstPersonParticleSystem();
+
     private static long lastParticleTickNanos = 0L;
 
     /**
-     * 单手第一人称渲染状态。主副手各持一份，互不干扰。
-     * 收枪过渡（put_away）是跨多帧的异步过程：旧 instance 保留为 {@link #previousInstance}
+     * 单手第一人称渲染状态。主副手各持一份，互不干扰。 收枪过渡（put_away）是跨多帧的异步过程：旧 instance 保留为 {@link #previousInstance}
      * 播放收枪动画，过渡结束后才切到新 instance。
      */
     private static final class HandRenderState {
-        /**
-         * 该手当前真实物品（切换检测基准）。
-         */
+        /** 该手当前真实物品（切换检测基准）。 */
         ItemStack realItem = ItemStack.EMPTY;
-        /**
-         * 当前活跃 instance。
-         */
+
+        /** 当前活跃 instance。 */
         IFPAnimationInstance activeInstance = null;
-        /**
-         * 收枪过渡中的旧 instance。
-         */
+
+        /** 收枪过渡中的旧 instance。 */
         IFPAnimationInstance previousInstance = null;
-        /**
-         * 过渡完成后要切入的目标物品。
-         */
+
+        /** 过渡完成后要切入的目标物品。 */
         ItemStack pendingTarget = ItemStack.EMPTY;
-        /**
-         * 是否处于收枪过渡。
-         */
+
+        /** 是否处于收枪过渡。 */
         boolean transitioning = false;
-        /**
-         * 过渡目标是否为自定义物品（驱动 vanilla height 目标值）。
-         */
+
+        /** 过渡目标是否为自定义物品（驱动 vanilla height 目标值）。 */
         boolean nextIsCustom = false;
-        /**
-         * 当前活跃 instance 的渲染变体键（{@link IFPGeoItemRenderer#getRenderVariantKey}）。
-         */
+
+        /** 当前活跃 instance 的渲染变体键（{@link IFPGeoItemRenderer#getRenderVariantKey}）。 */
         Object variantKey = null;
+
         long switchStartTime = 0L;
         long currentSheatheDuration = 0L;
 
@@ -86,9 +81,7 @@ public class FirstPersonRenderHandler {
     private static final HandRenderState MAIN_STATE = new HandRenderState();
     private static final HandRenderState OFF_STATE = new HandRenderState();
 
-    /**
-     * 主手选中槽（仅主手有槽位概念）。
-     */
+    /** 主手选中槽（仅主手有槽位概念）。 */
     private static int realSelectedSlot = -1;
 
     // 上一刻「主手是否霸占副手视野」的镜像。由 false→true 时丢弃副手实例（被遮挡，收枪不可见），
@@ -119,13 +112,13 @@ public class FirstPersonRenderHandler {
         lastParticleTickNanos = 0L;
     }
 
-
     public static void onRenderHand(SwapItemWithOffHand event) {
         forceHandSwapFlag = true;
     }
 
     public static void onClientTick(Minecraft client) {
-        if (/*event.phase != TickEvent.Phase.START ||*/ !CLOCK.shouldTick()) {
+        if (
+        /*event.phase != TickEvent.Phase.START ||*/ !CLOCK.shouldTick()) {
             return;
         }
 
@@ -145,7 +138,8 @@ public class FirstPersonRenderHandler {
         // 主手：选中槽变化 + 物品变化 + 渲染变体键变化检测（槽位是主手独有概念）。
         boolean mainSlotChanged = newSlot != realSelectedSlot;
         boolean mainItemChanged = !isSameItemStacks(MAIN_STATE.realItem, newMain);
-        boolean mainVariantChanged = variantKeyChanged(MAIN_STATE, newMain, InteractionHand.MAIN_HAND);
+        boolean mainVariantChanged =
+                variantKeyChanged(MAIN_STATE, newMain, InteractionHand.MAIN_HAND);
 
         realSelectedSlot = newSlot;
         // 仅在检测到物品变化时刷新拷贝。存拷贝而非引用：物品被取走时 Minecraft 会原地把槽位
@@ -189,7 +183,8 @@ public class FirstPersonRenderHandler {
             }
         } else {
             // 未被霸占的常规路径：副手物品变化 / 渲染变体键变化 / swap 时切换。
-            boolean offVariantChanged = variantKeyChanged(OFF_STATE, newOff, InteractionHand.OFF_HAND);
+            boolean offVariantChanged =
+                    variantKeyChanged(OFF_STATE, newOff, InteractionHand.OFF_HAND);
             if (swap || offRealChanged || offVariantChanged) {
                 beginSwitch(OFF_STATE, newOff, swap);
             }
@@ -206,11 +201,9 @@ public class FirstPersonRenderHandler {
         tickStates(OFF_STATE, InteractionHand.OFF_HAND);
     }
 
-    /**
-     * 检测某手「渲染变体键」是否相对当前活跃 instance 发生变化（物品同一但呈现形态需切换）。
-     * 无活跃 instance 时不算变化（由物品变化路径负责建立）。
-     */
-    private static boolean variantKeyChanged(HandRenderState state, ItemStack heldItem, InteractionHand hand) {
+    /** 检测某手「渲染变体键」是否相对当前活跃 instance 发生变化（物品同一但呈现形态需切换）。 无活跃 instance 时不算变化（由物品变化路径负责建立）。 */
+    private static boolean variantKeyChanged(
+            HandRenderState state, ItemStack heldItem, InteractionHand hand) {
         if (state.activeInstance == null || heldItem.isEmpty()) {
             return false;
         }
@@ -219,15 +212,13 @@ public class FirstPersonRenderHandler {
     }
 
     private static Object getRenderVariantKey(ItemStack stack, InteractionHand hand) {
-        return getRenderer(stack)
-                .map(r -> r.getRenderVariantKey(stack, hand))
-                .orElse(null);
+        return getRenderer(stack).map(r -> r.getRenderVariantKey(stack, hand)).orElse(null);
     }
 
     /**
      * 切换某只手的物品 / 渲染变体：旧 instance 若为自定义物品，进入收枪过渡；否则直接切到新 instance。
-     * <p>
-     * 「物品变化」与「渲染变体键变化」共用此通路，统一走 put_away → draw，由本类单一管理实例生命周期。
+     *
+     * <p>「物品变化」与「渲染变体键变化」共用此通路，统一走 put_away → draw，由本类单一管理实例生命周期。
      *
      * @param force 是否穿透幂等短路（用于 swap 等「值层面无差异但确需重建」的明确外部事件）
      */
@@ -263,7 +254,8 @@ public class FirstPersonRenderHandler {
         if (oldIsCustom) {
             state.transitioning = true;
             state.switchStartTime = CLOCK.nowMillis();
-            state.currentSheatheDuration = calculateSheatheDuration(state.previousInstance.currentItem());
+            state.currentSheatheDuration =
+                    calculateSheatheDuration(state.previousInstance.currentItem());
             state.previousInstance.triggerPutAway();
         } else {
             state.transitioning = false;
@@ -281,10 +273,7 @@ public class FirstPersonRenderHandler {
         }
     }
 
-    /**
-     * 直接丢弃副手渲染实例（不播收枪过渡）。用于主手霸占副手视野时——副手被遮挡，
-     * 收枪动画不可见，无需过渡；遮挡解除时再按当前物品重新掏枪。
-     */
+    /** 直接丢弃副手渲染实例（不播收枪过渡）。用于主手霸占副手视野时——副手被遮挡， 收枪动画不可见，无需过渡；遮挡解除时再按当前物品重新掏枪。 */
     private static void discardOffhandInstance() {
         OFF_STATE.activeInstance = null;
         OFF_STATE.previousInstance = null;
@@ -300,7 +289,8 @@ public class FirstPersonRenderHandler {
 
         // 统一 tick 所有第一人称粒子（不依赖具体物品）
         long now = CLOCK.nowNanos();
-        float dt = lastParticleTickNanos == 0L ? 0f : (now - lastParticleTickNanos) / 1_000_000_000f;
+        float dt =
+                lastParticleTickNanos == 0L ? 0f : (now - lastParticleTickNanos) / 1_000_000_000f;
         dt = Math.min(dt, 0.1f);
         lastParticleTickNanos = now;
         PARTICLE_SYSTEM.tick(dt);
@@ -310,8 +300,10 @@ public class FirstPersonRenderHandler {
         tickHandAnimation(OFF_STATE, InteractionHand.OFF_HAND, partialTick);
     }
 
-    private static void tickHandAnimation(HandRenderState state, InteractionHand hand, float partialTick) {
-        IFPAnimationInstance ani = state.transitioning ? state.previousInstance : state.activeInstance;
+    private static void tickHandAnimation(
+            HandRenderState state, InteractionHand hand, float partialTick) {
+        IFPAnimationInstance ani =
+                state.transitioning ? state.previousInstance : state.activeInstance;
         if (ani == null || !canActuallyRenderInHand(ani, hand)) {
             return;
         }
@@ -378,9 +370,10 @@ public class FirstPersonRenderHandler {
             return;
         }
 
-        ItemDisplayContext transformType = hand == InteractionHand.OFF_HAND
-                ? ItemDisplayContext.FIRST_PERSON_LEFT_HAND
-                : ItemDisplayContext.FIRST_PERSON_RIGHT_HAND;
+        ItemDisplayContext transformType =
+                hand == InteractionHand.OFF_HAND
+                        ? ItemDisplayContext.FIRST_PERSON_LEFT_HAND
+                        : ItemDisplayContext.FIRST_PERSON_RIGHT_HAND;
 
         // 更新该手粒子发射器变换（主副手各自在自己的 pass 内捕获基准、绑定枪口）。
         renderer.updateParticleEmitterTransforms(PARTICLE_SYSTEM, event.getPoseStack(), hand);
@@ -392,8 +385,7 @@ public class FirstPersonRenderHandler {
                 event.getPoseStack(),
                 event.getMultiBufferSource(),
                 event.getPackedLight(),
-                event.getPartialTick()
-        );
+                event.getPartialTick());
         event.setCanceled(true);
 
         renderParticlesIfAny(event);
@@ -401,9 +393,9 @@ public class FirstPersonRenderHandler {
 
     /**
      * 渲染当前 pass 这只手的活跃粒子。
-     * <p>
-     * 主副手各在自己的 {@code RenderHandEvent} pass 内渲染自己那组发射器——两手 pass 的
-     * poseStack 基准不同，必须按手渲染，不可跨手共用基准。
+     *
+     * <p>主副手各在自己的 {@code RenderHandEvent} pass 内渲染自己那组发射器——两手 pass 的 poseStack
+     * 基准不同，必须按手渲染，不可跨手共用基准。
      */
     private static void renderParticlesIfAny(RenderHandEvent event) {
         if (PARTICLE_SYSTEM.getParticleCount() == 0) {
@@ -421,13 +413,14 @@ public class FirstPersonRenderHandler {
                 event.getMultiBufferSource(),
                 event.getPackedLight(),
                 event.getPartialTick(),
-                cameraPitchRad, cameraRollRad, cameraRotation
-        );
+                cameraPitchRad,
+                cameraRollRad,
+                cameraRotation);
     }
 
     /**
-     * 用摄像机的 pitch/yaw/roll 构建视图旋转矩阵（与 Minecraft 内部一致）。
-     * Minecraft 的视图矩阵构建顺序：先绕 X 旋转 pitch，再绕 Y 旋转 (yaw + 180)，最后绕 Z 旋转 roll。
+     * 用摄像机的 pitch/yaw/roll 构建视图旋转矩阵（与 Minecraft 内部一致）。 Minecraft 的视图矩阵构建顺序：先绕 X 旋转 pitch，再绕 Y 旋转
+     * (yaw + 180)，最后绕 Z 旋转 roll。
      */
     private static Matrix4f buildCameraRotation(Camera camera, float rollRadians) {
         return new Matrix4f()
@@ -440,9 +433,7 @@ public class FirstPersonRenderHandler {
         return shouldLockVanilla(InteractionHand.MAIN_HAND);
     }
 
-    /**
-     * 该手是否处于收枪过渡（需要钉住 vanilla height、屏蔽原版升降动画）。
-     */
+    /** 该手是否处于收枪过渡（需要钉住 vanilla height、屏蔽原版升降动画）。 */
     public static boolean shouldLockVanilla(InteractionHand hand) {
         return stateFor(hand).transitioning;
     }
@@ -455,40 +446,34 @@ public class FirstPersonRenderHandler {
         return stateFor(hand).nextIsCustom ? 1.0F : 0.0F;
     }
 
-    /**
-     * 获取主手当前活跃动画 instance（过渡期返回正在收枪的旧 instance）。
-     * 无参版本保持主手语义，兼容现有调用方。
-     */
+    /** 获取主手当前活跃动画 instance（过渡期返回正在收枪的旧 instance）。 无参版本保持主手语义，兼容现有调用方。 */
     public static IFPAnimationInstance getActiveAnimationInstance() {
         return getActiveAnimationInstance(InteractionHand.MAIN_HAND);
     }
 
-    /**
-     * 获取指定手的当前活跃动画 instance（过渡期返回正在收枪的旧 instance）。
-     */
+    /** 获取指定手的当前活跃动画 instance（过渡期返回正在收枪的旧 instance）。 */
     public static IFPAnimationInstance getActiveAnimationInstance(InteractionHand hand) {
         HandRenderState state = stateFor(hand);
         return state.transitioning ? state.previousInstance : state.activeInstance;
     }
 
-    /**
-     * 摄像机使用的当前活跃动画 instance：主手优先，主手不存在时回退副手。
-     */
+    /** 摄像机使用的当前活跃动画 instance：主手优先，主手不存在时回退副手。 */
     public static IFPAnimationInstance getActiveAnimationInstanceForCamera() {
         IFPAnimationInstance main = getActiveAnimationInstance(InteractionHand.MAIN_HAND);
         return main != null ? main : getActiveAnimationInstance(InteractionHand.OFF_HAND);
     }
 
-    /**
-     * 获取全局第一人称粒子系统。所有自定义物品渲染器通过此方法添加发射器。
-     */
+    /** 获取全局第一人称粒子系统。所有自定义物品渲染器通过此方法添加发射器。 */
     public static FirstPersonParticleSystem getParticleSystem() {
         return PARTICLE_SYSTEM;
     }
 
     private static IFPAnimationInstance createInstance(ItemStack stack, InteractionHand hand) {
         return getRenderer(stack)
-                .map(r -> r.createAnimationInstance(stack, Minecraft.getInstance().getCameraEntity(), hand))
+                .map(
+                        r ->
+                                r.createAnimationInstance(
+                                        stack, Minecraft.getInstance().getCameraEntity(), hand))
                 .orElse(null);
     }
 
@@ -496,27 +481,21 @@ public class FirstPersonRenderHandler {
         return getRenderer(stack).isPresent();
     }
 
-    /**
-     * 该物品是否拥有自定义第一人称渲染器（即由本系统接管渲染的物品，如枪械）。
-     * 供 vanilla tick 接管逻辑判断是否套用「NBT 变化不算换物品」的语义。
-     */
+    /** 该物品是否拥有自定义第一人称渲染器（即由本系统接管渲染的物品，如枪械）。 供 vanilla tick 接管逻辑判断是否套用「NBT 变化不算换物品」的语义。 */
     public static boolean hasCustomRenderer(ItemStack stack) {
         return getRenderer(stack).isPresent();
     }
 
     /**
-     * 按本系统语义判断两个物品堆是否为「同一持有物」。
-     * 对自定义物品（枪械）走渲染器的 {@code isSameItem}（NBT 变化不视为新物品），
-     * 否则回退到 vanilla 的 {@code ItemStack.isSameItem}。
+     * 按本系统语义判断两个物品堆是否为「同一持有物」。 对自定义物品（枪械）走渲染器的 {@code isSameItem}（NBT 变化不视为新物品）， 否则回退到 vanilla 的
+     * {@code ItemStack.isSameItem}。
      */
     public static boolean isSameHeldItem(ItemStack a, ItemStack b) {
         return isSameItemStacks(a, b);
     }
 
     private static long calculateSheatheDuration(ItemStack stack) {
-        return getRenderer(stack)
-                .map(r -> r.getPutAwayDuration(stack))
-                .orElse(0L);
+        return getRenderer(stack).map(r -> r.getPutAwayDuration(stack)).orElse(0L);
     }
 
     private static float getSheatheProgress(HandRenderState state) {
@@ -529,8 +508,8 @@ public class FirstPersonRenderHandler {
 
     /**
      * 主手当前活跃 instance 是否霸占副手第一人称视野（如主手为双手长枪 / 单手枪双手持握）。
-     * <p>
-     * 取主手当前活跃 instance（过渡期为正在收枪的旧 instance）的 {@link IFPAnimationInstance#occupiesView()}：
+     *
+     * <p>取主手当前活跃 instance（过渡期为正在收枪的旧 instance）的 {@link IFPAnimationInstance#occupiesView()}：
      * 该判定绑定实例固定的渲染形态，过渡期间稳定，避免因实时手持物已变导致霸占状态抖动。
      */
     private static boolean mainHandBlocksOffhand() {
@@ -542,7 +521,8 @@ public class FirstPersonRenderHandler {
         if (stack.isEmpty()) {
             return Optional.empty();
         }
-        if (BuiltinItemRendererRegistry.INSTANCE.get(stack.getItem()) instanceof IFPGeoItemRenderer renderer) {
+        if (BuiltinItemRendererRegistry.INSTANCE.get(stack.getItem())
+                instanceof IFPGeoItemRenderer renderer) {
             return Optional.of(renderer);
         }
         return Optional.empty();

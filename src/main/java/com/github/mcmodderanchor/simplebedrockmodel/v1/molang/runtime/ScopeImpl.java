@@ -26,6 +26,7 @@ package com.github.mcmodderanchor.simplebedrockmodel.v1.molang.runtime;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.molang.runtime.value.ObjectProperty;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.molang.runtime.value.Value;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.molang.util.CaseInsensitiveStringHashMap;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

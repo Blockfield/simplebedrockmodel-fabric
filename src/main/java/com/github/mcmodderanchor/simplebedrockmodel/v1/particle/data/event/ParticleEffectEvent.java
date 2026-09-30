@@ -2,22 +2,23 @@ package com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.event;
 
 import com.github.mcmodderanchor.simplebedrockmodel.v1.molang.runtime.MolangExpression;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.runtime.ParticleMolangEnvironment;
+
 import org.jetbrains.annotations.Nullable;
 
 /**
  * 粒子效果事件节点。触发时创建子发射器。
  *
- * @param effect              子粒子效果标识符
- * @param type                发射器类型
+ * @param effect 子粒子效果标识符
+ * @param type 发射器类型
  * @param preEffectExpression 创建子发射器前执行的 Molang 表达式（原始字符串，调试用）
- * @param compiledPreEffect   预编译的 pre_effect_expression
+ * @param compiledPreEffect 预编译的 pre_effect_expression
  */
 public record ParticleEffectEvent(
         String effect,
         Type type,
         @Nullable String preEffectExpression,
-        @Nullable MolangExpression compiledPreEffect
-) implements IEventNode {
+        @Nullable MolangExpression compiledPreEffect)
+        implements IEventNode {
 
     public enum Type {
         EMITTER,
@@ -35,9 +36,10 @@ public record ParticleEffectEvent(
         }
     }
 
-    public static ParticleEffectEvent of(String effect, Type type, @Nullable String preExpr, ParticleMolangEnvironment molang) {
-        MolangExpression compiled = (preExpr != null && !preExpr.isEmpty())
-                ? molang.compile(preExpr) : null;
+    public static ParticleEffectEvent of(
+            String effect, Type type, @Nullable String preExpr, ParticleMolangEnvironment molang) {
+        MolangExpression compiled =
+                (preExpr != null && !preExpr.isEmpty()) ? molang.compile(preExpr) : null;
         return new ParticleEffectEvent(effect, type, preExpr, compiled);
     }
 }

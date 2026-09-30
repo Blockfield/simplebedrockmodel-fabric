@@ -5,18 +5,18 @@ import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.runtime.Particle
 import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.world.SnowStormParticle;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
-/**
- * Billboard quad 构建工具。
- */
+/** Billboard quad 构建工具。 */
 @Environment(EnvType.CLIENT)
 public final class BillboardHelper {
 
@@ -28,24 +28,27 @@ public final class BillboardHelper {
     private static final Vector3f TEMP_DIR = new Vector3f();
     private static final PoseStack IDENTITY_STACK = new PoseStack();
 
-    private BillboardHelper() {
-    }
+    private BillboardHelper() {}
 
     /**
      * 渲染一个局部空间粒子的 billboard quad。
-     * <p>
-     * 仅处理局部空间粒子（{@code worldSpace=false}）。
-     * 世界空间粒子由 {@link SnowStormParticle} 渲染。
+     *
+     * <p>仅处理局部空间粒子（{@code worldSpace=false}）。 世界空间粒子由 {@link SnowStormParticle} 渲染。
      *
      * @param cameraRotation 摄像机旋转矩阵（世界对齐空间 → 视图空间），保留备用。可为 null。
      */
-    public static void renderBillboard(ParticleInstance particle, PoseStack poseStack,
-                                       VertexConsumer consumer, int light,
-                                       ParticleAppearanceBillboard.FaceCameraMode mode,
-                                       Matrix4f emitterTransform,
-                                       boolean localPos, boolean localRot,
-                                       float cameraPitch, float cameraRoll,
-                                       @Nullable Matrix4f cameraRotation) {
+    public static void renderBillboard(
+            ParticleInstance particle,
+            PoseStack poseStack,
+            VertexConsumer consumer,
+            int light,
+            ParticleAppearanceBillboard.FaceCameraMode mode,
+            Matrix4f emitterTransform,
+            boolean localPos,
+            boolean localRot,
+            float cameraPitch,
+            float cameraRoll,
+            @Nullable Matrix4f cameraRotation) {
         Matrix4f pose = poseStack.last().pose();
 
         // 选择变换矩阵：
@@ -80,7 +83,8 @@ public final class BillboardHelper {
         // 计算 billboard 的两个轴向量（视图空间中）
         Vector3f axisX = TEMP_AXIS_X.set(1, 0, 0);
         Vector3f axisY = TEMP_AXIS_Y.set(0, 1, 0);
-        applyBillboardAxes(axisX, axisY, mode, velX, velY, velZ, velPose, pose, cameraPitch, cameraRoll);
+        applyBillboardAxes(
+                axisX, axisY, mode, velX, velY, velZ, velPose, pose, cameraPitch, cameraRoll);
 
         // 应用粒子自旋旋转
         if (particle.rotation != 0) {
@@ -100,24 +104,58 @@ public final class BillboardHelper {
         IDENTITY_STACK.setIdentity();
 
         var identityPose = IDENTITY_STACK.last();
-        vertex(consumer, identityPose,
-                cx - axisX.x * hw - axisY.x * hh, cy - axisX.y * hw - axisY.y * hh, cz - axisX.z * hw - axisY.z * hh,
-                particle.u0, particle.v1, particle, light);
-        vertex(consumer, identityPose,
-                cx - axisX.x * hw + axisY.x * hh, cy - axisX.y * hw + axisY.y * hh, cz - axisX.z * hw + axisY.z * hh,
-                particle.u0, particle.v0, particle, light);
-        vertex(consumer, identityPose,
-                cx + axisX.x * hw + axisY.x * hh, cy + axisX.y * hw + axisY.y * hh, cz + axisX.z * hw + axisY.z * hh,
-                particle.u1, particle.v0, particle, light);
-        vertex(consumer, identityPose,
-                cx + axisX.x * hw - axisY.x * hh, cy + axisX.y * hw - axisY.y * hh, cz + axisX.z * hw - axisY.z * hh,
-                particle.u1, particle.v1, particle, light);
+        vertex(
+                consumer,
+                identityPose,
+                cx - axisX.x * hw - axisY.x * hh,
+                cy - axisX.y * hw - axisY.y * hh,
+                cz - axisX.z * hw - axisY.z * hh,
+                particle.u0,
+                particle.v1,
+                particle,
+                light);
+        vertex(
+                consumer,
+                identityPose,
+                cx - axisX.x * hw + axisY.x * hh,
+                cy - axisX.y * hw + axisY.y * hh,
+                cz - axisX.z * hw + axisY.z * hh,
+                particle.u0,
+                particle.v0,
+                particle,
+                light);
+        vertex(
+                consumer,
+                identityPose,
+                cx + axisX.x * hw + axisY.x * hh,
+                cy + axisX.y * hw + axisY.y * hh,
+                cz + axisX.z * hw + axisY.z * hh,
+                particle.u1,
+                particle.v0,
+                particle,
+                light);
+        vertex(
+                consumer,
+                identityPose,
+                cx + axisX.x * hw - axisY.x * hh,
+                cy + axisX.y * hw - axisY.y * hh,
+                cz + axisX.z * hw - axisY.z * hh,
+                particle.u1,
+                particle.v1,
+                particle,
+                light);
     }
 
-    private static void vertex(VertexConsumer consumer, PoseStack.Pose pose,
-                               float x, float y, float z,
-                               float u, float v,
-                               ParticleInstance particle, int light) {
+    private static void vertex(
+            VertexConsumer consumer,
+            PoseStack.Pose pose,
+            float x,
+            float y,
+            float z,
+            float u,
+            float v,
+            ParticleInstance particle,
+            int light) {
         consumer.addVertex(pose, x, y, z)
                 .setColor(particle.r, particle.g, particle.b, particle.a)
                 .setUv(u, v)
@@ -127,20 +165,25 @@ public final class BillboardHelper {
     }
 
     /**
-     * 根据朝向模式计算 billboard 的 X/Y 轴方向（视图空间中的单位向量）。
-     * axisX 对应 quad 的宽度方向，axisY 对应高度方向。
+     * 根据朝向模式计算 billboard 的 X/Y 轴方向（视图空间中的单位向量）。 axisX 对应 quad 的宽度方向，axisY 对应高度方向。
      *
      * @param velX/velY/velZ 粒子速度（在粒子自身的坐标空间中）
-     * @param velPose        用于将速度变换到视图空间的矩阵
-     * @param viewPose       视图矩阵（poseStack 的 pose），用于将世界坐标轴变换到视图空间
-     * @param cameraPitch    摄像机 pitch（弧度）
-     * @param cameraRoll     摄像机 roll（弧度）
+     * @param velPose 用于将速度变换到视图空间的矩阵
+     * @param viewPose 视图矩阵（poseStack 的 pose），用于将世界坐标轴变换到视图空间
+     * @param cameraPitch 摄像机 pitch（弧度）
+     * @param cameraRoll 摄像机 roll（弧度）
      */
-    private static void applyBillboardAxes(Vector3f axisX, Vector3f axisY,
-                                           ParticleAppearanceBillboard.FaceCameraMode mode,
-                                           float velX, float velY, float velZ,
-                                           Matrix4f velPose, Matrix4f viewPose,
-                                           float cameraPitch, float cameraRoll) {
+    private static void applyBillboardAxes(
+            Vector3f axisX,
+            Vector3f axisY,
+            ParticleAppearanceBillboard.FaceCameraMode mode,
+            float velX,
+            float velY,
+            float velZ,
+            Matrix4f velPose,
+            Matrix4f viewPose,
+            float cameraPitch,
+            float cameraRoll) {
         switch (mode) {
             case ROTATE_XYZ, LOOKAT_XYZ -> {
                 axisX.set(1, 0, 0);
@@ -159,8 +202,12 @@ public final class BillboardHelper {
                     float cosRoll = (float) Math.cos(cameraRoll);
                     float sinRoll = (float) Math.sin(cameraRoll);
                     // 绕视图空间 Z 轴旋转 axisX 和 axisY
-                    axisX.set(ax * cosRoll + bx * sinRoll, ay * cosRoll + by * sinRoll, bz * sinRoll);
-                    axisY.set(-ax * sinRoll + bx * cosRoll, -ay * sinRoll + by * cosRoll, bz * cosRoll);
+                    axisX.set(
+                            ax * cosRoll + bx * sinRoll, ay * cosRoll + by * sinRoll, bz * sinRoll);
+                    axisY.set(
+                            -ax * sinRoll + bx * cosRoll,
+                            -ay * sinRoll + by * cosRoll,
+                            bz * cosRoll);
                 } else {
                     axisX.set(ax, ay, 0);
                     axisY.set(bx, by, bz);
@@ -210,14 +257,12 @@ public final class BillboardHelper {
         }
     }
 
-    /**
-     * 用矩阵的 3x3 部分（含缩放+旋转）变换一个方向向量，结果写入 dest。
-     */
-    private static void transformDirection(Vector3f dest, Matrix4f pose, float x, float y, float z) {
+    /** 用矩阵的 3x3 部分（含缩放+旋转）变换一个方向向量，结果写入 dest。 */
+    private static void transformDirection(
+            Vector3f dest, Matrix4f pose, float x, float y, float z) {
         dest.set(
                 pose.m00() * x + pose.m10() * y + pose.m20() * z,
                 pose.m01() * x + pose.m11() * y + pose.m21() * z,
-                pose.m02() * x + pose.m12() * y + pose.m22() * z
-        );
+                pose.m02() * x + pose.m12() * y + pose.m22() * z);
     }
 }

@@ -7,5 +7,4 @@ import java.util.List;
  *
  * @param nodes 子事件节点列表
  */
-public record EventSequence(List<IEventNode> nodes) implements IEventNode {
-}
+public record EventSequence(List<IEventNode> nodes) implements IEventNode {}

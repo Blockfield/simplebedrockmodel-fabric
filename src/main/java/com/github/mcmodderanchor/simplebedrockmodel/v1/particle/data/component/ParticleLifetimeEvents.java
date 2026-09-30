@@ -11,14 +11,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-/**
- * 粒子生命周期事件组件。对应 "minecraft:particle_lifetime_events"。
- */
+/** 粒子生命周期事件组件。对应 "minecraft:particle_lifetime_events"。 */
 public record ParticleLifetimeEvents(
         List<String> creationEvent,
         List<String> expirationEvent,
-        TreeMap<Float, List<String>> timeline
-) implements IParticleComponentDefinition {
+        TreeMap<Float, List<String>> timeline)
+        implements IParticleComponentDefinition {
 
     @Override
     public int order() {
@@ -35,16 +33,16 @@ public record ParticleLifetimeEvents(
         return new Runtime(creationEvent, expirationEvent, timeline);
     }
 
-    /**
-     * 运行时组件。持有 timeline 追踪状态。
-     */
+    /** 运行时组件。持有 timeline 追踪状态。 */
     static final class Runtime implements IParticleComponent {
         private final List<String> creationEvent;
         private final List<String> expirationEvent;
         private final TreeMap<Float, List<String>> timeline;
         private int lastTimelineIndex;
 
-        Runtime(List<String> creationEvent, List<String> expirationEvent,
+        Runtime(
+                List<String> creationEvent,
+                List<String> expirationEvent,
                 TreeMap<Float, List<String>> timeline) {
             this.creationEvent = creationEvent;
             this.expirationEvent = expirationEvent;
@@ -75,9 +73,7 @@ public record ParticleLifetimeEvents(
             }
         }
 
-        /**
-         * 触发过期事件
-         */
+        /** 触发过期事件 */
         void fireExpiration(ParticleInstance particle) {
             fireEvents(expirationEvent, particle);
         }

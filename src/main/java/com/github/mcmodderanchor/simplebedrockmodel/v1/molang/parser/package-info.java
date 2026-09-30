@@ -24,9 +24,9 @@
 /**
  * Package containing classes related to parsing of Molang code.
  *
- * <p>This means converting a stream of tokens to a stream of
- * Molang expressions, e.g. (double plus double) -> (Add(double, double)),
- * or (identifier dot identifier)) -> (Access(identifier, identifier))</p>
+ * <p>This means converting a stream of tokens to a stream of Molang expressions, e.g. (double plus
+ * double) -> (Add(double, double)), or (identifier dot identifier)) -> (Access(identifier,
+ * identifier))
  *
  * @since 3.0.0
  */

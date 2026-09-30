@@ -8,6 +8,7 @@ import com.github.mcmodderanchor.simplebedrockmodel.v2.common.model.runtime.Tree
 import com.github.mcmodderanchor.simplebedrockmodel.v2.common.model.tree.TreeBedrockModel;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelLayers;
@@ -21,32 +22,33 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * 基于 Tree 模型的实例盔甲渲染器。
- */
-public class GeoArmorRendererV2 extends HumanoidModel<LivingEntity> implements IFPArmorHandRenderer, ICustomArmorRenderer {
+/** 基于 Tree 模型的实例盔甲渲染器。 */
+public class GeoArmorRendererV2 extends HumanoidModel<LivingEntity>
+        implements IFPArmorHandRenderer, ICustomArmorRenderer {
     protected final TreeBedrockModel model;
     protected final TreeArmorModelInstance instance;
     private final EquipmentSlot armorSlot;
     private final ResourceLocation texture;
 
-    @Nullable
-    protected LivingEntity livingEntity;
-    @Nullable
-    protected ItemStack itemStack;
-    @Nullable
-    protected EquipmentSlot equipmentSlot;
-    @Nullable
-    protected HumanoidModel<?> original;
+    @Nullable protected LivingEntity livingEntity;
+    @Nullable protected ItemStack itemStack;
+    @Nullable protected EquipmentSlot equipmentSlot;
+    @Nullable protected HumanoidModel<?> original;
 
-    public GeoArmorRendererV2(TreeBedrockModel model, EquipmentSlot armorSlot, ResourceLocation texture) {
+    public GeoArmorRendererV2(
+            TreeBedrockModel model, EquipmentSlot armorSlot, ResourceLocation texture) {
         this(model, new TreeArmorModelInstance(model), armorSlot, texture);
     }
 
-    public GeoArmorRendererV2(TreeBedrockModel model, TreeArmorModelInstance instance, EquipmentSlot armorSlot, ResourceLocation texture) {
+    public GeoArmorRendererV2(
+            TreeBedrockModel model,
+            TreeArmorModelInstance instance,
+            EquipmentSlot armorSlot,
+            ResourceLocation texture) {
         super(Minecraft.getInstance().getEntityModels().bakeLayer(ModelLayers.PLAYER_INNER_ARMOR));
         this.armorSlot = armorSlot;
         this.model = model;
@@ -54,9 +56,14 @@ public class GeoArmorRendererV2 extends HumanoidModel<LivingEntity> implements I
         this.texture = texture;
     }
 
-    public void preparePose(LivingEntity livingEntity, ItemStack itemStack, EquipmentSlot equipmentSlot, HumanoidModel<?> original) {
+    public void preparePose(
+            LivingEntity livingEntity,
+            ItemStack itemStack,
+            EquipmentSlot equipmentSlot,
+            HumanoidModel<?> original) {
         this.instance.preparePose(livingEntity, itemStack, equipmentSlot, original);
-        // Fabric's armor layer never runs copyPropertiesTo on a custom model, so young would stay at its default true
+        // Fabric's armor layer never runs copyPropertiesTo on a custom model, so young would stay
+        // at its default true
         // and scaleModelForBaby would shrink and drop every adult's armor.
         this.young = original.young;
         this.livingEntity = livingEntity;
@@ -65,8 +72,12 @@ public class GeoArmorRendererV2 extends HumanoidModel<LivingEntity> implements I
         this.original = original;
     }
 
-    public void scaleModelForBaby(PoseStack poseStack, LivingEntity livingEntity, float partialTick, EquipmentSlot slot,
-                                  HumanoidModel<?> original) {
+    public void scaleModelForBaby(
+            PoseStack poseStack,
+            LivingEntity livingEntity,
+            float partialTick,
+            EquipmentSlot slot,
+            HumanoidModel<?> original) {
         if (!this.young) {
             return;
         }
@@ -85,23 +96,44 @@ public class GeoArmorRendererV2 extends HumanoidModel<LivingEntity> implements I
     }
 
     @Override
-    public void renderToBuffer(PoseStack poseStack, @NotNull VertexConsumer buffer, int light, int overlay, int color) {
+    public void renderToBuffer(
+            PoseStack poseStack,
+            @NotNull VertexConsumer buffer,
+            int light,
+            int overlay,
+            int color) {
         float red = FastColor.ARGB32.red(color) / 255.0F;
         float green = FastColor.ARGB32.green(color) / 255.0F;
         float blue = FastColor.ARGB32.blue(color) / 255.0F;
         float alpha = FastColor.ARGB32.alpha(color) / 255.0F;
-        renderArmorToBuffer(poseStack, Minecraft.getInstance().renderBuffers().bufferSource(), light, overlay, red, green, blue, alpha);
+        renderArmorToBuffer(
+                poseStack,
+                Minecraft.getInstance().renderBuffers().bufferSource(),
+                light,
+                overlay,
+                red,
+                green,
+                blue,
+                alpha);
         afterRender(poseStack, buffer, light, overlay, red, green, blue, alpha);
     }
 
     @Override
-    public void renderArmorToBuffer(PoseStack poseStack, MultiBufferSource bufferSource, int light, int overlay,
-                                    float red, float green, float blue, float alpha) {
+    public void renderArmorToBuffer(
+            PoseStack poseStack,
+            MultiBufferSource bufferSource,
+            int light,
+            int overlay,
+            float red,
+            float green,
+            float blue,
+            float alpha) {
         float partialTick = Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(true);
 
         poseStack.pushPose();
         if (this.livingEntity != null && this.equipmentSlot != null && this.original != null) {
-            scaleModelForBaby(poseStack, this.livingEntity, partialTick, this.equipmentSlot, this.original);
+            scaleModelForBaby(
+                    poseStack, this.livingEntity, partialTick, this.equipmentSlot, this.original);
         }
         this.instance.renderToBuffer(
                 poseStack,
@@ -113,13 +145,19 @@ public class GeoArmorRendererV2 extends HumanoidModel<LivingEntity> implements I
                 red,
                 green,
                 blue,
-                alpha
-        );
+                alpha);
         poseStack.popPose();
     }
 
-    public void afterRender(PoseStack poseStack, VertexConsumer buffer, int light, int overlay,
-                            float red, float green, float blue, float alpha) {
+    public void afterRender(
+            PoseStack poseStack,
+            VertexConsumer buffer,
+            int light,
+            int overlay,
+            float red,
+            float green,
+            float blue,
+            float alpha) {
         this.livingEntity = null;
         this.itemStack = null;
         this.equipmentSlot = null;
@@ -127,18 +165,33 @@ public class GeoArmorRendererV2 extends HumanoidModel<LivingEntity> implements I
     }
 
     @Override
-    public void renderFirstPersonArmorArm(@NotNull AbstractClientPlayer player, @NotNull HumanoidArm arm, @NotNull PoseStack poseStack,
-                                          @NotNull MultiBufferSource bufferSource, int packedLight) {
-        BoneState armBone = arm == HumanoidArm.RIGHT
-                ? this.instance.getArmorRightArm()
-                : this.instance.getArmorLeftArm();
+    public void renderFirstPersonArmorArm(
+            @NotNull AbstractClientPlayer player,
+            @NotNull HumanoidArm arm,
+            @NotNull PoseStack poseStack,
+            @NotNull MultiBufferSource bufferSource,
+            int packedLight) {
+        BoneState armBone =
+                arm == HumanoidArm.RIGHT
+                        ? this.instance.getArmorRightArm()
+                        : this.instance.getArmorLeftArm();
         if (armBone == null) {
             return;
         }
 
-        this.instance.renderSingleBone(poseStack, armBone.index(), bufferSource, getRenderType(getTexture()),
-                BedrockModelRenderTypes.polyMeshCutout(getTexture()), packedLight, OverlayTexture.NO_OVERLAY,
-                1.0F, 1.0F, 1.0F, 1.0F, true);
+        this.instance.renderSingleBone(
+                poseStack,
+                armBone.index(),
+                bufferSource,
+                getRenderType(getTexture()),
+                BedrockModelRenderTypes.polyMeshCutout(getTexture()),
+                packedLight,
+                OverlayTexture.NO_OVERLAY,
+                1.0F,
+                1.0F,
+                1.0F,
+                1.0F,
+                true);
     }
 
     public RenderType getRenderType(ResourceLocation texture) {

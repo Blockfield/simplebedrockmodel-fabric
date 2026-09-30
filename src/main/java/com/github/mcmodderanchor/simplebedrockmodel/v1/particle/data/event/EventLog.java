@@ -5,5 +5,4 @@ package com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.event;
  *
  * @param message 日志消息
  */
-public record EventLog(String message) implements IEventNode {
-}
+public record EventLog(String message) implements IEventNode {}

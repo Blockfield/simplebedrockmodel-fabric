@@ -23,15 +23,16 @@
  */
 package com.github.mcmodderanchor.simplebedrockmodel.v1.molang.runtime;
 
+import static java.util.Objects.requireNonNull;
+
 import com.github.mcmodderanchor.simplebedrockmodel.v1.molang.runtime.value.Value;
+
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import static java.util.Objects.requireNonNull;
 
 @ApiStatus.Internal
 public final class JavaTypes {
@@ -49,15 +50,15 @@ public final class JavaTypes {
         NULL_VALUES.put(String.class, "");
     }
 
-    private JavaTypes() {
-    }
+    private JavaTypes() {}
 
     public static @Nullable Object getNullValueForType(final @NotNull Class<?> type) {
         requireNonNull(type, "type");
         return NULL_VALUES.get(type);
     }
 
-    public static @Nullable Object convert(final @NotNull Value value, final @NotNull Class<?> type) {
+    public static @Nullable Object convert(
+            final @NotNull Value value, final @NotNull Class<?> type) {
         requireNonNull(value, "value");
         requireNonNull(type, "type");
         if (type == String.class) {

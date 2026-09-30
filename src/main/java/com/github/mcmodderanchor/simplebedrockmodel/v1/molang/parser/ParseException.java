@@ -28,8 +28,7 @@ import com.github.mcmodderanchor.simplebedrockmodel.v1.molang.lexer.Cursor;
 import java.io.IOException;
 
 /**
- * Exception that can be thrown during the
- * parsing phase
+ * Exception that can be thrown during the parsing phase
  *
  * @since 3.0.0
  */
@@ -67,5 +66,4 @@ public class ParseException extends IOException {
         // "    at line 2, column 6"
         return message + "\n\tat " + cursor;
     }
-
 }

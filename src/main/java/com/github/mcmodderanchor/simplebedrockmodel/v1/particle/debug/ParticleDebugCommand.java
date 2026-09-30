@@ -1,5 +1,8 @@
 package com.github.mcmodderanchor.simplebedrockmodel.v1.particle.debug;
 
+import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.argument;
+import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
+
 import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.ParticleEffectDefinition;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.resource.ParticleDefinitionLoader;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.world.WorldEmitterManager;
@@ -9,6 +12,7 @@ import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
+
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
@@ -26,47 +30,93 @@ import net.minecraft.world.phys.Vec3;
 import java.util.Locale;
 import java.util.concurrent.CompletableFuture;
 
-import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.argument;
-import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
-
 @Environment(EnvType.CLIENT)
 public class ParticleDebugCommand {
-    public static void onRegisterClientCommands(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandBuildContext context) {
-        var particleCommand = literal("particle")
-                .then(literal("spawn")
-                        .then(argument("effect", ResourceLocationArgument.id())
-                                .suggests(ParticleDebugCommand::suggestParticleEffects)
-                                .then(argument("pos", Vec3Argument.vec3(false))
-                                        .executes(ParticleDebugCommand::spawnEmitter)
-                                        .then(argument("velocity", Vec3Argument.vec3(false))
-                                                .executes(ParticleDebugCommand::spawnEmitter)))))
-                .then(literal("stress")
-                        .then(argument("effect", ResourceLocationArgument.id())
-                                .suggests(ParticleDebugCommand::suggestParticleEffects)
-                                .then(argument("pos", Vec3Argument.vec3(false))
-                                        .then(argument("count", IntegerArgumentType.integer(1))
-                                                .executes(ParticleDebugCommand::spawnEmitterStress)
-                                                .then(argument("spacing", DoubleArgumentType.doubleArg(0.0D))
-                                                        .executes(ParticleDebugCommand::spawnEmitterStress)
-                                                        .then(argument("velocity", Vec3Argument.vec3(false))
-                                                                .executes(ParticleDebugCommand::spawnEmitterStress)))))));
+    public static void onRegisterClientCommands(
+            CommandDispatcher<FabricClientCommandSource> dispatcher, CommandBuildContext context) {
+        var particleCommand =
+                literal("particle")
+                        .then(
+                                literal("spawn")
+                                        .then(
+                                                argument("effect", ResourceLocationArgument.id())
+                                                        .suggests(
+                                                                ParticleDebugCommand
+                                                                        ::suggestParticleEffects)
+                                                        .then(
+                                                                argument(
+                                                                                "pos",
+                                                                                Vec3Argument.vec3(
+                                                                                        false))
+                                                                        .executes(
+                                                                                ParticleDebugCommand
+                                                                                        ::spawnEmitter)
+                                                                        .then(
+                                                                                argument(
+                                                                                                "velocity",
+                                                                                                Vec3Argument
+                                                                                                        .vec3(
+                                                                                                                false))
+                                                                                        .executes(
+                                                                                                ParticleDebugCommand
+                                                                                                        ::spawnEmitter)))))
+                        .then(
+                                literal("stress")
+                                        .then(
+                                                argument("effect", ResourceLocationArgument.id())
+                                                        .suggests(
+                                                                ParticleDebugCommand
+                                                                        ::suggestParticleEffects)
+                                                        .then(
+                                                                argument(
+                                                                                "pos",
+                                                                                Vec3Argument.vec3(
+                                                                                        false))
+                                                                        .then(
+                                                                                argument(
+                                                                                                "count",
+                                                                                                IntegerArgumentType
+                                                                                                        .integer(
+                                                                                                                1))
+                                                                                        .executes(
+                                                                                                ParticleDebugCommand
+                                                                                                        ::spawnEmitterStress)
+                                                                                        .then(
+                                                                                                argument(
+                                                                                                                "spacing",
+                                                                                                                DoubleArgumentType
+                                                                                                                        .doubleArg(
+                                                                                                                                0.0D))
+                                                                                                        .executes(
+                                                                                                                ParticleDebugCommand
+                                                                                                                        ::spawnEmitterStress)
+                                                                                                        .then(
+                                                                                                                argument(
+                                                                                                                                "velocity",
+                                                                                                                                Vec3Argument
+                                                                                                                                        .vec3(
+                                                                                                                                                false))
+                                                                                                                        .executes(
+                                                                                                                                ParticleDebugCommand
+                                                                                                                                        ::spawnEmitterStress)))))));
 
         dispatcher.register(literal("sbm").then(particleCommand));
     }
 
-    private static CompletableFuture<Suggestions> suggestParticleEffects(CommandContext<?> context, SuggestionsBuilder builder) {
+    private static CompletableFuture<Suggestions> suggestParticleEffects(
+            CommandContext<?> context, SuggestionsBuilder builder) {
         return SharedSuggestionProvider.suggestResource(
-                ParticleDefinitionLoader.getInstance().getAllDefinitions().keySet(),
-                builder
-        );
+                ParticleDefinitionLoader.getInstance().getAllDefinitions().keySet(), builder);
     }
 
-    private static ResourceLocation getId(CommandContext<FabricClientCommandSource> context, String name) {
+    private static ResourceLocation getId(
+            CommandContext<FabricClientCommandSource> context, String name) {
         return context.getArgument(name, ResourceLocation.class);
     }
 
     private static Vec3 getVec3(CommandContext<FabricClientCommandSource> context, String name) {
-        return context.getArgument(name, Coordinates.class).getPosition((CommandSourceStack) context.getSource());
+        return context.getArgument(name, Coordinates.class)
+                .getPosition((CommandSourceStack) context.getSource());
     }
 
     private static int spawnEmitter(CommandContext<FabricClientCommandSource> context) {
@@ -83,13 +133,18 @@ public class ParticleDebugCommand {
 
         ResourceLocation effectId = getId(context, "effect");
         Vec3 pos = getVec3(context, "pos");
-        Vec3 velocity = hasArgument(context, "velocity")
-                ? getVec3(context, "velocity")
-                : Vec3.ZERO;
+        Vec3 velocity = hasArgument(context, "velocity") ? getVec3(context, "velocity") : Vec3.ZERO;
 
         WorldEmitterManager.getInstance().addEmitter(mc.level, pos, velocity, definition);
-        sendMessage(Component.literal("[SBM] 已生成粒子发射器: " + effectId + " @ "
-                + formatVec3(pos) + " vel=" + formatVec3(velocity)), false);
+        sendMessage(
+                Component.literal(
+                        "[SBM] 已生成粒子发射器: "
+                                + effectId
+                                + " @ "
+                                + formatVec3(pos)
+                                + " vel="
+                                + formatVec3(velocity)),
+                false);
         return 1;
     }
 
@@ -108,12 +163,11 @@ public class ParticleDebugCommand {
         ResourceLocation effectId = getId(context, "effect");
         Vec3 center = getVec3(context, "pos");
         int count = IntegerArgumentType.getInteger(context, "count");
-        double spacing = hasArgument(context, "spacing")
-                ? DoubleArgumentType.getDouble(context, "spacing")
-                : 1.0D;
-        Vec3 velocity = hasArgument(context, "velocity")
-                ? getVec3(context, "velocity")
-                : Vec3.ZERO;
+        double spacing =
+                hasArgument(context, "spacing")
+                        ? DoubleArgumentType.getDouble(context, "spacing")
+                        : 1.0D;
+        Vec3 velocity = hasArgument(context, "velocity") ? getVec3(context, "velocity") : Vec3.ZERO;
 
         int side = (int) Math.ceil(Math.cbrt(count));
         double centerOffset = (side - 1) / 2.0D;
@@ -124,29 +178,40 @@ public class ParticleDebugCommand {
             int zIndex = (i / side) % side;
             int yIndex = i / (side * side);
 
-            Vec3 emitterPos = center.add(
-                    (xIndex - centerOffset) * spacing,
-                    (yIndex - centerOffset) * spacing,
-                    (zIndex - centerOffset) * spacing
-            );
+            Vec3 emitterPos =
+                    center.add(
+                            (xIndex - centerOffset) * spacing,
+                            (yIndex - centerOffset) * spacing,
+                            (zIndex - centerOffset) * spacing);
             emitterManager.addEmitter(mc.level, emitterPos, velocity, definition);
         }
 
-        sendMessage(Component.literal("[SBM] 已为性能测试生成 " + count + " 个粒子发射器: " + effectId
-                + " center=" + formatVec3(center)
-                + " spacing=" + String.format(Locale.ROOT, "%.3f", spacing)
-                + " vel=" + formatVec3(velocity)), false);
+        sendMessage(
+                Component.literal(
+                        "[SBM] 已为性能测试生成 "
+                                + count
+                                + " 个粒子发射器: "
+                                + effectId
+                                + " center="
+                                + formatVec3(center)
+                                + " spacing="
+                                + String.format(Locale.ROOT, "%.3f", spacing)
+                                + " vel="
+                                + formatVec3(velocity)),
+                false);
         return count;
     }
 
-    private static ParticleEffectDefinition resolveDefinition(CommandContext<FabricClientCommandSource> context) {
+    private static ParticleEffectDefinition resolveDefinition(
+            CommandContext<FabricClientCommandSource> context) {
         ResourceLocation effectId = getId(context, "effect");
         if (effectId == null) {
             sendMessage(Component.literal("[SBM] 无效的粒子效果 ID: " + effectId), true);
             return null;
         }
 
-        ParticleEffectDefinition definition = ParticleDefinitionLoader.getInstance().getDefinition(effectId);
+        ParticleEffectDefinition definition =
+                ParticleDefinitionLoader.getInstance().getDefinition(effectId);
         if (definition == null) {
             sendMessage(Component.literal("[SBM] 找不到粒子效果定义: " + effectId), true);
             return null;
@@ -154,7 +219,8 @@ public class ParticleDebugCommand {
         return definition;
     }
 
-    private static boolean hasArgument(CommandContext<FabricClientCommandSource> context, String name) {
+    private static boolean hasArgument(
+            CommandContext<FabricClientCommandSource> context, String name) {
         return context.getNodes().stream().anyMatch(node -> name.equals(node.getNode().getName()));
     }
 

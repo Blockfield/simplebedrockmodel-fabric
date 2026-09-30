@@ -1,6 +1,7 @@
 package cn.sh1rocu.simplebedrockmodel.api.event;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.event.Event;
@@ -23,13 +24,27 @@ public class RenderHandEvent extends BaseEvent implements ICancellableEvent {
     private final float equipProgress;
     private final int light;
 
-    public static final Event<Callback> EVENT = EventFactory.createArrayBacked(Callback.class, callbacks -> (handEvent) -> {
-        for (Callback callback : callbacks) {
-            callback.post(handEvent);
-        }
-    });
+    public static final Event<Callback> EVENT =
+            EventFactory.createArrayBacked(
+                    Callback.class,
+                    callbacks ->
+                            (handEvent) -> {
+                                for (Callback callback : callbacks) {
+                                    callback.post(handEvent);
+                                }
+                            });
 
-    public RenderHandEvent(AbstractClientPlayer player, InteractionHand hand, ItemStack stack, PoseStack matrices, MultiBufferSource vertexConsumers, float tickDelta, float pitch, float swingProgress, float equipProgress, int light) {
+    public RenderHandEvent(
+            AbstractClientPlayer player,
+            InteractionHand hand,
+            ItemStack stack,
+            PoseStack matrices,
+            MultiBufferSource vertexConsumers,
+            float tickDelta,
+            float pitch,
+            float swingProgress,
+            float equipProgress,
+            int light) {
         this.player = player;
         this.hand = hand;
         this.stack = stack;

@@ -5,10 +5,11 @@ import com.github.mcmodderanchor.simplebedrockmodel.v1.molang.runtime.MolangExpr
 import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.component.IParticleComponent;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.component.IParticleComponentDefinition;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.runtime.ParticleInstance;
+
 import org.jetbrains.annotations.Nullable;
 
-public record ParticleTintingStatic(MolangExpression r, MolangExpression g, MolangExpression b,
-                                    @Nullable MolangExpression a)
+public record ParticleTintingStatic(
+        MolangExpression r, MolangExpression g, MolangExpression b, @Nullable MolangExpression a)
         implements IParticleComponentDefinition, IParticleComponent {
 
     @Override

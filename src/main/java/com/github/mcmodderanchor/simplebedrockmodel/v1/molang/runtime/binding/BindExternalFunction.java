@@ -41,16 +41,16 @@ public @interface BindExternalFunction {
     /**
      * Determines if this function is pure or not.
      *
-     * <p>A pure function is a function that has the following properties:</p>
+     * <p>A pure function is a function that has the following properties:
+     *
      * <ol>
-     *     <li>The function return values are <b>identical for identical
-     *     arguments</b>, and</li>
-     *     <li>The function has <b>no side effects</b></li>
+     *   <li>The function return values are <b>identical for identical arguments</b>, and
+     *   <li>The function has <b>no side effects</b>
      * </ol>
      *
-     * <p>The compiler or interpreter may pre-evaluate these functions ahead
-     * of time. In case of compiling, the function may be called during compile
-     * time, to use the function's result instead.</p>
+     * <p>The compiler or interpreter may pre-evaluate these functions ahead of time. In case of
+     * compiling, the function may be called during compile time, to use the function's result
+     * instead.
      *
      * @return If this function is pure or not.
      * @since 3.0.0

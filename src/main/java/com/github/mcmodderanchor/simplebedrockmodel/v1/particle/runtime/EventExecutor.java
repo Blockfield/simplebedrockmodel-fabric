@@ -5,42 +5,43 @@ import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.ParticleEff
 import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.event.*;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.resource.ParticleDefinitionLoader;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.world.WorldEmitterManager;
+
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.phys.Vec3;
+
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-/**
- * 粒子事件执行引擎。
- */
+/** 粒子事件执行引擎。 */
 public final class EventExecutor {
 
-    private EventExecutor() {
-    }
+    private EventExecutor() {}
 
-    /**
-     * 事件执行上下文。
-     */
+    /** 事件执行上下文。 */
     public record EventContext(
             ParticleEmitterInstance emitter,
             ParticleMolangEnvironment molang,
             @Nullable ClientLevel level,
             @Nullable Vec3 position,
-            Random random  // 本地随机源，用于 EventRandomize
-    ) {
-        public EventContext(ParticleEmitterInstance emitter, ParticleMolangEnvironment molang,
-                            @Nullable ClientLevel level, @Nullable Vec3 position) {
+            Random random // 本地随机源，用于 EventRandomize
+            ) {
+        public EventContext(
+                ParticleEmitterInstance emitter,
+                ParticleMolangEnvironment molang,
+                @Nullable ClientLevel level,
+                @Nullable Vec3 position) {
             this(emitter, molang, level, position, new Random());
         }
     }
 
-    public static void fireEvents(List<String> eventNames, ParticleEffectDefinition definition, EventContext ctx) {
+    public static void fireEvents(
+            List<String> eventNames, ParticleEffectDefinition definition, EventContext ctx) {
         if (eventNames.isEmpty()) return;
         Map<String, List<IEventNode>> allEvents = definition.getEvents();
         if (allEvents.isEmpty()) return;
@@ -102,14 +103,19 @@ public final class EventExecutor {
             try {
                 effect.compiledPreEffect().evaluate(ctx.molang.getContext());
             } catch (Exception e) {
-                SimpleBedrockModel.LOGGER.warn("Failed to evaluate pre_effect_expression: {}", effect.preEffectExpression(), e);
+                SimpleBedrockModel.LOGGER.warn(
+                        "Failed to evaluate pre_effect_expression: {}",
+                        effect.preEffectExpression(),
+                        e);
             }
         }
 
         ResourceLocation effectId = ResourceLocation.parse(effect.effect());
-        ParticleEffectDefinition childDef = ParticleDefinitionLoader.getInstance().getDefinition(effectId);
+        ParticleEffectDefinition childDef =
+                ParticleDefinitionLoader.getInstance().getDefinition(effectId);
         if (childDef == null) {
-            SimpleBedrockModel.LOGGER.debug("Particle effect event references unknown effect: {}", effect.effect());
+            SimpleBedrockModel.LOGGER.debug(
+                    "Particle effect event references unknown effect: {}", effect.effect());
             return;
         }
 
@@ -125,9 +131,14 @@ public final class EventExecutor {
             ResourceLocation soundId = ResourceLocation.parse(eventName);
             SoundEvent soundEvent = SoundEvent.createVariableRangeEvent(soundId);
             ctx.level.playLocalSound(
-                    ctx.position.x, ctx.position.y, ctx.position.z,
-                    soundEvent, SoundSource.AMBIENT, 1.0f, 1.0f, false
-            );
+                    ctx.position.x,
+                    ctx.position.y,
+                    ctx.position.z,
+                    soundEvent,
+                    SoundSource.AMBIENT,
+                    1.0f,
+                    1.0f,
+                    false);
         } catch (Exception e) {
             SimpleBedrockModel.LOGGER.warn("Failed to play sound effect: {}", eventName, e);
         }
@@ -139,7 +150,8 @@ public final class EventExecutor {
         try {
             expr.compiledExpression().evaluate(ctx.molang.getContext());
         } catch (Exception e) {
-            SimpleBedrockModel.LOGGER.warn("Failed to evaluate event molang expression: {}", expr.expression(), e);
+            SimpleBedrockModel.LOGGER.warn(
+                    "Failed to evaluate event molang expression: {}", expr.expression(), e);
         }
     }
 

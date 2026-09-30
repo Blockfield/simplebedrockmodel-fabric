@@ -4,6 +4,7 @@ import com.github.mcmodderanchor.simplebedrockmodel.v1.client.model.BedrockArmor
 import com.github.mcmodderanchor.simplebedrockmodel.v1.common.model.BedrockBone;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelLayers;
@@ -18,23 +19,21 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 
 // 说是模型，实际上是一个适配器，用来敷衍原版的）
-public class GeoArmorRenderer extends HumanoidModel implements IFPArmorHandRenderer, ICustomArmorRenderer {
+public class GeoArmorRenderer extends HumanoidModel
+        implements IFPArmorHandRenderer, ICustomArmorRenderer {
     protected final BedrockArmorModel model;
     private final ResourceLocation texture;
 
-    @Nullable
-    protected LivingEntity livingEntity;
-    @Nullable
-    protected ItemStack itemStack;
-    @Nullable
-    protected EquipmentSlot equipmentSlot;
-    @Nullable
-    protected HumanoidModel<?> original;
+    @Nullable protected LivingEntity livingEntity;
+    @Nullable protected ItemStack itemStack;
+    @Nullable protected EquipmentSlot equipmentSlot;
+    @Nullable protected HumanoidModel<?> original;
 
     public GeoArmorRenderer(BedrockArmorModel origin, ResourceLocation texture) {
         super(Minecraft.getInstance().getEntityModels().bakeLayer(ModelLayers.PLAYER_INNER_ARMOR));
@@ -42,7 +41,11 @@ public class GeoArmorRenderer extends HumanoidModel implements IFPArmorHandRende
         this.texture = texture;
     }
 
-    public void preparePose(LivingEntity livingEntity, ItemStack itemStack, EquipmentSlot equipmentSlot, HumanoidModel<?> original) {
+    public void preparePose(
+            LivingEntity livingEntity,
+            ItemStack itemStack,
+            EquipmentSlot equipmentSlot,
+            HumanoidModel<?> original) {
         model.applyPose(model.getBindPose());
 
         copyModelPart(original.head, model.getArmorHead(), 0, 24, 0);
@@ -56,7 +59,8 @@ public class GeoArmorRenderer extends HumanoidModel implements IFPArmorHandRende
 
         setVisibilityBySlot(equipmentSlot);
 
-        // Fabric's armor layer never runs copyPropertiesTo on a custom model, so young would stay at its default true
+        // Fabric's armor layer never runs copyPropertiesTo on a custom model, so young would stay
+        // at its default true
         // and scaleModelForBaby would shrink and drop every adult's armor.
         this.young = original.young;
         this.livingEntity = livingEntity;
@@ -65,7 +69,8 @@ public class GeoArmorRenderer extends HumanoidModel implements IFPArmorHandRende
         this.original = original;
     }
 
-    public void copyModelPart(ModelPart part, BedrockBone bone, float initX, float initY, float initZ) {
+    public void copyModelPart(
+            ModelPart part, BedrockBone bone, float initX, float initY, float initZ) {
         if (bone != null) {
             float deltaX = part.x - initX;
             float deltaY = part.y - initY;
@@ -101,8 +106,12 @@ public class GeoArmorRenderer extends HumanoidModel implements IFPArmorHandRende
         }
     }
 
-    public void scaleModelForBaby(PoseStack poseStack, LivingEntity livingEntity, float partialTick, EquipmentSlot slot,
-                                  HumanoidModel<?> original) {
+    public void scaleModelForBaby(
+            PoseStack poseStack,
+            LivingEntity livingEntity,
+            float partialTick,
+            EquipmentSlot slot,
+            HumanoidModel<?> original) {
         if (!this.young) {
             return;
         }
@@ -121,35 +130,61 @@ public class GeoArmorRenderer extends HumanoidModel implements IFPArmorHandRende
         }
     }
 
-    /**
-     * 非原版盔甲层直接调用时使用的后备渲染路径。
-     */
+    /** 非原版盔甲层直接调用时使用的后备渲染路径。 */
     @Override
-    public void renderToBuffer(PoseStack poseStack, @NotNull VertexConsumer buffer, int packedLight, int packedOverlay, int color) {
+    public void renderToBuffer(
+            PoseStack poseStack,
+            @NotNull VertexConsumer buffer,
+            int packedLight,
+            int packedOverlay,
+            int color) {
         float red = FastColor.ARGB32.red(color) / 255.0F;
         float green = FastColor.ARGB32.green(color) / 255.0F;
         float blue = FastColor.ARGB32.blue(color) / 255.0F;
         float alpha = FastColor.ARGB32.alpha(color) / 255.0F;
-        renderArmorToBuffer(poseStack, Minecraft.getInstance().renderBuffers().bufferSource(), packedLight, packedOverlay, red, green, blue, alpha);
+        renderArmorToBuffer(
+                poseStack,
+                Minecraft.getInstance().renderBuffers().bufferSource(),
+                packedLight,
+                packedOverlay,
+                red,
+                green,
+                blue,
+                alpha);
         afterRender(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
     }
 
     @Override
-    public void renderArmorToBuffer(PoseStack poseStack, MultiBufferSource bufferSource, int light, int overlay,
-                                    float red, float green, float blue, float alpha) {
+    public void renderArmorToBuffer(
+            PoseStack poseStack,
+            MultiBufferSource bufferSource,
+            int light,
+            int overlay,
+            float red,
+            float green,
+            float blue,
+            float alpha) {
         VertexConsumer vertexConsumer = bufferSource.getBuffer(getRenderType(getTexture()));
         float partialTick = Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(true);
 
         poseStack.pushPose();
         if (this.livingEntity != null && this.equipmentSlot != null && this.original != null) {
-            scaleModelForBaby(poseStack, this.livingEntity, partialTick, this.equipmentSlot, this.original);
+            scaleModelForBaby(
+                    poseStack, this.livingEntity, partialTick, this.equipmentSlot, this.original);
         }
         model.renderToBuffer(poseStack, vertexConsumer, light, overlay, red, green, blue, alpha);
         poseStack.popPose();
     }
 
-    public void afterRender(PoseStack poseStack, VertexConsumer buffer, int light, int overlay,
-                            float red, float green, float blue, float alpha) {
+    public void afterRender(
+            PoseStack poseStack,
+            VertexConsumer buffer,
+            int light,
+            int overlay,
+            float red,
+            float green,
+            float blue,
+            float alpha) {
         this.livingEntity = null;
         this.itemStack = null;
         this.equipmentSlot = null;
@@ -157,11 +192,16 @@ public class GeoArmorRenderer extends HumanoidModel implements IFPArmorHandRende
     }
 
     @Override
-    public void renderFirstPersonArmorArm(@NotNull AbstractClientPlayer player, @NotNull HumanoidArm arm, @NotNull PoseStack poseStack,
-                                          @NotNull MultiBufferSource bufferSource, int packedLight) {
-        BedrockBone armBone = arm == HumanoidArm.RIGHT
-                ? this.model.getArmorRightArm()
-                : this.model.getArmorLeftArm();
+    public void renderFirstPersonArmorArm(
+            @NotNull AbstractClientPlayer player,
+            @NotNull HumanoidArm arm,
+            @NotNull PoseStack poseStack,
+            @NotNull MultiBufferSource bufferSource,
+            int packedLight) {
+        BedrockBone armBone =
+                arm == HumanoidArm.RIGHT
+                        ? this.model.getArmorRightArm()
+                        : this.model.getArmorLeftArm();
         if (armBone == null) {
             return;
         }

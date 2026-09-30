@@ -27,6 +27,7 @@ import com.github.mcmodderanchor.simplebedrockmodel.v1.molang.lexer.Cursor;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.molang.lexer.MolangLexer;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.molang.lexer.TokenKind;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.molang.parser.ast.Expression;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -39,12 +40,10 @@ import java.util.List;
 /**
  * Parser for the Molang language.
  *
- * <p>The parser converts token streams to expression
- * streams</p>
+ * <p>The parser converts token streams to expression streams
  *
- * <p>Note that this is a stream-based parser, this means
- * that it will not consume the entire lexer if it doesn't
- * continue having next() calls</p>
+ * <p>Note that this is a stream-based parser, this means that it will not consume the entire lexer
+ * if it doesn't continue having next() calls
  *
  * @since 3.0.0
  */
@@ -56,12 +55,12 @@ public /* sealed */ interface MolangParser /* permits MolangParserImpl */ extend
      * @return The lexer for this parser.
      * @since 3.0.0
      */
-    @NotNull MolangLexer lexer();
+    @NotNull
+    MolangLexer lexer();
 
     /**
-     * Returns the cursor for this parser, the cursor maintains
-     * track of the current line and column, it is used for
-     * error reporting.
+     * Returns the cursor for this parser, the cursor maintains track of the current line and
+     * column, it is used for error reporting.
      *
      * @return The cursor.
      * @since 3.0.0
@@ -72,36 +71,36 @@ public /* sealed */ interface MolangParser /* permits MolangParserImpl */ extend
     }
 
     /**
-     * Returns the last emitted expression (the last expression value
-     * returned when calling {@link MolangParser#next()})
+     * Returns the last emitted expression (the last expression value returned when calling {@link
+     * MolangParser#next()})
      *
-     * <p>Requires the user to call {@link MolangParser#next()}
-     * at least once first.</p>
+     * <p>Requires the user to call {@link MolangParser#next()} at least once first.
      *
      * @return The last emitted expression
      * @throws IllegalStateException If there is no current expression
      * @since 3.0.0
      */
-    @Nullable Expression current();
+    @Nullable
+    Expression current();
 
     /**
      * Parses the next expression.
      *
-     * <p>This method returns {@code null} if it reaches
-     * the end of file and throws a {@link ParseException}
-     * if there is an error.</p>
+     * <p>This method returns {@code null} if it reaches the end of file and throws a {@link
+     * ParseException} if there is an error.
      *
      * @return The parsed expression
      * @throws IOException If reading or parsing fails
      * @since 3.0.0
      */
-    @Nullable Expression next() throws IOException;
+    @Nullable
+    Expression next() throws IOException;
 
     /**
      * Parses all the tokens until it finds a {@link TokenKind#EOF}.
      *
-     * <p>After this method is called, the parser should be
-     * done and all next expressions will be null</p>
+     * <p>After this method is called, the parser should be done and all next expressions will be
+     * null
      *
      * @return All the read expressions
      * @throws IOException If reading or parsing fails
@@ -126,8 +125,7 @@ public /* sealed */ interface MolangParser /* permits MolangParserImpl */ extend
     void close() throws IOException;
 
     /**
-     * Creates a new parser that will read the tokens from
-     * the given lexer.
+     * Creates a new parser that will read the tokens from the given lexer.
      *
      * @param lexer The lexer
      * @return The created parser
@@ -139,8 +137,7 @@ public /* sealed */ interface MolangParser /* permits MolangParserImpl */ extend
     }
 
     /**
-     * Creates a new parser that will read the tokens from
-     * the given reader.
+     * Creates a new parser that will read the tokens from the given reader.
      *
      * @param reader The reader
      * @return The created parser
@@ -151,10 +148,8 @@ public /* sealed */ interface MolangParser /* permits MolangParserImpl */ extend
         return parser(MolangLexer.lexer(reader));
     }
 
-
     /**
-     * Creates a new parser that will read the tokens from
-     * the given string.
+     * Creates a new parser that will read the tokens from the given string.
      *
      * @param string The string
      * @return The created parser
@@ -192,5 +187,4 @@ public /* sealed */ interface MolangParser /* permits MolangParserImpl */ extend
             return parser.parseAll();
         }
     }
-
 }

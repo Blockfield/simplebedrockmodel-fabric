@@ -1,8 +1,6 @@
 package com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.curve;
 
-/**
- * 曲线插值类型。
- */
+/** 曲线插值类型。 */
 public enum CurveType {
     LINEAR,
     BEZIER,

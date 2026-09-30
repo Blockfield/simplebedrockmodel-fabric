@@ -1,6 +1,7 @@
 package cn.sh1rocu.simplebedrockmodel.client;
 
 import cn.sh1rocu.simplebedrockmodel.api.event.*;
+
 import com.github.mcmodderanchor.simplebedrockmodel.v1.client.ClientSetupEvent;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.client.event.BeforeRenderHandEvent;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.client.event.ClientAnimationClockTicker;
@@ -15,6 +16,7 @@ import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.debug.ParticleDe
 import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.render.CameraStateCache;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.world.WorldEmitterManager;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.resource.ReloadListenersRegister;
+
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
@@ -45,7 +47,8 @@ public class SimpleBedrockModelClient implements ClientModInitializer {
         RenderFrameEvent.EVENT.register(FirstPersonRenderHandler::tickAnimation);
         RenderHandEvent.EVENT.register(FirstPersonRenderHandler::onRenderHand);
 
-        ClientCommandRegistrationCallback.EVENT.register(ParticleDebugCommand::onRegisterClientCommands);
+        ClientCommandRegistrationCallback.EVENT.register(
+                ParticleDebugCommand::onRegisterClientCommands);
 
         WorldRenderEvents.AFTER_TRANSLUCENT.register(ParticleDebugRenderer::onRenderLevelStage);
 
@@ -53,6 +56,5 @@ public class SimpleBedrockModelClient implements ClientModInitializer {
 
         ClientTickEvents.START_CLIENT_TICK.register(WorldEmitterManager::onClientTick);
         ClientPlayConnectionEvents.DISCONNECT.register(WorldEmitterManager::onLoggingOut);
-
     }
 }

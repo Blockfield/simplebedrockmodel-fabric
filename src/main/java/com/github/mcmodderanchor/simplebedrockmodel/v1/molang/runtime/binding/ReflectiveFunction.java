@@ -23,17 +23,18 @@
  */
 package com.github.mcmodderanchor.simplebedrockmodel.v1.molang.runtime.binding;
 
+import static java.util.Objects.requireNonNull;
+
 import com.github.mcmodderanchor.simplebedrockmodel.v1.molang.runtime.ExecutionContext;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.molang.runtime.JavaTypes;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.molang.runtime.value.*;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.*;
 import java.util.ArrayList;
 import java.util.List;
-
-import static java.util.Objects.requireNonNull;
 
 final class ReflectiveFunction<T> implements Function<T> {
     private final Object object;
@@ -72,7 +73,8 @@ final class ReflectiveFunction<T> implements Function<T> {
     }
 
     @Override
-    public @NotNull Value evaluate(final @NotNull ExecutionContext<T> context, final @NotNull Arguments arguments) {
+    public @NotNull Value evaluate(
+            final @NotNull ExecutionContext<T> context, final @NotNull Arguments arguments) {
         final Parameter[] parameters = method.getParameters();
         final Type[] genericParameterTypes = method.getGenericParameterTypes();
 
@@ -98,30 +100,37 @@ final class ReflectiveFunction<T> implements Function<T> {
                         varArgsValues.add(null);
                     }
                 }
-                value = ArrayValue.of(varArgsValues.toArray(size -> (Value[]) Array.newInstance(componentType, size)));
+                value =
+                        ArrayValue.of(
+                                varArgsValues.toArray(
+                                        size -> (Value[]) Array.newInstance(componentType, size)));
             } else if (parameterType == Lazy.class) {
                 // use the Lazy<T> argument as type, and pass the argument
                 final Type genericParameterType = genericParameterTypes[i];
                 if (!(genericParameterType instanceof ParameterizedType)) {
                     throw new IllegalArgumentException(
-                            "Lazy<T> parameter must be a parameterized type."
-                    );
+                            "Lazy<T> parameter must be a parameterized type.");
                 }
-                parameterType = (Class<?>) ((ParameterizedType) genericParameterType)
-                        .getActualTypeArguments()[0];
+                parameterType =
+                        (Class<?>)
+                                ((ParameterizedType) genericParameterType)
+                                        .getActualTypeArguments()[0];
                 if (parameterType == ExecutionContext.class) {
                     value = new JavaValue((Lazy<ExecutionContext<T>>) () -> context);
                 } else {
                     final Class<?> argumentType = parameterType;
                     final Argument argument = arguments.next();
-                    value = new JavaValue((Lazy<?>) () -> {
-                        final Object object = argument.eval();
-                        if (argumentType.isInstance(object)) {
-                            return object;
-                        } else {
-                            return null;
-                        }
-                    });
+                    value =
+                            new JavaValue(
+                                    (Lazy<?>)
+                                            () -> {
+                                                final Object object = argument.eval();
+                                                if (argumentType.isInstance(object)) {
+                                                    return object;
+                                                } else {
+                                                    return null;
+                                                }
+                                            });
                 }
             } else if (parameterType == ExecutionContext.class) {
                 value = new JavaValue(context);

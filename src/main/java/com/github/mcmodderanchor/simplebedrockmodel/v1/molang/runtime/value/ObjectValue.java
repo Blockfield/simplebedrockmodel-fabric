@@ -31,18 +31,17 @@ import java.util.Map;
 
 public interface ObjectValue extends Value {
     /**
-     * Returns the property for the given name ignoring
-     * its case. This method is CASE-INSENSITIVE.
+     * Returns the property for the given name ignoring its case. This method is CASE-INSENSITIVE.
      *
      * @param name The name of the property
      * @return The property for the given name
      * @since 3.0.0
      */
-    @Nullable ObjectProperty getProperty(final @NotNull String name);
+    @Nullable
+    ObjectProperty getProperty(final @NotNull String name);
 
     /**
-     * Gets the value of the specified property,
-     * ignoring its casing. This method is
+     * Gets the value of the specified property, ignoring its casing. This method is
      * CASE-INSENSITIVE.
      *
      * @param name The name of the property
@@ -68,15 +67,34 @@ public interface ObjectValue extends Value {
 
     // :) overloads
     default void setFunction(final @NotNull String name, final @NotNull DoubleFunction1 function) {
-        set(name, (Function<?>) (ctx, args) -> NumberValue.of(function.apply(args.next().eval().getAsNumber())));
+        set(
+                name,
+                (Function<?>)
+                        (ctx, args) ->
+                                NumberValue.of(function.apply(args.next().eval().getAsNumber())));
     }
 
     default void setFunction(final @NotNull String name, final @NotNull DoubleFunction2 function) {
-        set(name, (Function<?>) (ctx, args) -> NumberValue.of(function.apply(args.next().eval().getAsNumber(), args.next().eval().getAsNumber())));
+        set(
+                name,
+                (Function<?>)
+                        (ctx, args) ->
+                                NumberValue.of(
+                                        function.apply(
+                                                args.next().eval().getAsNumber(),
+                                                args.next().eval().getAsNumber())));
     }
 
     default void setFunction(final @NotNull String name, final @NotNull DoubleFunction3 function) {
-        set(name, (Function<?>) (ctx, args) -> NumberValue.of(function.apply(args.next().eval().getAsNumber(), args.next().eval().getAsNumber(), args.next().eval().getAsNumber())));
+        set(
+                name,
+                (Function<?>)
+                        (ctx, args) ->
+                                NumberValue.of(
+                                        function.apply(
+                                                args.next().eval().getAsNumber(),
+                                                args.next().eval().getAsNumber(),
+                                                args.next().eval().getAsNumber())));
     }
 
     interface DoubleFunction1 {

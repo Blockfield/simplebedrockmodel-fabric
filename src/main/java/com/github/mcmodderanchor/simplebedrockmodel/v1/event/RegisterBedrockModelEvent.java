@@ -1,11 +1,13 @@
 package com.github.mcmodderanchor.simplebedrockmodel.v1.event;
 
 import cn.sh1rocu.simplebedrockmodel.api.event.BaseEvent;
+
 import com.github.mcmodderanchor.simplebedrockmodel.v1.common.model.BedrockModel;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.common.resource.pojo.BedrockModelPOJO;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.resource.BedrockModelResourceProcessor;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.resource.RawResourceLoader;
 import com.google.common.collect.Maps;
+
 import net.fabricmc.api.EnvType;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
@@ -18,25 +20,29 @@ public class RegisterBedrockModelEvent extends BaseEvent {
     private final Map<ResourceLocation, BedrockModelResourceProcessor> modelRegistry;
     private final EnvType envType;
 
-    public static final Event<Callback> EVENT = EventFactory.createArrayBacked(Callback.class, callbacks -> event -> {
-        for (Callback callback : callbacks) {
-            callback.post(event);
-        }
-    });
+    public static final Event<Callback> EVENT =
+            EventFactory.createArrayBacked(
+                    Callback.class,
+                    callbacks ->
+                            event -> {
+                                for (Callback callback : callbacks) {
+                                    callback.post(event);
+                                }
+                            });
 
     public RegisterBedrockModelEvent(EnvType envType) {
         this.modelRegistry = Maps.newHashMap();
         this.envType = envType;
     }
 
-    public void register(ResourceLocation modelLocation,
-                         RawResourceLoader loader,
-                         Function<BedrockModelPOJO, BedrockModel> converter) {
+    public void register(
+            ResourceLocation modelLocation,
+            RawResourceLoader loader,
+            Function<BedrockModelPOJO, BedrockModel> converter) {
         modelRegistry.put(modelLocation, new BedrockModelResourceProcessor(loader, converter));
     }
 
-    public void register(ResourceLocation modelLocation,
-                         RawResourceLoader loader) {
+    public void register(ResourceLocation modelLocation, RawResourceLoader loader) {
         register(modelLocation, loader, BedrockModel::new);
     }
 

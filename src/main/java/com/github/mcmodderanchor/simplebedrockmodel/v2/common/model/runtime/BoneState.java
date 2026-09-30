@@ -3,6 +3,7 @@ package com.github.mcmodderanchor.simplebedrockmodel.v2.common.model.runtime;
 import com.maydaymemory.mae.basic.BoneTransform;
 import com.maydaymemory.mae.basic.RotationView;
 import com.mojang.blaze3d.vertex.PoseStack;
+
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
@@ -66,7 +67,10 @@ public class BoneState {
         if (foldedParentTransform != null) {
             pose.mul(foldedParentTransform);
             Matrix3f foldedParentNormalTransform = definition.foldedParentNormalTransform();
-            normal.mul(foldedParentNormalTransform == null ? new Matrix3f(foldedParentTransform) : foldedParentNormalTransform);
+            normal.mul(
+                    foldedParentNormalTransform == null
+                            ? new Matrix3f(foldedParentTransform)
+                            : foldedParentNormalTransform);
         }
         applyCurrentSelfTransform(pose, normal);
     }
@@ -112,10 +116,15 @@ public class BoneState {
     }
 
     public BoneTransform getBoneTransform() {
-        return new BoneTransform(index(), new Vector3f(x, y, z), new BindRotationView(rotation, rotationInEuler), new Vector3f(xScale, yScale, zScale));
+        return new BoneTransform(
+                index(),
+                new Vector3f(x, y, z),
+                new BindRotationView(rotation, rotationInEuler),
+                new Vector3f(xScale, yScale, zScale));
     }
 
-    private record BindRotationView(Quaternionf quaternion, Vector3f euler) implements RotationView {
+    private record BindRotationView(Quaternionf quaternion, Vector3f euler)
+            implements RotationView {
         private BindRotationView(Quaternionf quaternion, Vector3f euler) {
             this.quaternion = new Quaternionf(quaternion);
             this.euler = new Vector3f(euler);

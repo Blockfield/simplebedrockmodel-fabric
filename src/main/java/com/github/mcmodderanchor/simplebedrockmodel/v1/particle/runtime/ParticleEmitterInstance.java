@@ -8,6 +8,7 @@ import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.component.r
 import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.component.shape.EmitterShape;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.curve.ParticleCurve;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.event.IEventNode;
+
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import org.joml.Vector4f;
@@ -62,11 +63,9 @@ public class ParticleEmitterInstance {
 
     private final Map<String, ParticleCurve> curves;
 
-    @Nullable
-    private EventExecutor.EventContext eventContext;
+    @Nullable private EventExecutor.EventContext eventContext;
 
-    @Nullable
-    private ParticleSpawnCallback spawnCallback;
+    @Nullable private ParticleSpawnCallback spawnCallback;
     private boolean externalParticleManagement;
 
     @FunctionalInterface
@@ -76,7 +75,8 @@ public class ParticleEmitterInstance {
 
     // ==================== 构造 ====================
 
-    public ParticleEmitterInstance(ParticleEffectDefinition definition, ParticleMolangEnvironment molang) {
+    public ParticleEmitterInstance(
+            ParticleEffectDefinition definition, ParticleMolangEnvironment molang) {
         this.definition = definition;
         this.molang = molang;
         this.curves = definition.getCurves();
@@ -141,9 +141,16 @@ public class ParticleEmitterInstance {
     }
 
     private void bindEmitterContext() {
-        molang.bindEmitter(emitterAge, emitterLifetime, emitterRandom1, emitterRandom2, emitterRandom3, emitterRandom4);
+        molang.bindEmitter(
+                emitterAge,
+                emitterLifetime,
+                emitterRandom1,
+                emitterRandom2,
+                emitterRandom3,
+                emitterRandom4);
         for (Map.Entry<String, ParticleCurve> entry : curves.entrySet()) {
-            float value = CurveEvaluator.evaluate(entry.getValue(), molang.getContext(), entry.getKey());
+            float value =
+                    CurveEvaluator.evaluate(entry.getValue(), molang.getContext(), entry.getKey());
             molang.getVariableStorage().set(entry.getKey(), NumberValue.of(value));
         }
     }
@@ -188,9 +195,7 @@ public class ParticleEmitterInstance {
         }
     }
 
-    /**
-     * 公共入口，供 Runtime 组件调用
-     */
+    /** 公共入口，供 Runtime 组件调用 */
     public void spawnParticle() {
         spawnParticleInternal();
     }
@@ -412,9 +417,7 @@ public class ParticleEmitterInstance {
         return particles;
     }
 
-    /**
-     * 暴露 emitter 级 Runtime 组件列表，供 Loop 重启等场景遍历重置。
-     */
+    /** 暴露 emitter 级 Runtime 组件列表，供 Loop 重启等场景遍历重置。 */
     public List<IEmitterComponent> getEmitterUpdateComponents() {
         return emitterUpdateComponents;
     }
@@ -487,7 +490,8 @@ public class ParticleEmitterInstance {
 
     public void fireParticleExpirationEvents(ParticleInstance p) {
         if (eventContext == null) return;
-        ParticleLifetimeEvents evts = definition.particlePreset().find(ParticleLifetimeEvents.class);
+        ParticleLifetimeEvents evts =
+                definition.particlePreset().find(ParticleLifetimeEvents.class);
         if (evts == null || evts.expirationEvent().isEmpty()) return;
         molang.bindParticle(p.age, p.maxLifetime, p.random1, p.random2, p.random3, p.random4);
         EventExecutor.fireEvents(evts.expirationEvent(), definition, eventContext);

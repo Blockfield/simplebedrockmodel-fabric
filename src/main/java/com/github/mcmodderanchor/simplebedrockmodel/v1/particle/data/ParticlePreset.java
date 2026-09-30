@@ -6,8 +6,8 @@ import java.util.*;
 
 /**
  * 粒子组件预设。从 {@link ParticleEffectDefinition} 构建，不可变。
- * <p>
- * 存储 {@link IParticleComponentDefinition}，按 {@code order()} 排序。
+ *
+ * <p>存储 {@link IParticleComponentDefinition}，按 {@code order()} 排序。
  */
 public final class ParticlePreset {
 
@@ -23,9 +23,10 @@ public final class ParticlePreset {
         sorted.sort(Comparator.comparingInt(IParticleComponentDefinition::order));
         this.components = Collections.unmodifiableList(sorted);
 
-        this.updateComponents = this.components.stream()
-                .filter(IParticleComponentDefinition::requireUpdate)
-                .toList();
+        this.updateComponents =
+                this.components.stream()
+                        .filter(IParticleComponentDefinition::requireUpdate)
+                        .toList();
 
         Map<Class<? extends IComponent>, IComponent> map = new HashMap<>();
         for (IParticleComponentDefinition c : this.components) {
@@ -46,9 +47,10 @@ public final class ParticlePreset {
         this.componentMap = Collections.unmodifiableMap(map);
 
         ParticleAppearanceBillboard billboard = find(ParticleAppearanceBillboard.class);
-        this.faceCameraMode = billboard != null
-                ? billboard.faceCameraMode()
-                : ParticleAppearanceBillboard.FaceCameraMode.ROTATE_XYZ;
+        this.faceCameraMode =
+                billboard != null
+                        ? billboard.faceCameraMode()
+                        : ParticleAppearanceBillboard.FaceCameraMode.ROTATE_XYZ;
 
         this.environmentLighting = find(ParticleAppearanceLighting.class) != null;
     }

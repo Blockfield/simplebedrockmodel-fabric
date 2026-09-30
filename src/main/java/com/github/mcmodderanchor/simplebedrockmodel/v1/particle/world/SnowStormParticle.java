@@ -1,15 +1,16 @@
 package com.github.mcmodderanchor.simplebedrockmodel.v1.particle.world;
 
+import com.github.mcmodderanchor.simplebedrockmodel.v1.client.compat.sodium.SodiumCompat;
+import com.github.mcmodderanchor.simplebedrockmodel.v1.client.compat.sodium.SodiumParticleVertexWriter;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.ParticleDescription;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.ParticleEffectDefinition;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.component.*;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.component.motion.*;
-import com.github.mcmodderanchor.simplebedrockmodel.v1.client.compat.sodium.SodiumCompat;
-import com.github.mcmodderanchor.simplebedrockmodel.v1.client.compat.sodium.SodiumParticleVertexWriter;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.runtime.ParticleEmitterInstance;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.runtime.ParticleInstance;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.util.math.MathUtil;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Camera;
@@ -22,10 +23,14 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
-import org.jetbrains.annotations.Nullable;
-import org.joml.*;
 
-import java.lang.Math;
+import org.jetbrains.annotations.Nullable;
+import org.joml.Matrix3f;
+import org.joml.Matrix4f;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
+
 import java.util.List;
 
 @Environment(EnvType.CLIENT)
@@ -39,8 +44,7 @@ public class SnowStormParticle extends TextureSheetParticle {
     private final ParticleAppearanceBillboard.FaceCameraMode faceCameraMode;
 
     // 碰撞参数
-    @Nullable
-    private final ParticleMotionCollision collisionComponent;
+    @Nullable private final ParticleMotionCollision collisionComponent;
     private boolean hasCollision;
     private final float collisionDrag;
     private final float coefficientOfRestitution;
@@ -50,17 +54,17 @@ public class SnowStormParticle extends TextureSheetParticle {
     private final boolean environmentLighting;
 
     // 方块过期组件
-    @Nullable
-    private final ParticleExpireIfInBlocks expireIfInBlocks;
-    @Nullable
-    private final ParticleExpireIfNotInBlocks expireIfNotInBlocks;
+    @Nullable private final ParticleExpireIfInBlocks expireIfInBlocks;
+    @Nullable private final ParticleExpireIfNotInBlocks expireIfNotInBlocks;
 
     // 自定义 RenderType（按纹理+材质缓存）
     private final ParticleRenderType renderType;
 
-    public SnowStormParticle(ClientLevel level, ParticleInstance particleData,
-                             ParticleEffectDefinition definition,
-                             ParticleEmitterInstance emitter) {
+    public SnowStormParticle(
+            ClientLevel level,
+            ParticleInstance particleData,
+            ParticleEffectDefinition definition,
+            ParticleEmitterInstance emitter) {
         super(level, particleData.x, particleData.y, particleData.z);
         this.particleData = particleData;
         this.definition = definition;
@@ -86,10 +90,12 @@ public class SnowStormParticle extends TextureSheetParticle {
         this.friction = 1.0f;
 
         // billboard 朝向模式
-        ParticleAppearanceBillboard billboard = definition.findComponent(ParticleAppearanceBillboard.class);
-        this.faceCameraMode = billboard != null
-                ? billboard.faceCameraMode()
-                : ParticleAppearanceBillboard.FaceCameraMode.ROTATE_XYZ;
+        ParticleAppearanceBillboard billboard =
+                definition.findComponent(ParticleAppearanceBillboard.class);
+        this.faceCameraMode =
+                billboard != null
+                        ? billboard.faceCameraMode()
+                        : ParticleAppearanceBillboard.FaceCameraMode.ROTATE_XYZ;
 
         // 碰撞
         ParticleMotionCollision collision = definition.findComponent(ParticleMotionCollision.class);
@@ -97,7 +103,8 @@ public class SnowStormParticle extends TextureSheetParticle {
         if (collision != null) {
             // enabled 初始值：如果有 enabled 表达式则求值，否则默认启用
             if (collision.enabled() != null) {
-                this.hasCollision = collision.enabled().evaluate(emitter.getMolang().getContext()) != 0;
+                this.hasCollision =
+                        collision.enabled().evaluate(emitter.getMolang().getContext()) != 0;
             } else {
                 this.hasCollision = true;
             }
@@ -115,7 +122,8 @@ public class SnowStormParticle extends TextureSheetParticle {
         }
 
         // 光照：组件存在时使用世界光照，否则全亮
-        this.environmentLighting = definition.findComponent(ParticleAppearanceLighting.class) != null;
+        this.environmentLighting =
+                definition.findComponent(ParticleAppearanceLighting.class) != null;
 
         // 方块过期组件
         this.expireIfInBlocks = definition.findComponent(ParticleExpireIfInBlocks.class);
@@ -137,7 +145,8 @@ public class SnowStormParticle extends TextureSheetParticle {
 
         // 每帧更新 collision.enabled
         if (collisionComponent != null && collisionComponent.enabled() != null) {
-            this.hasCollision = collisionComponent.enabled().evaluate(emitter.getMolang().getContext()) != 0;
+            this.hasCollision =
+                    collisionComponent.enabled().evaluate(emitter.getMolang().getContext()) != 0;
         }
 
         float savedX = particleData.x, savedY = particleData.y, savedZ = particleData.z;
@@ -197,16 +206,24 @@ public class SnowStormParticle extends TextureSheetParticle {
         // 速度上限
         double velSqr = x * x + y * y + z * z;
         if (this.hasPhysics && (x != 0.0 || y != 0.0 || z != 0.0) && velSqr < 10000.0) {
-            Vec3 collided = Entity.collideBoundingBox(null, new Vec3(x, y, z), this.getBoundingBox(), this.level, List.of());
+            Vec3 collided =
+                    Entity.collideBoundingBox(
+                            null, new Vec3(x, y, z), this.getBoundingBox(), this.level, List.of());
 
             if (x != collided.x) {
-                this.xd = -Mth.sign(xd) * (Math.abs(xd) - collisionDrag / 20f) * coefficientOfRestitution;
+                this.xd =
+                        -Mth.sign(xd)
+                                * (Math.abs(xd) - collisionDrag / 20f)
+                                * coefficientOfRestitution;
             }
             if (y != collided.y) {
                 this.yd *= -coefficientOfRestitution;
             }
             if (z != collided.z) {
-                this.zd = -Mth.sign(zd) * (Math.abs(zd) - collisionDrag / 20f) * coefficientOfRestitution;
+                this.zd =
+                        -Mth.sign(zd)
+                                * (Math.abs(zd) - collisionDrag / 20f)
+                                * coefficientOfRestitution;
             }
 
             x = collided.x;
@@ -225,11 +242,12 @@ public class SnowStormParticle extends TextureSheetParticle {
             this.onGround = origY != y && origY < 0.0;
 
             // 触发碰撞事件
-            float speed = (float) Math.sqrt(
-                    particleData.vx * particleData.vx +
-                    particleData.vy * particleData.vy +
-                    particleData.vz * particleData.vz
-            );
+            float speed =
+                    (float)
+                            Math.sqrt(
+                                    particleData.vx * particleData.vx
+                                            + particleData.vy * particleData.vy
+                                            + particleData.vz * particleData.vz);
             emitter.fireCollisionEvents(particleData, speed);
 
             if (expireOnContact) {
@@ -296,13 +314,10 @@ public class SnowStormParticle extends TextureSheetParticle {
         float y3 = cy + ay - by;
         float z3 = cz + az - bz;
 
-        if (SodiumCompat.isSodiumInstalled() && SodiumParticleVertexWriter.tryRender(
-                buffer,
-                x0, y0, z0, u0, v1,
-                x1, y1, z1, u0, v0,
-                x2, y2, z2, u1, v0,
-                x3, y3, z3, u1, v1,
-                rCol, gCol, bCol, alpha, light)) {
+        if (SodiumCompat.isSodiumInstalled()
+                && SodiumParticleVertexWriter.tryRender(
+                        buffer, x0, y0, z0, u0, v1, x1, y1, z1, u0, v0, x2, y2, z2, u1, v0, x3, y3,
+                        z3, u1, v1, rCol, gCol, bCol, alpha, light)) {
             return;
         }
 
@@ -312,7 +327,8 @@ public class SnowStormParticle extends TextureSheetParticle {
         renderVertex(buffer, x3, y3, z3, u1, v1, light);
     }
 
-    private void renderVertex(VertexConsumer buffer, float x, float y, float z, float u, float v, int light) {
+    private void renderVertex(
+            VertexConsumer buffer, float x, float y, float z, float u, float v, int light) {
         buffer.addVertex(TEMP_VEC.x(), TEMP_VEC.y(), TEMP_VEC.z())
                 .setUv(u, v)
                 .setColor(rCol, gCol, bCol, alpha)
@@ -331,37 +347,53 @@ public class SnowStormParticle extends TextureSheetParticle {
                 // 真正的 lookat：从粒子位置看向摄像机
                 Vec3 camPos = camera.getPosition();
                 TEMP_VEC.set(
-                        (float) (camPos.x - this.x),
-                        (float) (camPos.y - this.y),
-                        (float) (camPos.z - this.z)
-                ).normalize(); // toCamera
+                                (float) (camPos.x - this.x),
+                                (float) (camPos.y - this.y),
+                                (float) (camPos.z - this.z))
+                        .normalize(); // toCamera
                 TEMP_VEC2.set(0, 1, 0); // up
                 TEMP_VEC2.cross(TEMP_VEC, TEMP_VEC3); // right = up × toCamera
                 TEMP_VEC3.normalize();
                 TEMP_VEC.cross(TEMP_VEC3, TEMP_VEC2); // correctedUp = toCamera × right
-                q.setFromNormalized(TEMP_MAT3.set(
-                        TEMP_VEC3.x, TEMP_VEC2.x, TEMP_VEC.x,
-                        TEMP_VEC3.y, TEMP_VEC2.y, TEMP_VEC.y,
-                        TEMP_VEC3.z, TEMP_VEC2.z, TEMP_VEC.z
-                ).invert());
+                q.setFromNormalized(
+                        TEMP_MAT3
+                                .set(
+                                        TEMP_VEC3.x,
+                                        TEMP_VEC2.x,
+                                        TEMP_VEC.x,
+                                        TEMP_VEC3.y,
+                                        TEMP_VEC2.y,
+                                        TEMP_VEC.y,
+                                        TEMP_VEC3.z,
+                                        TEMP_VEC2.z,
+                                        TEMP_VEC.z)
+                                .invert());
             }
             case LOOKAT_Y -> {
                 // lookat 但只保留 Y 轴旋转分量
                 Vec3 camPos = camera.getPosition();
                 TEMP_VEC.set(
-                        (float) (camPos.x - this.x),
-                        (float) (camPos.y - this.y),
-                        (float) (camPos.z - this.z)
-                ).normalize(); // toCamera
+                                (float) (camPos.x - this.x),
+                                (float) (camPos.y - this.y),
+                                (float) (camPos.z - this.z))
+                        .normalize(); // toCamera
                 TEMP_VEC2.set(0, 1, 0); // up
                 TEMP_VEC2.cross(TEMP_VEC, TEMP_VEC3); // right = up × toCamera
                 TEMP_VEC3.normalize();
                 TEMP_VEC.cross(TEMP_VEC3, TEMP_VEC2); // correctedUp = toCamera × right
-                q.setFromNormalized(TEMP_MAT3.set(
-                        TEMP_VEC3.x, TEMP_VEC2.x, TEMP_VEC.x,
-                        TEMP_VEC3.y, TEMP_VEC2.y, TEMP_VEC.y,
-                        TEMP_VEC3.z, TEMP_VEC2.z, TEMP_VEC.z
-                ).invert());
+                q.setFromNormalized(
+                        TEMP_MAT3
+                                .set(
+                                        TEMP_VEC3.x,
+                                        TEMP_VEC2.x,
+                                        TEMP_VEC.x,
+                                        TEMP_VEC3.y,
+                                        TEMP_VEC2.y,
+                                        TEMP_VEC.y,
+                                        TEMP_VEC3.z,
+                                        TEMP_VEC2.z,
+                                        TEMP_VEC.z)
+                                .invert());
                 q.x = 0;
                 q.z = 0;
                 q.normalize();
@@ -377,12 +409,13 @@ public class SnowStormParticle extends TextureSheetParticle {
                     MathUtil.setFromUnitVectors(TEMP_VEC2, TEMP_VEC, q);
                     // 把摄像机方向变换到粒子局部空间，计算绕 X 轴的旋转使面片朝向摄像机
                     Vec3 camPos = camera.getPosition();
-                    TEMP_VEC4.set(
-                            (float) (camPos.x - this.x),
-                            (float) (camPos.y - this.y),
-                            (float) (camPos.z - this.z),
-                            0
-                    ).mul(TEMP_MAT.rotation(q).invert());
+                    TEMP_VEC4
+                            .set(
+                                    (float) (camPos.x - this.x),
+                                    (float) (camPos.y - this.y),
+                                    (float) (camPos.z - this.z),
+                                    0)
+                            .mul(TEMP_MAT.rotation(q).invert());
                     q.rotateX((float) Mth.atan2(-TEMP_VEC4.y, TEMP_VEC4.z));
                 } else {
                     q.set(camera.rotation());
@@ -420,16 +453,12 @@ public class SnowStormParticle extends TextureSheetParticle {
         return particleData.v1;
     }
 
-    /**
-     * 获取关联的 ParticleInstance 数据。
-     */
+    /** 获取关联的 ParticleInstance 数据。 */
     public ParticleInstance getParticleData() {
         return particleData;
     }
 
-    /**
-     * 获取关联的发射器实例。
-     */
+    /** 获取关联的发射器实例。 */
     public ParticleEmitterInstance getEmitter() {
         return emitter;
     }
@@ -439,14 +468,13 @@ public class SnowStormParticle extends TextureSheetParticle {
         return environmentLighting ? super.getLightColor(partialTick) : LightTexture.FULL_BRIGHT;
     }
 
-    /**
-     * 检查粒子是否因所在方块而过期。
-     */
+    /** 检查粒子是否因所在方块而过期。 */
     private void checkBlockExpiration() {
         if (expireIfInBlocks == null && expireIfNotInBlocks == null) return;
 
         BlockPos pos = BlockPos.containing(this.x, this.y, this.z);
-        String blockId = BuiltInRegistries.BLOCK.getKey(this.level.getBlockState(pos).getBlock()).toString();
+        String blockId =
+                BuiltInRegistries.BLOCK.getKey(this.level.getBlockState(pos).getBlock()).toString();
 
         if (expireIfInBlocks != null && expireIfInBlocks.blocks().contains(blockId)) {
             particleData.alive = false;

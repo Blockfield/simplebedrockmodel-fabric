@@ -1,14 +1,17 @@
 package com.github.mcmodderanchor.simplebedrockmodel.v1.client.handler;
 
 import cn.sh1rocu.simplebedrockmodel.api.event.ViewportEvent;
+
 import com.github.mcmodderanchor.simplebedrockmodel.v1.client.event.BeforeRenderHandEvent;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.client.event.RenderItemInHandBobEvent;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.client.renderer.IFPGeoItemRenderer;
+
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.rendering.v1.BuiltinItemRendererRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
+
 import org.joml.*;
 
 @Environment(EnvType.CLIENT)
@@ -34,8 +37,10 @@ public class CameraEventHandler {
             euler.y = org.joml.Math.atan2(r31, r33);
             euler.z = org.joml.Math.atan2(r12, r22);
         } else {
-            if (org.joml.Math.abs(r31) < EPSILON && org.joml.Math.abs(r33) < EPSILON &&
-                    org.joml.Math.abs(r12) < EPSILON && org.joml.Math.abs(r22) < EPSILON) {
+            if (org.joml.Math.abs(r31) < EPSILON
+                    && org.joml.Math.abs(r33) < EPSILON
+                    && org.joml.Math.abs(r12) < EPSILON
+                    && org.joml.Math.abs(r22) < EPSILON) {
                 euler.x = (float) (r32 > 0 ? -org.joml.Math.PI / 2 : org.joml.Math.PI / 2);
                 // when x ≈ -90°
                 // r21 ≈ -(sin(y)cos(z) + cos(y)sin(z))
@@ -62,9 +67,7 @@ public class CameraEventHandler {
         return extractEulerAnglesYXZ(m);
     }
 
-    /**
-     * 当主手拿着枪械物品的时候，取消应用在它上面的 viewBobbing，以便应用自定义的跑步/走路动画。
-     */
+    /** 当主手拿着枪械物品的时候，取消应用在它上面的 viewBobbing，以便应用自定义的跑步/走路动画。 */
     public static void cancelItemInHandViewBobbing(RenderItemInHandBobEvent.BobView event) {
         LocalPlayer player = Minecraft.getInstance().player;
         if (player == null) {
@@ -72,7 +75,9 @@ public class CameraEventHandler {
         }
         var instance = FirstPersonRenderHandler.getActiveAnimationInstanceForCamera();
 
-        if (instance != null && BuiltinItemRendererRegistry.INSTANCE.get(instance.currentItem().getItem()) instanceof IFPGeoItemRenderer renderer) {
+        if (instance != null
+                && BuiltinItemRendererRegistry.INSTANCE.get(instance.currentItem().getItem())
+                        instanceof IFPGeoItemRenderer renderer) {
             event.setCanceled(renderer.blockViewBobbing());
         }
     }
@@ -87,8 +92,14 @@ public class CameraEventHandler {
         }
         var instance = FirstPersonRenderHandler.getActiveAnimationInstanceForCamera();
 
-        if (instance != null && BuiltinItemRendererRegistry.INSTANCE.get(instance.currentItem().getItem()) instanceof IFPGeoItemRenderer renderer) {
-            renderer.applyLevelCameraAnimation(event, instance.currentItem(), instance.getCameraRotation(), (float) event.getPartialTick());
+        if (instance != null
+                && BuiltinItemRendererRegistry.INSTANCE.get(instance.currentItem().getItem())
+                        instanceof IFPGeoItemRenderer renderer) {
+            renderer.applyLevelCameraAnimation(
+                    event,
+                    instance.currentItem(),
+                    instance.getCameraRotation(),
+                    (float) event.getPartialTick());
         }
     }
 
@@ -102,8 +113,14 @@ public class CameraEventHandler {
         }
         var instance = FirstPersonRenderHandler.getActiveAnimationInstanceForCamera();
 
-        if (instance != null && BuiltinItemRendererRegistry.INSTANCE.get(instance.currentItem().getItem()) instanceof IFPGeoItemRenderer renderer) {
-            renderer.applyItemInHandCameraAnimation(event.getPoseStack(), instance.currentItem(), instance.getCameraRotation(), event.getPartialTick());
+        if (instance != null
+                && BuiltinItemRendererRegistry.INSTANCE.get(instance.currentItem().getItem())
+                        instanceof IFPGeoItemRenderer renderer) {
+            renderer.applyItemInHandCameraAnimation(
+                    event.getPoseStack(),
+                    instance.currentItem(),
+                    instance.getCameraRotation(),
+                    event.getPartialTick());
         }
     }
 }

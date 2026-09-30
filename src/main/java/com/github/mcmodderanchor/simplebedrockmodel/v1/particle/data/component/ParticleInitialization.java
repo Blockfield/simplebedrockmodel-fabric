@@ -1,17 +1,18 @@
 package com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.component;
 
+import static com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.ParticleJsonUtils.getMolang;
+
 import com.github.mcmodderanchor.simplebedrockmodel.v1.molang.runtime.MolangExpression;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.runtime.ParticleInstance;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.runtime.ParticleMolangEnvironment;
 import com.google.gson.JsonObject;
-import org.jetbrains.annotations.Nullable;
 
-import static com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.ParticleJsonUtils.getMolang;
+import org.jetbrains.annotations.Nullable;
 
 public record ParticleInitialization(
         @Nullable MolangExpression perRenderExpression,
-        @Nullable MolangExpression perUpdateExpression
-) implements IParticleComponentDefinition, IParticleComponent {
+        @Nullable MolangExpression perUpdateExpression)
+        implements IParticleComponentDefinition, IParticleComponent {
 
     @Override
     public int order() {
@@ -31,7 +32,8 @@ public record ParticleInitialization(
         if (perUpdateExpression != null) perUpdateExpression.evaluate(ctx);
     }
 
-    public static ParticleInitialization fromJson(JsonObject obj, ParticleMolangEnvironment molang) {
+    public static ParticleInitialization fromJson(
+            JsonObject obj, ParticleMolangEnvironment molang) {
         MolangExpression perRender = null;
         MolangExpression perUpdate = null;
         if (obj.has("per_render_expression")) {

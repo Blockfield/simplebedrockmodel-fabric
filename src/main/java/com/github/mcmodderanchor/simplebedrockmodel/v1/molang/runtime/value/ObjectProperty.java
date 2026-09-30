@@ -32,10 +32,9 @@ import org.jetbrains.annotations.NotNull;
  */
 public interface ObjectProperty {
     /**
-     * Creates a new {@link ObjectProperty} with the given
-     * {@link Value} and constant flag.
+     * Creates a new {@link ObjectProperty} with the given {@link Value} and constant flag.
      *
-     * @param value    The value of the property
+     * @param value The value of the property
      * @param constant Whether the property is constant or not
      * @return The created property
      * @since 3.0.0
@@ -50,11 +49,11 @@ public interface ObjectProperty {
      * @return The value of this property
      * @since 3.0.0
      */
-    @NotNull Value value();
+    @NotNull
+    Value value();
 
     /**
-     * Determines whether this property is constant and cannot
-     * be changed in runtime.
+     * Determines whether this property is constant and cannot be changed in runtime.
      *
      * @return Whether this property is constant or not
      * @since 3.0.0

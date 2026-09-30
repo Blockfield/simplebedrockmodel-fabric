@@ -1,59 +1,62 @@
-//package com.github.mcmodderanchor.simplebedrockmodel.v1.client.compat.epicfight;
+// package com.github.mcmodderanchor.simplebedrockmodel.v1.client.compat.epicfight;
 //
-//import com.github.mcmodderanchor.simplebedrockmodel.v1.client.model.BedrockArmorModel;
-//import com.github.mcmodderanchor.simplebedrockmodel.v1.client.renderer.GeoArmorRenderer;
-//import com.github.mcmodderanchor.simplebedrockmodel.v1.common.model.BedrockBone;
-//import com.github.mcmodderanchor.simplebedrockmodel.v1.common.model.BedrockCube;
-//import com.github.mcmodderanchor.simplebedrockmodel.v2.client.renderer.GeoArmorRendererV2;
-//import com.github.mcmodderanchor.simplebedrockmodel.v2.common.model.runtime.BoneState;
-//import com.github.mcmodderanchor.simplebedrockmodel.v2.common.model.runtime.TreeArmorModelInstance;
-//import com.github.mcmodderanchor.simplebedrockmodel.v2.common.model.tree.CubeBox;
-//import com.github.mcmodderanchor.simplebedrockmodel.v2.common.model.tree.CubePerFace;
-//import com.github.mcmodderanchor.simplebedrockmodel.v2.common.model.tree.ICube;
-//import com.github.mcmodderanchor.simplebedrockmodel.v2.common.model.tree.TreeBedrockModel;
-//import com.github.mcmodderanchor.simplebedrockmodel.v2.common.model.tree.TreeBoneDefinition;
-//import com.google.common.collect.Lists;
-//import com.google.common.collect.Maps;
-//import com.mojang.blaze3d.vertex.PoseStack;
-//import it.unimi.dsi.fastutil.ints.IntArrayList;
-//import it.unimi.dsi.fastutil.ints.IntList;
-//import net.minecraft.client.model.HumanoidModel;
-//import net.minecraft.core.Direction;
-//import net.minecraft.core.Vec3i;
-//import net.minecraft.world.entity.EquipmentSlot;
-//import net.minecraft.world.phys.AABB;
-//import net.minecraft.world.phys.Vec3;
-//import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
-//import org.joml.Matrix3f;
-//import org.joml.Matrix4f;
-//import org.joml.Quaternionf;
-//import org.joml.Vector3f;
-//import yesman.epicfight.api.client.event.types.render.AnimatedArmorTextureEvent;
-//import yesman.epicfight.api.client.model.Mesh;
-//import yesman.epicfight.api.client.model.MeshPartDefinition;
-//import yesman.epicfight.api.client.model.SingleGroupVertexBuilder;
-//import yesman.epicfight.api.client.model.SkinnedMesh;
-//import yesman.epicfight.api.client.model.transformer.HumanoidModelTransformer;
-//import yesman.epicfight.api.utils.math.OpenMatrix4f;
-//import yesman.epicfight.api.utils.math.Vec2f;
-//import yesman.epicfight.api.utils.math.Vec3f;
+// import com.github.mcmodderanchor.simplebedrockmodel.v1.client.model.BedrockArmorModel;
+// import com.github.mcmodderanchor.simplebedrockmodel.v1.client.renderer.GeoArmorRenderer;
+// import com.github.mcmodderanchor.simplebedrockmodel.v1.common.model.BedrockBone;
+// import com.github.mcmodderanchor.simplebedrockmodel.v1.common.model.BedrockCube;
+// import com.github.mcmodderanchor.simplebedrockmodel.v2.client.renderer.GeoArmorRendererV2;
+// import com.github.mcmodderanchor.simplebedrockmodel.v2.common.model.runtime.BoneState;
+// import
+// com.github.mcmodderanchor.simplebedrockmodel.v2.common.model.runtime.TreeArmorModelInstance;
+// import com.github.mcmodderanchor.simplebedrockmodel.v2.common.model.tree.CubeBox;
+// import com.github.mcmodderanchor.simplebedrockmodel.v2.common.model.tree.CubePerFace;
+// import com.github.mcmodderanchor.simplebedrockmodel.v2.common.model.tree.ICube;
+// import com.github.mcmodderanchor.simplebedrockmodel.v2.common.model.tree.TreeBedrockModel;
+// import com.github.mcmodderanchor.simplebedrockmodel.v2.common.model.tree.TreeBoneDefinition;
+// import com.google.common.collect.Lists;
+// import com.google.common.collect.Maps;
+// import com.mojang.blaze3d.vertex.PoseStack;
+// import it.unimi.dsi.fastutil.ints.IntArrayList;
+// import it.unimi.dsi.fastutil.ints.IntList;
+// import net.minecraft.client.model.HumanoidModel;
+// import net.minecraft.core.Direction;
+// import net.minecraft.core.Vec3i;
+// import net.minecraft.world.entity.EquipmentSlot;
+// import net.minecraft.world.phys.AABB;
+// import net.minecraft.world.phys.Vec3;
+// import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
+// import org.joml.Matrix3f;
+// import org.joml.Matrix4f;
+// import org.joml.Quaternionf;
+// import org.joml.Vector3f;
+// import yesman.epicfight.api.client.event.types.render.AnimatedArmorTextureEvent;
+// import yesman.epicfight.api.client.model.Mesh;
+// import yesman.epicfight.api.client.model.MeshPartDefinition;
+// import yesman.epicfight.api.client.model.SingleGroupVertexBuilder;
+// import yesman.epicfight.api.client.model.SkinnedMesh;
+// import yesman.epicfight.api.client.model.transformer.HumanoidModelTransformer;
+// import yesman.epicfight.api.utils.math.OpenMatrix4f;
+// import yesman.epicfight.api.utils.math.Vec2f;
+// import yesman.epicfight.api.utils.math.Vec3f;
 //
-//import org.jetbrains.annotations.Nullable;
-//import java.util.List;
-//import java.util.Map;
-//import java.util.function.Supplier;
+// import org.jetbrains.annotations.Nullable;
+// import java.util.List;
+// import java.util.Map;
+// import java.util.function.Supplier;
 //
 /// **
 // * Transforms BedrockArmorModel into EpicFight SkinnedMesh.
 // * Based on EpicFight's GeoModelTransformer for GeckoLib armor.
 // */
-//public class BedrockArmorTransformer extends HumanoidModelTransformer {
+// public class BedrockArmorTransformer extends HumanoidModelTransformer {
 //
 //    public static void getBedrockArmorTexturePath(AnimatedArmorTextureEvent event) {
-//        IClientItemExtensions customRenderProperties = IClientItemExtensions.of(event.getItemStack());
+//        IClientItemExtensions customRenderProperties =
+// IClientItemExtensions.of(event.getItemStack());
 //
 //        HumanoidModel<?> extensionRenderer = customRenderProperties.getHumanoidArmorModel(
-//                event.getLivingEntity(), event.getItemStack(), event.getEquipmentSlot(), event.getOriginalModel());
+//                event.getLivingEntity(), event.getItemStack(), event.getEquipmentSlot(),
+// event.getOriginalModel());
 //
 //        if (extensionRenderer instanceof GeoArmorRenderer geoArmorRenderer) {
 //            event.setResultLocation(geoArmorRenderer.getTexture());
@@ -65,11 +68,16 @@
 //    static final CubeTransformer HEAD = new SimpleTransformer(9);
 //    static final CubeTransformer LEFT_FEET = new SimpleTransformer(5);
 //    static final CubeTransformer RIGHT_FEET = new SimpleTransformer(2);
-//    static final CubeTransformer LEFT_ARM = new LimbPartTransformer(16, 17, 19, 1.125F, false, AABB.ofSize(new Vec3(-0.375D, 1.125D, 0), 0.5D, 0.85D, 0.5D));
-//    static final CubeTransformer RIGHT_ARM = new LimbPartTransformer(11, 12, 14, 1.125F, false, AABB.ofSize(new Vec3(0.375D, 1.125D, 0), 0.5D, 0.85D, 0.5D));
-//    static final CubeTransformer LEFT_LEG = new LimbPartTransformer(4, 5, 6, 0.375F, true, AABB.ofSize(new Vec3(-0.15D, 0.375D, 0), 0.5D, 0.85D, 0.5D));
-//    static final CubeTransformer RIGHT_LEG = new LimbPartTransformer(1, 2, 3, 0.375F, true, AABB.ofSize(new Vec3(0.15D, 0.375D, 0), 0.5D, 0.85D, 0.5D));
-//    static final CubeTransformer CHEST = new ChestPartTransformer(8, 7, 1.125F, AABB.ofSize(new Vec3(0, 1.125D, 0), 0.9D, 0.85D, 0.45D));
+//    static final CubeTransformer LEFT_ARM = new LimbPartTransformer(16, 17, 19, 1.125F, false,
+// AABB.ofSize(new Vec3(-0.375D, 1.125D, 0), 0.5D, 0.85D, 0.5D));
+//    static final CubeTransformer RIGHT_ARM = new LimbPartTransformer(11, 12, 14, 1.125F, false,
+// AABB.ofSize(new Vec3(0.375D, 1.125D, 0), 0.5D, 0.85D, 0.5D));
+//    static final CubeTransformer LEFT_LEG = new LimbPartTransformer(4, 5, 6, 0.375F, true,
+// AABB.ofSize(new Vec3(-0.15D, 0.375D, 0), 0.5D, 0.85D, 0.5D));
+//    static final CubeTransformer RIGHT_LEG = new LimbPartTransformer(1, 2, 3, 0.375F, true,
+// AABB.ofSize(new Vec3(0.15D, 0.375D, 0), 0.5D, 0.85D, 0.5D));
+//    static final CubeTransformer CHEST = new ChestPartTransformer(8, 7, 1.125F, AABB.ofSize(new
+// Vec3(0, 1.125D, 0), 0.9D, 0.85D, 0.45D));
 //
 //    static class BedrockModelPartition {
 //        final CubeTransformer cubeTransformer;
@@ -97,7 +105,8 @@
 //            return transformArmorModel(geoArmor.getModel(), geoArmor.getEquipmentSlot());
 //        }
 //        if (humanoidModel instanceof GeoArmorRendererV2 geoArmor) {
-//            EquipmentSlot slot = geoArmor.getCurrentSlot() != null ? geoArmor.getCurrentSlot() : geoArmor.getArmorSlot();
+//            EquipmentSlot slot = geoArmor.getCurrentSlot() != null ? geoArmor.getCurrentSlot() :
+// geoArmor.getArmorSlot();
 //            return transformTreeArmorModel(geoArmor.getModel(), geoArmor.getInstance(), slot);
 //        }
 //
@@ -108,7 +117,8 @@
 //        return transformArmorModel(model, null);
 //    }
 //
-//    public static SkinnedMesh transformArmorModel(BedrockArmorModel model, @Nullable EquipmentSlot equipmentSlot) {
+//    public static SkinnedMesh transformArmorModel(BedrockArmorModel model, @Nullable EquipmentSlot
+// equipmentSlot) {
 //        // Reset to bind pose to get default bone transforms
 //        model.applyPose(model.getBindPose());
 //
@@ -152,11 +162,13 @@
 //        return bakeMeshFromBones(partitions);
 //    }
 //
-//    public static SkinnedMesh transformTreeArmorModel(TreeBedrockModel model, TreeArmorModelInstance instance) {
+//    public static SkinnedMesh transformTreeArmorModel(TreeBedrockModel model,
+// TreeArmorModelInstance instance) {
 //        return transformTreeArmorModel(model, instance, null);
 //    }
 //
-//    public static SkinnedMesh transformTreeArmorModel(TreeBedrockModel model, TreeArmorModelInstance instance, @Nullable EquipmentSlot equipmentSlot) {
+//    public static SkinnedMesh transformTreeArmorModel(TreeBedrockModel model,
+// TreeArmorModelInstance instance, @Nullable EquipmentSlot equipmentSlot) {
 //        instance.resetPose();
 //
 //        BoneState headBone = instance.getArmorHead();
@@ -223,7 +235,8 @@
 //        return SingleGroupVertexBuilder.loadVertexInformation(vertices, indices);
 //    }
 //
-//    private static SkinnedMesh bakeMeshFromTreeBones(TreeBedrockModel model, TreeArmorModelInstance instance,
+//    private static SkinnedMesh bakeMeshFromTreeBones(TreeBedrockModel model,
+// TreeArmorModelInstance instance,
 //                                                     List<TreeModelPartition> partitions) {
 //        List<SingleGroupVertexBuilder> vertices = Lists.newArrayList();
 //        Map<MeshPartDefinition, IntList> indices = Maps.newHashMap();
@@ -231,16 +244,19 @@
 //        IndexCounter indexCounter = new IndexCounter();
 //
 //        for (TreeModelPartition partition : partitions) {
-//            bakeTree(poseStack, model, instance, partition, partition.bone != null ? partition.bone.name() : "",
+//            bakeTree(poseStack, model, instance, partition, partition.bone != null ?
+// partition.bone.name() : "",
 //                    partition.bone, vertices, indices, indexCounter);
 //        }
 //
 //        return SingleGroupVertexBuilder.loadVertexInformation(vertices, indices);
 //    }
 //
-//    private static void bake(PoseStack poseStack, BedrockModelPartition partition, String partName,
+//    private static void bake(PoseStack poseStack, BedrockModelPartition partition, String
+// partName,
 //                             @Nullable BedrockBone bone, List<SingleGroupVertexBuilder> vertices,
-//                             Map<MeshPartDefinition, IntList> indices, IndexCounter indexCounter) {
+//                             Map<MeshPartDefinition, IntList> indices, IndexCounter indexCounter)
+// {
 //        if (bone == null) return;
 //
 //        poseStack.pushPose();
@@ -249,7 +265,8 @@
 //        MeshPartDefinition partDefinition = BedrockMeshPart.of(partName);
 //
 //        for (BedrockCube cube : bone.cubes) {
-//            partition.cubeTransformer.bakeCube(poseStack, partDefinition, new BedrockArmorCube(cube), vertices, indices, indexCounter);
+//            partition.cubeTransformer.bakeCube(poseStack, partDefinition, new
+// BedrockArmorCube(cube), vertices, indices, indexCounter);
 //        }
 //
 //        for (BedrockBone childBone : bone.getChildren()) {
@@ -259,10 +276,13 @@
 //        poseStack.popPose();
 //    }
 //
-//    private static void bakeTree(PoseStack poseStack, TreeBedrockModel model, TreeArmorModelInstance instance,
-//                                 TreeModelPartition partition, String partName, @Nullable BoneState bone,
+//    private static void bakeTree(PoseStack poseStack, TreeBedrockModel model,
+// TreeArmorModelInstance instance,
+//                                 TreeModelPartition partition, String partName, @Nullable
+// BoneState bone,
 //                                 List<SingleGroupVertexBuilder> vertices,
-//                                 Map<MeshPartDefinition, IntList> indices, IndexCounter indexCounter) {
+//                                 Map<MeshPartDefinition, IntList> indices, IndexCounter
+// indexCounter) {
 //        if (bone == null) return;
 //
 //        poseStack.pushPose();
@@ -272,11 +292,13 @@
 //        TreeBoneDefinition definition = model.bone(bone.index());
 //
 //        for (ICube cube : definition.cubes()) {
-//            partition.cubeTransformer.bakeCube(poseStack, partDefinition, new TreeArmorCube(cube), vertices, indices, indexCounter);
+//            partition.cubeTransformer.bakeCube(poseStack, partDefinition, new TreeArmorCube(cube),
+// vertices, indices, indexCounter);
 //        }
 //
 //        for (int childIndex : definition.children()) {
-//            bakeTree(poseStack, model, instance, partition, partName, instance.getBone(childIndex), vertices, indices, indexCounter);
+//            bakeTree(poseStack, model, instance, partition, partName,
+// instance.getBone(childIndex), vertices, indices, indexCounter);
 //        }
 //
 //        poseStack.popPose();
@@ -325,7 +347,8 @@
 //            if (maxZ < v.z) maxZ = v.z;
 //        }
 //
-//        return new Vec3(minX + (maxX - minX) * 0.5D, minY + (maxY - minY) * 0.5D, minZ + (maxZ - minZ) * 0.5D);
+//        return new Vec3(minX + (maxX - minX) * 0.5D, minY + (maxY - minY) * 0.5D, minZ + (maxZ -
+// minZ) * 0.5D);
 //    }
 //
 //    static Direction getFaceDirection(int faceIndex) {
@@ -512,7 +535,8 @@
 //     * Triangulate a quad (4 vertices) into two triangles, matching EpicFight's winding order.
 //     * Copied from HumanoidModelTransformer.PartTransformer.triangluatePolygon (package-private).
 //     */
-//    static void triangulatePolygon(Map<MeshPartDefinition, IntList> indices, MeshPartDefinition partDefinition, IndexCounter indexCounter) {
+//    static void triangulatePolygon(Map<MeshPartDefinition, IntList> indices, MeshPartDefinition
+// partDefinition, IndexCounter indexCounter) {
 //        IntList list = indices.computeIfAbsent(partDefinition, k -> new IntArrayList());
 //        int base = indexCounter.index;
 //
@@ -573,7 +597,8 @@
 //
 //    static abstract class CubeTransformer {
 //        abstract void bakeCube(PoseStack poseStack, MeshPartDefinition partName, ArmorCube cube,
-//                               List<SingleGroupVertexBuilder> vertices, Map<MeshPartDefinition, IntList> indices,
+//                               List<SingleGroupVertexBuilder> vertices, Map<MeshPartDefinition,
+// IntList> indices,
 //                               IndexCounter indexCounter);
 //    }
 //
@@ -586,7 +611,8 @@
 //
 //        @Override
 //        void bakeCube(PoseStack poseStack, MeshPartDefinition partName, ArmorCube cube,
-//                      List<SingleGroupVertexBuilder> vertices, Map<MeshPartDefinition, IntList> indices,
+//                      List<SingleGroupVertexBuilder> vertices, Map<MeshPartDefinition, IntList>
+// indices,
 //                      IndexCounter indexCounter) {
 //            Matrix4f pose = poseStack.last().pose();
 //            Vector3f[] cubeVerts = computeVertices(pose, cube);
@@ -603,7 +629,8 @@
 //                    vertices.add(new SingleGroupVertexBuilder()
 //                            .setPosition(new Vec3f(pos.x, pos.y, pos.z))
 //                            .setNormal(new Vec3f(norm.x(), norm.y(), norm.z()))
-//                            .setTextureCoordinate(new Vec2f(cube.getU(face, v), cube.getV(face, v)))
+//                            .setTextureCoordinate(new Vec2f(cube.getU(face, v), cube.getV(face,
+// v)))
 //                            .setEffectiveJointIDs(new Vec3f(this.jointId, 0, 0))
 //                            .setEffectiveJointWeights(new Vec3f(1.0F, 0.0F, 0.0F))
 //                            .setEffectiveJointNumber(1)
@@ -630,7 +657,8 @@
 //        final AABB noneAttachmentArea;
 //        final float yClipCoord;
 //
-//        ChestPartTransformer(int upperJoint, int lowerJoint, float yBasis, AABB noneAttachmentArea) {
+//        ChestPartTransformer(int upperJoint, int lowerJoint, float yBasis, AABB
+// noneAttachmentArea) {
 //            this.noneAttachmentArea = noneAttachmentArea;
 //            this.upperAttachmentTransformer = new SimpleTransformer(upperJoint);
 //            this.lowerAttachmentTransformer = new SimpleTransformer(lowerJoint);
@@ -639,15 +667,18 @@
 //
 //        @Override
 //        void bakeCube(PoseStack poseStack, MeshPartDefinition partName, ArmorCube cube,
-//                      List<SingleGroupVertexBuilder> vertices, Map<MeshPartDefinition, IntList> indices,
+//                      List<SingleGroupVertexBuilder> vertices, Map<MeshPartDefinition, IntList>
+// indices,
 //                      IndexCounter indexCounter) {
 //            Vec3 centerOfCube = getCenterOfCube(poseStack, cube);
 //
 //            if (!this.noneAttachmentArea.contains(centerOfCube)) {
 //                if (centerOfCube.y < this.yClipCoord) {
-//                    this.lowerAttachmentTransformer.bakeCube(poseStack, partName, cube, vertices, indices, indexCounter);
+//                    this.lowerAttachmentTransformer.bakeCube(poseStack, partName, cube, vertices,
+// indices, indexCounter);
 //                } else {
-//                    this.upperAttachmentTransformer.bakeCube(poseStack, partName, cube, vertices, indices, indexCounter);
+//                    this.upperAttachmentTransformer.bakeCube(poseStack, partName, cube, vertices,
+// indices, indexCounter);
 //                }
 //                return;
 //            }
@@ -661,10 +692,14 @@
 //                if (cube.isEmptyFace(face)) continue;
 //
 //                int[] order = BedrockCube.VERTEX_ORDER[face];
-//                PosTexVertex pos0 = makeVertex(cubeVerts[order[0]], cube.getU(face, 0), cube.getV(face, 0));
-//                PosTexVertex pos1 = makeVertex(cubeVerts[order[1]], cube.getU(face, 1), cube.getV(face, 1));
-//                PosTexVertex pos2 = makeVertex(cubeVerts[order[2]], cube.getU(face, 2), cube.getV(face, 2));
-//                PosTexVertex pos3 = makeVertex(cubeVerts[order[3]], cube.getU(face, 3), cube.getV(face, 3));
+//                PosTexVertex pos0 = makeVertex(cubeVerts[order[0]], cube.getU(face, 0),
+// cube.getV(face, 0));
+//                PosTexVertex pos1 = makeVertex(cubeVerts[order[1]], cube.getU(face, 1),
+// cube.getV(face, 1));
+//                PosTexVertex pos2 = makeVertex(cubeVerts[order[2]], cube.getU(face, 2),
+// cube.getV(face, 2));
+//                PosTexVertex pos3 = makeVertex(cubeVerts[order[3]], cube.getU(face, 3),
+// cube.getV(face, 3));
 //                Direction direction = getFaceDirection(face);
 //                VertexWeight pos0Weight = getYClipWeight(pos0.pos.y());
 //                VertexWeight pos1Weight = getYClipWeight(pos1.pos.y());
@@ -672,39 +707,59 @@
 //
 //                if (pos1.pos.x() > X_PLANE != pos2.pos.x() > X_PLANE) {
 //                    float distance = pos2.pos.x() - pos1.pos.x();
-//                    float textureU = pos1.u + (pos2.u - pos1.u) * ((X_PLANE - pos1.pos.x()) / distance);
-//                    PosTexVertex pos4 = new PosTexVertex(X_PLANE, pos0.pos.y(), pos0.pos.z(), textureU, pos0.v);
-//                    PosTexVertex pos5 = new PosTexVertex(X_PLANE, pos1.pos.y(), pos1.pos.z(), textureU, pos1.v);
+//                    float textureU = pos1.u + (pos2.u - pos1.u) * ((X_PLANE - pos1.pos.x()) /
+// distance);
+//                    PosTexVertex pos4 = new PosTexVertex(X_PLANE, pos0.pos.y(), pos0.pos.z(),
+// textureU, pos0.v);
+//                    PosTexVertex pos5 = new PosTexVertex(X_PLANE, pos1.pos.y(), pos1.pos.z(),
+// textureU, pos1.v);
 //
 //                    xClipPolygons.add(new AnimatedPolygon(new AnimatedVertex[]{
-//                            new AnimatedVertex(pos0, 8, 7, 0, pos0Weight.chestWeight, pos0Weight.torsoWeight, 0),
-//                            new AnimatedVertex(pos4, 8, 7, 0, pos0Weight.chestWeight, pos0Weight.torsoWeight, 0),
-//                            new AnimatedVertex(pos5, 8, 7, 0, pos1Weight.chestWeight, pos1Weight.torsoWeight, 0),
-//                            new AnimatedVertex(pos3, 8, 7, 0, pos3Weight.chestWeight, pos3Weight.torsoWeight, 0)
+//                            new AnimatedVertex(pos0, 8, 7, 0, pos0Weight.chestWeight,
+// pos0Weight.torsoWeight, 0),
+//                            new AnimatedVertex(pos4, 8, 7, 0, pos0Weight.chestWeight,
+// pos0Weight.torsoWeight, 0),
+//                            new AnimatedVertex(pos5, 8, 7, 0, pos1Weight.chestWeight,
+// pos1Weight.torsoWeight, 0),
+//                            new AnimatedVertex(pos3, 8, 7, 0, pos3Weight.chestWeight,
+// pos3Weight.torsoWeight, 0)
 //                    }, direction));
 //                    xClipPolygons.add(new AnimatedPolygon(new AnimatedVertex[]{
-//                            new AnimatedVertex(pos4, 8, 7, 0, pos0Weight.chestWeight, pos0Weight.torsoWeight, 0),
-//                            new AnimatedVertex(pos1, 8, 7, 0, pos1Weight.chestWeight, pos1Weight.torsoWeight, 0),
-//                            new AnimatedVertex(pos2, 8, 7, 0, getYClipWeight(pos2.pos.y()).chestWeight, getYClipWeight(pos2.pos.y()).torsoWeight, 0),
-//                            new AnimatedVertex(pos5, 8, 7, 0, pos1Weight.chestWeight, pos1Weight.torsoWeight, 0)
+//                            new AnimatedVertex(pos4, 8, 7, 0, pos0Weight.chestWeight,
+// pos0Weight.torsoWeight, 0),
+//                            new AnimatedVertex(pos1, 8, 7, 0, pos1Weight.chestWeight,
+// pos1Weight.torsoWeight, 0),
+//                            new AnimatedVertex(pos2, 8, 7, 0,
+// getYClipWeight(pos2.pos.y()).chestWeight, getYClipWeight(pos2.pos.y()).torsoWeight, 0),
+//                            new AnimatedVertex(pos5, 8, 7, 0, pos1Weight.chestWeight,
+// pos1Weight.torsoWeight, 0)
 //                    }, direction));
 //                } else {
 //                    VertexWeight pos2Weight = getYClipWeight(pos2.pos.y());
 //                    xClipPolygons.add(new AnimatedPolygon(new AnimatedVertex[]{
-//                            new AnimatedVertex(pos0, 8, 7, 0, pos0Weight.chestWeight, pos0Weight.torsoWeight, 0),
-//                            new AnimatedVertex(pos1, 8, 7, 0, pos1Weight.chestWeight, pos1Weight.torsoWeight, 0),
-//                            new AnimatedVertex(pos2, 8, 7, 0, pos2Weight.chestWeight, pos2Weight.torsoWeight, 0),
-//                            new AnimatedVertex(pos3, 8, 7, 0, pos3Weight.chestWeight, pos3Weight.torsoWeight, 0)
+//                            new AnimatedVertex(pos0, 8, 7, 0, pos0Weight.chestWeight,
+// pos0Weight.torsoWeight, 0),
+//                            new AnimatedVertex(pos1, 8, 7, 0, pos1Weight.chestWeight,
+// pos1Weight.torsoWeight, 0),
+//                            new AnimatedVertex(pos2, 8, 7, 0, pos2Weight.chestWeight,
+// pos2Weight.torsoWeight, 0),
+//                            new AnimatedVertex(pos3, 8, 7, 0, pos3Weight.chestWeight,
+// pos3Weight.torsoWeight, 0)
 //                    }, direction));
 //                }
 //            }
 //
 //            for (AnimatedPolygon polygon : xClipPolygons) {
-//                boolean upsideDown = polygon.animatedVertexPositions[1].pos.y() > polygon.animatedVertexPositions[2].pos.y();
-//                AnimatedVertex p0 = upsideDown ? polygon.animatedVertexPositions[2] : polygon.animatedVertexPositions[0];
-//                AnimatedVertex p1 = upsideDown ? polygon.animatedVertexPositions[3] : polygon.animatedVertexPositions[1];
-//                AnimatedVertex p2 = upsideDown ? polygon.animatedVertexPositions[0] : polygon.animatedVertexPositions[2];
-//                AnimatedVertex p3 = upsideDown ? polygon.animatedVertexPositions[1] : polygon.animatedVertexPositions[3];
+//                boolean upsideDown = polygon.animatedVertexPositions[1].pos.y() >
+// polygon.animatedVertexPositions[2].pos.y();
+//                AnimatedVertex p0 = upsideDown ? polygon.animatedVertexPositions[2] :
+// polygon.animatedVertexPositions[0];
+//                AnimatedVertex p1 = upsideDown ? polygon.animatedVertexPositions[3] :
+// polygon.animatedVertexPositions[1];
+//                AnimatedVertex p2 = upsideDown ? polygon.animatedVertexPositions[0] :
+// polygon.animatedVertexPositions[2];
+//                AnimatedVertex p3 = upsideDown ? polygon.animatedVertexPositions[1] :
+// polygon.animatedVertexPositions[3];
 //                Direction direction = getFaceDirection(polygon.faceIndex);
 //                List<VertexWeight> vertexWeights = getMiddleYClipWeights(p1.pos.y(), p2.pos.y());
 //                List<AnimatedVertex> animatedVertices = Lists.newArrayList();
@@ -714,13 +769,16 @@
 //                if (!vertexWeights.isEmpty()) {
 //                    for (VertexWeight vertexWeight : vertexWeights) {
 //                        float distance = p2.pos.y() - p1.pos.y();
-//                        float textureV = p1.v + (p2.v - p1.v) * ((vertexWeight.yClipCoord - p1.pos.y()) / distance);
+//                        float textureV = p1.v + (p2.v - p1.v) * ((vertexWeight.yClipCoord -
+// p1.pos.y()) / distance);
 //                        Vector3f clipPos1 = getClipPoint(p1.pos, p2.pos, vertexWeight.yClipCoord);
 //                        Vector3f clipPos2 = getClipPoint(p0.pos, p3.pos, vertexWeight.yClipCoord);
 //                        PosTexVertex vt4 = new PosTexVertex(clipPos2, p0.u, textureV);
 //                        PosTexVertex vt5 = new PosTexVertex(clipPos1, p1.u, textureV);
-//                        animatedVertices.add(new AnimatedVertex(vt4, 8, 7, 0, vertexWeight.chestWeight, vertexWeight.torsoWeight, 0));
-//                        animatedVertices.add(new AnimatedVertex(vt5, 8, 7, 0, vertexWeight.chestWeight, vertexWeight.torsoWeight, 0));
+//                        animatedVertices.add(new AnimatedVertex(vt4, 8, 7, 0,
+// vertexWeight.chestWeight, vertexWeight.torsoWeight, 0));
+//                        animatedVertices.add(new AnimatedVertex(vt5, 8, 7, 0,
+// vertexWeight.chestWeight, vertexWeight.torsoWeight, 0));
 //                    }
 //                }
 //
@@ -743,7 +801,8 @@
 //            }
 //
 //            for (AnimatedPolygon polygon : xyClipPolygons) {
-//                Vector3f norm = cube.transformedNormal(getFaceDirection(polygon.faceIndex), poseStack.last().normal());
+//                Vector3f norm = cube.transformedNormal(getFaceDirection(polygon.faceIndex),
+// poseStack.last().normal());
 //
 //                for (AnimatedVertex vertex : polygon.animatedVertexPositions) {
 //                    float weight1 = vertex.weight.x;
@@ -758,7 +817,8 @@
 //                    }
 //
 //                    vertices.add(new SingleGroupVertexBuilder()
-//                            .setPosition(new Vec3f(vertex.pos.x(), vertex.pos.y(), vertex.pos.z()))
+//                            .setPosition(new Vec3f(vertex.pos.x(), vertex.pos.y(),
+// vertex.pos.z()))
 //                            .setNormal(new Vec3f(norm.x(), norm.y(), norm.z()))
 //                            .setTextureCoordinate(new Vec2f(vertex.u, vertex.v))
 //                            .setEffectiveJointIDs(new Vec3f(joint1, joint2, 0))
@@ -839,15 +899,18 @@
 //
 //        @Override
 //        void bakeCube(PoseStack poseStack, MeshPartDefinition partName, ArmorCube cube,
-//                      List<SingleGroupVertexBuilder> vertices, Map<MeshPartDefinition, IntList> indices,
+//                      List<SingleGroupVertexBuilder> vertices, Map<MeshPartDefinition, IntList>
+// indices,
 //                      IndexCounter indexCounter) {
 //            Vec3 centerOfCube = getCenterOfCube(poseStack, cube);
 //
 //            if (!this.noneAttachmentArea.contains(centerOfCube)) {
 //                if (centerOfCube.y < this.yClipCoord) {
-//                    this.lowerAttachmentTransformer.bakeCube(poseStack, partName, cube, vertices, indices, indexCounter);
+//                    this.lowerAttachmentTransformer.bakeCube(poseStack, partName, cube, vertices,
+// indices, indexCounter);
 //                } else {
-//                    this.upperAttachmentTransformer.bakeCube(poseStack, partName, cube, vertices, indices, indexCounter);
+//                    this.upperAttachmentTransformer.bakeCube(poseStack, partName, cube, vertices,
+// indices, indexCounter);
 //                }
 //                return;
 //            }
@@ -860,15 +923,20 @@
 //                if (cube.isEmptyFace(face)) continue;
 //
 //                int[] order = BedrockCube.VERTEX_ORDER[face];
-//                PosTexVertex pos0 = makeVertex(cubeVerts[order[0]], cube.getU(face, 0), cube.getV(face, 0));
-//                PosTexVertex pos1 = makeVertex(cubeVerts[order[1]], cube.getU(face, 1), cube.getV(face, 1));
-//                PosTexVertex pos2 = makeVertex(cubeVerts[order[2]], cube.getU(face, 2), cube.getV(face, 2));
-//                PosTexVertex pos3 = makeVertex(cubeVerts[order[3]], cube.getU(face, 3), cube.getV(face, 3));
+//                PosTexVertex pos0 = makeVertex(cubeVerts[order[0]], cube.getU(face, 0),
+// cube.getV(face, 0));
+//                PosTexVertex pos1 = makeVertex(cubeVerts[order[1]], cube.getU(face, 1),
+// cube.getV(face, 1));
+//                PosTexVertex pos2 = makeVertex(cubeVerts[order[2]], cube.getU(face, 2),
+// cube.getV(face, 2));
+//                PosTexVertex pos3 = makeVertex(cubeVerts[order[3]], cube.getU(face, 3),
+// cube.getV(face, 3));
 //                Direction direction = getFaceDirection(face);
 //
 //                if (pos1.pos.y() > this.yClipCoord != pos2.pos.y() > this.yClipCoord) {
 //                    float distance = pos2.pos.y() - pos1.pos.y();
-//                    float textureV = pos1.v + (pos2.v - pos1.v) * ((this.yClipCoord - pos1.pos.y()) / distance);
+//                    float textureV = pos1.v + (pos2.v - pos1.v) * ((this.yClipCoord -
+// pos1.pos.y()) / distance);
 //                    Vector3f clipPos1 = getClipPoint(pos1.pos, pos2.pos, this.yClipCoord);
 //                    Vector3f clipPos2 = getClipPoint(pos0.pos, pos3.pos, this.yClipCoord);
 //                    PosTexVertex pos4 = new PosTexVertex(clipPos2, pos0.u, textureV);
@@ -897,12 +965,16 @@
 //
 //                    if (isFront) {
 //                        polygons.add(new AnimatedPolygon(new AnimatedVertex[]{
-//                                new AnimatedVertex(pos4, this.middleJoint), new AnimatedVertex(pos5, this.middleJoint),
-//                                new AnimatedVertex(pos5, this.upperJoint), new AnimatedVertex(pos4, this.upperJoint)
+//                                new AnimatedVertex(pos4, this.middleJoint), new
+// AnimatedVertex(pos5, this.middleJoint),
+//                                new AnimatedVertex(pos5, this.upperJoint), new
+// AnimatedVertex(pos4, this.upperJoint)
 //                        }, 0.001F, direction));
 //                        polygons.add(new AnimatedPolygon(new AnimatedVertex[]{
-//                                new AnimatedVertex(pos4, this.lowerJoint), new AnimatedVertex(pos5, this.lowerJoint),
-//                                new AnimatedVertex(pos5, this.middleJoint), new AnimatedVertex(pos4, this.middleJoint)
+//                                new AnimatedVertex(pos4, this.lowerJoint), new
+// AnimatedVertex(pos5, this.lowerJoint),
+//                                new AnimatedVertex(pos5, this.middleJoint), new
+// AnimatedVertex(pos4, this.middleJoint)
 //                        }, 0.001F, direction));
 //                    } else if (!hasSameZ) {
 //                        boolean startFront = pos4.pos.z() > 0;
@@ -914,16 +986,21 @@
 //                        int sixthJoint = this.upperJoint;
 //
 //                        polygons.add(new AnimatedPolygon(new AnimatedVertex[]{
-//                                new AnimatedVertex(pos4, firstJoint), new AnimatedVertex(pos5, secondJoint),
-//                                new AnimatedVertex(pos5, thirdJoint), new AnimatedVertex(pos4, fourthJoint)
+//                                new AnimatedVertex(pos4, firstJoint), new AnimatedVertex(pos5,
+// secondJoint),
+//                                new AnimatedVertex(pos5, thirdJoint), new AnimatedVertex(pos4,
+// fourthJoint)
 //                        }, 0.001F, direction));
 //                        polygons.add(new AnimatedPolygon(new AnimatedVertex[]{
-//                                new AnimatedVertex(pos4, fourthJoint), new AnimatedVertex(pos5, thirdJoint),
-//                                new AnimatedVertex(pos5, fifthJoint), new AnimatedVertex(pos4, sixthJoint)
+//                                new AnimatedVertex(pos4, fourthJoint), new AnimatedVertex(pos5,
+// thirdJoint),
+//                                new AnimatedVertex(pos5, fifthJoint), new AnimatedVertex(pos4,
+// sixthJoint)
 //                        }, 0.001F, direction));
 //                    }
 //                } else {
-//                    int jointId = pos0.pos.y() > this.yClipCoord ? this.upperJoint : this.lowerJoint;
+//                    int jointId = pos0.pos.y() > this.yClipCoord ? this.upperJoint :
+// this.lowerJoint;
 //                    polygons.add(new AnimatedPolygon(new AnimatedVertex[]{
 //                            new AnimatedVertex(pos0, jointId), new AnimatedVertex(pos1, jointId),
 //                            new AnimatedVertex(pos2, jointId), new AnimatedVertex(pos3, jointId)
@@ -932,11 +1009,13 @@
 //            }
 //
 //            for (AnimatedPolygon quad : polygons) {
-//                Vector3f norm = cube.transformedNormal(getFaceDirection(quad.faceIndex), poseStack.last().normal());
+//                Vector3f norm = cube.transformedNormal(getFaceDirection(quad.faceIndex),
+// poseStack.last().normal());
 //
 //                for (AnimatedVertex vertex : quad.animatedVertexPositions) {
 //                    vertices.add(new SingleGroupVertexBuilder()
-//                            .setPosition(new Vec3f(vertex.pos.x(), vertex.pos.y(), vertex.pos.z()))
+//                            .setPosition(new Vec3f(vertex.pos.x(), vertex.pos.y(),
+// vertex.pos.z()))
 //                            .setNormal(new Vec3f(norm.x(), norm.y(), norm.z()))
 //                            .setTextureCoordinate(new Vec2f(vertex.u, vertex.v))
 //                            .setEffectiveJointIDs(new Vec3f(vertex.jointId.getX(), 0, 0))
@@ -966,13 +1045,15 @@
 //        AnimatedVertex(PosTexVertex posTexVertex, int jointId1, int jointId2, int jointId3,
 //                       float weight1, float weight2, float weight3) {
 //            this(posTexVertex.pos, posTexVertex.u, posTexVertex.v,
-//                    new Vec3i(jointId1, jointId2, jointId3), new Vec3f(weight1, weight2, weight3));
+//                    new Vec3i(jointId1, jointId2, jointId3), new Vec3f(weight1, weight2,
+// weight3));
 //        }
 //
 //        AnimatedVertex(AnimatedVertex other, int jointId1, int jointId2, int jointId3,
 //                       float weight1, float weight2, float weight3) {
 //            this(other.pos, other.u, other.v,
-//                    new Vec3i(jointId1, jointId2, jointId3), new Vec3f(weight1, weight2, weight3));
+//                    new Vec3i(jointId1, jointId2, jointId3), new Vec3f(weight1, weight2,
+// weight3));
 //        }
 //
 //        AnimatedVertex(AnimatedVertex other, float u, float v, Vec3i ids, Vec3f weights) {
@@ -1001,10 +1082,14 @@
 //
 //        AnimatedPolygon(AnimatedVertex[] positionsIn, float cor, Direction directionIn) {
 //            this.animatedVertexPositions = positionsIn;
-//            positionsIn[0] = new AnimatedVertex(positionsIn[0], positionsIn[0].u, positionsIn[0].v + cor, positionsIn[0].jointId, positionsIn[0].weight);
-//            positionsIn[1] = new AnimatedVertex(positionsIn[1], positionsIn[1].u, positionsIn[1].v + cor, positionsIn[1].jointId, positionsIn[1].weight);
-//            positionsIn[2] = new AnimatedVertex(positionsIn[2], positionsIn[2].u, positionsIn[2].v - cor, positionsIn[2].jointId, positionsIn[2].weight);
-//            positionsIn[3] = new AnimatedVertex(positionsIn[3], positionsIn[3].u, positionsIn[3].v - cor, positionsIn[3].jointId, positionsIn[3].weight);
+//            positionsIn[0] = new AnimatedVertex(positionsIn[0], positionsIn[0].u, positionsIn[0].v
+// + cor, positionsIn[0].jointId, positionsIn[0].weight);
+//            positionsIn[1] = new AnimatedVertex(positionsIn[1], positionsIn[1].u, positionsIn[1].v
+// + cor, positionsIn[1].jointId, positionsIn[1].weight);
+//            positionsIn[2] = new AnimatedVertex(positionsIn[2], positionsIn[2].u, positionsIn[2].v
+// - cor, positionsIn[2].jointId, positionsIn[2].weight);
+//            positionsIn[3] = new AnimatedVertex(positionsIn[3], positionsIn[3].u, positionsIn[3].v
+// - cor, positionsIn[3].jointId, positionsIn[3].weight);
 //            this.normal = directionIn.step();
 //            this.faceIndex = directionIn.ordinal();
 //        }
@@ -1039,4 +1124,4 @@
 //            return this.partName.hashCode();
 //        }
 //    }
-//}
+// }

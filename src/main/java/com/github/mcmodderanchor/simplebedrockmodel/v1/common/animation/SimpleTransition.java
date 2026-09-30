@@ -35,13 +35,14 @@ public class SimpleTransition<T> implements IAnimationTransition<T> {
     private final Consumer<T> afterTrigger;
     private final InterpolatedPoseFunction<T> interpolatedPoseFunction;
 
-    public SimpleTransition(IAnimationState<T> target,
-                            float duration,
-                            TransferOutStrategy strategy,
-                            Predicate<T> predicate,
-                            Supplier<IBlendCurve> curve,
-                            Consumer<T> afterTrigger,
-                            InterpolatedPoseFunction<T> interpolatedPoseFunction) {
+    public SimpleTransition(
+            IAnimationState<T> target,
+            float duration,
+            TransferOutStrategy strategy,
+            Predicate<T> predicate,
+            Supplier<IBlendCurve> curve,
+            Consumer<T> afterTrigger,
+            InterpolatedPoseFunction<T> interpolatedPoseFunction) {
         this.target = target;
         this.duration = duration;
         this.strategy = strategy;
@@ -86,7 +87,6 @@ public class SimpleTransition<T> implements IAnimationTransition<T> {
         return interpolatedPoseFunction.getPose(context, fromPose, toPose, progress);
     }
 
-
     @FunctionalInterface
     public interface InterpolatedPoseFunction<T> {
         Pose getPose(T context, Pose fromPose, Pose toPose, float progress);
@@ -99,10 +99,10 @@ public class SimpleTransition<T> implements IAnimationTransition<T> {
         private TransferOutStrategy strategy = TransferOutStrategy.TO_STATE;
         private Predicate<T> predicate = (ctx) -> true;
         private Supplier<IBlendCurve> curve = () -> new EasingBlendCurve(Easing.LINEAR);
-        private Consumer<T> afterTrigger = (state) -> {
-        };
-        private InterpolatedPoseFunction<T> interpolatedPoseFunction = (ctx, fromPose, toPose, progress) ->
-                TRANSITION_BLENDER.blend(fromPose, toPose, progress);
+        private Consumer<T> afterTrigger = (state) -> {};
+        private InterpolatedPoseFunction<T> interpolatedPoseFunction =
+                (ctx, fromPose, toPose, progress) ->
+                        TRANSITION_BLENDER.blend(fromPose, toPose, progress);
 
         @SafeVarargs
         public final Builder<T> from(IAnimationState<T>... target) {
@@ -148,10 +148,15 @@ public class SimpleTransition<T> implements IAnimationTransition<T> {
         }
 
         public SimpleTransition<T> build() {
-            var transition = new SimpleTransition<>(
-                    target, duration, strategy, predicate,
-                    curve, afterTrigger, interpolatedPoseFunction
-            );
+            var transition =
+                    new SimpleTransition<>(
+                            target,
+                            duration,
+                            strategy,
+                            predicate,
+                            curve,
+                            afterTrigger,
+                            interpolatedPoseFunction);
             for (IAnimationState<T> state : from) {
                 if (state instanceof SimpleAnimationState<T> simpleState) {
                     simpleState.addTransition(transition);
@@ -160,5 +165,4 @@ public class SimpleTransition<T> implements IAnimationTransition<T> {
             return transition;
         }
     }
-
 }

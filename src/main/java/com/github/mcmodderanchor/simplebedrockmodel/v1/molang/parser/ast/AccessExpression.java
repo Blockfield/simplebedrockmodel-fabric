@@ -23,16 +23,15 @@
  */
 package com.github.mcmodderanchor.simplebedrockmodel.v1.molang.parser.ast;
 
-import org.jetbrains.annotations.NotNull;
-
 import static java.util.Objects.requireNonNull;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
- * Property accessing expression implementation,
- * access to a property on another expression result.
+ * Property accessing expression implementation, access to a property on another expression result.
  *
- * <p>Example property accessing expressions: {@code v.x},
- * {@code v.location.x}, {@code 'str'.length}, {@code query.print}</p>
+ * <p>Example property accessing expressions: {@code v.x}, {@code v.location.x}, {@code
+ * 'str'.length}, {@code query.print}
  *
  * @since 3.0.0
  */
@@ -47,8 +46,7 @@ public final class AccessExpression implements Expression {
     }
 
     /**
-     * Gets the "object" expression, the property is
-     * evaluated on this expression's result.
+     * Gets the "object" expression, the property is evaluated on this expression's result.
      *
      * @return The object expression.
      * @since 3.0.0
@@ -58,8 +56,7 @@ public final class AccessExpression implements Expression {
     }
 
     /**
-     * Sets the "object" expression, the property is
-     * evaluated on this expression's result.
+     * Sets the "object" expression, the property is evaluated on this expression's result.
      *
      * @param object The object expression.
      * @since 3.0.0
@@ -103,5 +100,4 @@ public final class AccessExpression implements Expression {
         result = 31 * result + property.hashCode();
         return result;
     }
-
 }

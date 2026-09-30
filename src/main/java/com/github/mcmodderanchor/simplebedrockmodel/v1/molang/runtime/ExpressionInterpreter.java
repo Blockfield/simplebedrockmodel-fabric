@@ -23,9 +23,12 @@
  */
 package com.github.mcmodderanchor.simplebedrockmodel.v1.molang.runtime;
 
+import static java.util.Objects.requireNonNull;
+
 import com.github.mcmodderanchor.simplebedrockmodel.v1.molang.parser.ast.*;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.molang.runtime.binding.JavaFunction;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.molang.runtime.value.*;
+
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -33,85 +36,86 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Arrays;
 import java.util.List;
 
-import static java.util.Objects.requireNonNull;
-
 @ApiStatus.Internal
-public final class ExpressionInterpreter<T> implements ExpressionVisitor<Value>, ExecutionContext<T> {
-    private static final List<Evaluator> BINARY_EVALUATORS = Arrays.asList(
-            bool((a, b) -> a.eval() && b.eval()),
-            bool((a, b) -> a.eval() || b.eval()),
-            compare((a, b) -> a.eval() < b.eval()),
-            compare((a, b) -> a.eval() <= b.eval()),
-            compare((a, b) -> a.eval() > b.eval()),
-            compare((a, b) -> a.eval() >= b.eval()),
-            (evaluator, a, b) -> {
-                final Value aVal = a.visit(evaluator);
-                final Value bVal = b.visit(evaluator);
-                // string concatenation is not supported in molang
-                // if (aVal.isString() || bVal.isString()) {
-                //     return StringValue.of(aVal.getAsString() + bVal.getAsString());
-                // } else {
-                return NumberValue.of(aVal.getAsNumber() + bVal.getAsNumber());
-                // }
-            },
-            arithmetic((a, b) -> a.eval() - b.eval()),
-            arithmetic((a, b) -> a.eval() * b.eval()),
-            arithmetic((a, b) -> {
-                // Molang allows division by zero,
-                // which is always equal to 0
-                final double dividend = a.eval();
-                final double divisor = b.eval();
-                if (divisor == 0) return 0;
-                else return dividend / divisor;
-            }),
-            (evaluator, a, b) -> { // arrow
-                final Value val = a.visit(evaluator);
-                if (!(val instanceof JavaValue)) {
-                    return NumberValue.zero();
-                } else {
-                    return b.visit(evaluator.createChild(((JavaValue) val).value()));
-                }
-            },
-            (evaluator, a, b) -> { // null coalesce
-                final Value val = a.visit(evaluator);
-                if (val.getAsBoolean()) {
-                    return val;
-                } else {
-                    return b.visit(evaluator);
-                }
-            },
-            (evaluator, a, b) -> { // assignation
-                final Value val = b.visit(evaluator);
-                // we can only assign to values that are accessed
-                // like:
-                //      temp.x = 1
-                //      t.location.world = 'world'
-                // but not:
-                //      x = 1
-                //      i = 2
-                if (a instanceof AccessExpression access) {
-                    final Value objectValue = access.object().visit(evaluator);
-                    if (objectValue instanceof MutableObjectBinding) {
-                        ((MutableObjectBinding) objectValue).set(access.property(), val);
-                    }
-                }
-                return val;
-            },
-            (evaluator, a, b) -> { // conditional
-                final Value conditionValue = a.visit(evaluator);
-                if (conditionValue.getAsBoolean()) {
-                    final Value predicateVal = b.visit(evaluator);
-                    if (predicateVal instanceof Function) {
-                        return Value.of(((Function) predicateVal).evaluate(evaluator));
-                    } else {
-                        return predicateVal;
-                    }
-                }
-                return NumberValue.zero();
-            },
-            arithmetic((a, b) -> ((a.eval() == b.eval()) ? 1.0F : 0.0F)), // eq
-            arithmetic((a, b) -> ((a.eval() != b.eval()) ? 1.0F : 0.0F))  // neq
-    );
+public final class ExpressionInterpreter<T>
+        implements ExpressionVisitor<Value>, ExecutionContext<T> {
+    private static final List<Evaluator> BINARY_EVALUATORS =
+            Arrays.asList(
+                    bool((a, b) -> a.eval() && b.eval()),
+                    bool((a, b) -> a.eval() || b.eval()),
+                    compare((a, b) -> a.eval() < b.eval()),
+                    compare((a, b) -> a.eval() <= b.eval()),
+                    compare((a, b) -> a.eval() > b.eval()),
+                    compare((a, b) -> a.eval() >= b.eval()),
+                    (evaluator, a, b) -> {
+                        final Value aVal = a.visit(evaluator);
+                        final Value bVal = b.visit(evaluator);
+                        // string concatenation is not supported in molang
+                        // if (aVal.isString() || bVal.isString()) {
+                        //     return StringValue.of(aVal.getAsString() + bVal.getAsString());
+                        // } else {
+                        return NumberValue.of(aVal.getAsNumber() + bVal.getAsNumber());
+                        // }
+                    },
+                    arithmetic((a, b) -> a.eval() - b.eval()),
+                    arithmetic((a, b) -> a.eval() * b.eval()),
+                    arithmetic(
+                            (a, b) -> {
+                                // Molang allows division by zero,
+                                // which is always equal to 0
+                                final double dividend = a.eval();
+                                final double divisor = b.eval();
+                                if (divisor == 0) return 0;
+                                else return dividend / divisor;
+                            }),
+                    (evaluator, a, b) -> { // arrow
+                        final Value val = a.visit(evaluator);
+                        if (!(val instanceof JavaValue)) {
+                            return NumberValue.zero();
+                        } else {
+                            return b.visit(evaluator.createChild(((JavaValue) val).value()));
+                        }
+                    },
+                    (evaluator, a, b) -> { // null coalesce
+                        final Value val = a.visit(evaluator);
+                        if (val.getAsBoolean()) {
+                            return val;
+                        } else {
+                            return b.visit(evaluator);
+                        }
+                    },
+                    (evaluator, a, b) -> { // assignation
+                        final Value val = b.visit(evaluator);
+                        // we can only assign to values that are accessed
+                        // like:
+                        //      temp.x = 1
+                        //      t.location.world = 'world'
+                        // but not:
+                        //      x = 1
+                        //      i = 2
+                        if (a instanceof AccessExpression access) {
+                            final Value objectValue = access.object().visit(evaluator);
+                            if (objectValue instanceof MutableObjectBinding) {
+                                ((MutableObjectBinding) objectValue).set(access.property(), val);
+                            }
+                        }
+                        return val;
+                    },
+                    (evaluator, a, b) -> { // conditional
+                        final Value conditionValue = a.visit(evaluator);
+                        if (conditionValue.getAsBoolean()) {
+                            final Value predicateVal = b.visit(evaluator);
+                            if (predicateVal instanceof Function) {
+                                return Value.of(((Function) predicateVal).evaluate(evaluator));
+                            } else {
+                                return predicateVal;
+                            }
+                        }
+                        return NumberValue.zero();
+                    },
+                    arithmetic((a, b) -> ((a.eval() == b.eval()) ? 1.0F : 0.0F)), // eq
+                    arithmetic((a, b) -> ((a.eval() != b.eval()) ? 1.0F : 0.0F)) // neq
+                    );
 
     private final T entity;
     private final Scope scope;
@@ -126,24 +130,27 @@ public final class ExpressionInterpreter<T> implements ExpressionVisitor<Value>,
     }
 
     private static Evaluator bool(BooleanOperator op) {
-        return (evaluator, a, b) -> Value.of(op.operate(
-                () -> a.visit(evaluator).getAsBoolean(),
-                () -> b.visit(evaluator).getAsBoolean()
-        ));
+        return (evaluator, a, b) ->
+                Value.of(
+                        op.operate(
+                                () -> a.visit(evaluator).getAsBoolean(),
+                                () -> b.visit(evaluator).getAsBoolean()));
     }
 
     private static Evaluator compare(Comparator comp) {
-        return (evaluator, a, b) -> Value.of(comp.compare(
-                () -> a.visit(evaluator).getAsNumber(),
-                () -> b.visit(evaluator).getAsNumber()
-        ));
+        return (evaluator, a, b) ->
+                Value.of(
+                        comp.compare(
+                                () -> a.visit(evaluator).getAsNumber(),
+                                () -> b.visit(evaluator).getAsNumber()));
     }
 
     private static Evaluator arithmetic(ArithmeticOperator op) {
-        return (evaluator, a, b) -> NumberValue.of(op.operate(
-                () -> a.visit(evaluator).getAsNumber(),
-                () -> b.visit(evaluator).getAsNumber()
-        ));
+        return (evaluator, a, b) ->
+                NumberValue.of(
+                        op.operate(
+                                () -> a.visit(evaluator).getAsNumber(),
+                                () -> b.visit(evaluator).getAsNumber()));
     }
 
     public void warnOnReflectiveFunctionUsage(final boolean warnOnReflectiveFunctionUsage) {
@@ -298,7 +305,9 @@ public final class ExpressionInterpreter<T> implements ExpressionVisitor<Value>,
         }
 
         if (warnOnReflectiveFunctionUsage && function instanceof JavaFunction<?> javaFunction) {
-            System.err.println("Warning: Reflective function usage detected for method: " + javaFunction.method());
+            System.err.println(
+                    "Warning: Reflective function usage detected for method: "
+                            + javaFunction.method());
         }
 
         return ((Function<T>) function).evaluate(this, args);
@@ -310,20 +319,22 @@ public final class ExpressionInterpreter<T> implements ExpressionVisitor<Value>,
     }
 
     @Override
-    public @NotNull Value visitExecutionScope(final @NotNull ExecutionScopeExpression executionScope) {
+    public @NotNull Value visitExecutionScope(
+            final @NotNull ExecutionScopeExpression executionScope) {
         List<Expression> expressions = executionScope.expressions();
-        return (Function<T>) (context, arguments) -> {
-            for (Expression expression : expressions) {
-                // eval expression, ignore result
-                context.eval(expression);
+        return (Function<T>)
+                (context, arguments) -> {
+                    for (Expression expression : expressions) {
+                        // eval expression, ignore result
+                        context.eval(expression);
 
-                // check for return values
-                if (context.flag() != null) {
-                    break;
-                }
-            }
-            return NumberValue.zero();
-        };
+                        // check for return values
+                        if (context.flag() != null) {
+                            break;
+                        }
+                    }
+                    return NumberValue.zero();
+                };
     }
 
     @Override
@@ -333,11 +344,9 @@ public final class ExpressionInterpreter<T> implements ExpressionVisitor<Value>,
 
     @Override
     public @NotNull Value visitBinary(@NotNull BinaryExpression expression) {
-        return BINARY_EVALUATORS.get(expression.op().ordinal()).eval(
-                this,
-                expression.left(),
-                expression.right()
-        );
+        return BINARY_EVALUATORS
+                .get(expression.op().ordinal())
+                .eval(this, expression.left(), expression.right());
     }
 
     @Override
@@ -348,10 +357,11 @@ public final class ExpressionInterpreter<T> implements ExpressionVisitor<Value>,
                 return Value.of(!value.getAsBoolean());
             case ARITHMETICAL_NEGATION:
                 return NumberValue.of(-value.getAsNumber());
-            case RETURN: {
-                this.returnValue = value;
-                return NumberValue.zero();
-            }
+            case RETURN:
+                {
+                    this.returnValue = value;
+                    return NumberValue.zero();
+                }
             default:
                 throw new IllegalStateException("Unknown operation");
         }
@@ -360,14 +370,16 @@ public final class ExpressionInterpreter<T> implements ExpressionVisitor<Value>,
     @Override
     public @NotNull Value visitStatement(final @NotNull StatementExpression expression) {
         switch (expression.op()) {
-            case BREAK: {
-                this.flag = StatementExpression.Op.BREAK;
-                break;
-            }
-            case CONTINUE: {
-                this.flag = StatementExpression.Op.CONTINUE;
-                break;
-            }
+            case BREAK:
+                {
+                    this.flag = StatementExpression.Op.BREAK;
+                    break;
+                }
+            case CONTINUE:
+                {
+                    this.flag = StatementExpression.Op.CONTINUE;
+                    break;
+                }
         }
         return NumberValue.zero();
     }
@@ -378,7 +390,8 @@ public final class ExpressionInterpreter<T> implements ExpressionVisitor<Value>,
     }
 
     @Override
-    public @NotNull Value visitTernaryConditional(@NotNull TernaryConditionalExpression expression) {
+    public @NotNull Value visitTernaryConditional(
+            @NotNull TernaryConditionalExpression expression) {
         final Value conditionResult = expression.condition().visit(this);
         return conditionResult.getAsBoolean()
                 ? expression.trueExpression().visit(this)
@@ -391,7 +404,8 @@ public final class ExpressionInterpreter<T> implements ExpressionVisitor<Value>,
     }
 
     private interface Evaluator {
-        @NotNull Value eval(ExpressionInterpreter<?> evaluator, Expression a, Expression b);
+        @NotNull
+        Value eval(ExpressionInterpreter<?> evaluator, Expression a, Expression b);
     }
 
     private interface BooleanOperator {
@@ -408,7 +422,6 @@ public final class ExpressionInterpreter<T> implements ExpressionVisitor<Value>,
 
     private interface Comparator {
         boolean compare(LazyEvaluableDouble a, LazyEvaluableDouble b);
-
     }
 
     private interface ArithmeticOperator {
@@ -416,7 +429,8 @@ public final class ExpressionInterpreter<T> implements ExpressionVisitor<Value>,
     }
 
     public static class FunctionArguments implements Function.Arguments {
-        public static final Function.Arguments EMPTY = new FunctionArguments(new Function.Argument[0]);
+        public static final Function.Arguments EMPTY =
+                new FunctionArguments(new Function.Argument[0]);
 
         private final Function.Argument[] arguments;
         private int next;

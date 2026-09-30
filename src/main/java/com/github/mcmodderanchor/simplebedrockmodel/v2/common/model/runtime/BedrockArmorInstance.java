@@ -1,34 +1,25 @@
 package com.github.mcmodderanchor.simplebedrockmodel.v2.common.model.runtime;
 
 import com.github.mcmodderanchor.simplebedrockmodel.v2.common.model.baked.BakedBedrockModel;
+
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
+
 import org.jetbrains.annotations.Nullable;
 
-/**
- * v2 盔甲用的运行时实例封装。
- * 直接继承 BedrockModelInstance，便于在外部继续按常规实例使用。
- */
+/** v2 盔甲用的运行时实例封装。 直接继承 BedrockModelInstance，便于在外部继续按常规实例使用。 */
 public class BedrockArmorInstance extends BakedModelInstance {
-    @Nullable
-    private final BoneState armorHead;
-    @Nullable
-    private final BoneState armorBody;
-    @Nullable
-    private final BoneState armorRightArm;
-    @Nullable
-    private final BoneState armorLeftArm;
-    @Nullable
-    private final BoneState armorRightLeg;
-    @Nullable
-    private final BoneState armorLeftLeg;
-    @Nullable
-    private final BoneState armorRightBoot;
-    @Nullable
-    private final BoneState armorLeftBoot;
+    @Nullable private final BoneState armorHead;
+    @Nullable private final BoneState armorBody;
+    @Nullable private final BoneState armorRightArm;
+    @Nullable private final BoneState armorLeftArm;
+    @Nullable private final BoneState armorRightLeg;
+    @Nullable private final BoneState armorLeftLeg;
+    @Nullable private final BoneState armorRightBoot;
+    @Nullable private final BoneState armorLeftBoot;
 
     public BedrockArmorInstance(BakedBedrockModel baseModel) {
         super(baseModel);
@@ -42,7 +33,11 @@ public class BedrockArmorInstance extends BakedModelInstance {
         this.armorLeftBoot = getBone("armorLeftBoot");
     }
 
-    public void preparePose(LivingEntity livingEntity, ItemStack itemStack, EquipmentSlot equipmentSlot, HumanoidModel<?> original) {
+    public void preparePose(
+            LivingEntity livingEntity,
+            ItemStack itemStack,
+            EquipmentSlot equipmentSlot,
+            HumanoidModel<?> original) {
         this.resetPose();
         copyModelPart(original.head, this.armorHead, 0, 24, 0);
         copyModelPart(original.body, this.armorBody, 0, 24, 0);
@@ -72,7 +67,8 @@ public class BedrockArmorInstance extends BakedModelInstance {
         }
     }
 
-    public void copyModelPart(ModelPart part, @Nullable BoneState bone, float initX, float initY, float initZ) {
+    public void copyModelPart(
+            ModelPart part, @Nullable BoneState bone, float initX, float initY, float initZ) {
         if (bone != null) {
             float deltaX = part.x - initX;
             float deltaY = part.y - initY;

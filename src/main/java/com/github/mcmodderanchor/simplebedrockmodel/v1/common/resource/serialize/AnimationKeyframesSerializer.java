@@ -2,8 +2,11 @@ package com.github.mcmodderanchor.simplebedrockmodel.v1.common.resource.serializ
 
 import com.github.mcmodderanchor.simplebedrockmodel.v1.common.resource.pojo.AnimationKeyframes;
 import com.google.gson.*;
+
 import it.unimi.dsi.fastutil.doubles.Double2ObjectRBTreeMap;
+
 import net.minecraft.util.GsonHelper;
+
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 
@@ -13,21 +16,27 @@ import java.util.Map;
 @SuppressWarnings("ALL")
 public class AnimationKeyframesSerializer implements JsonDeserializer<AnimationKeyframes> {
     @Override
-    public AnimationKeyframes deserialize(JsonElement json, Type type, JsonDeserializationContext context) throws JsonParseException {
-        Double2ObjectRBTreeMap<AnimationKeyframes.Keyframe> keyframes = new Double2ObjectRBTreeMap<>();
+    public AnimationKeyframes deserialize(
+            JsonElement json, Type type, JsonDeserializationContext context)
+            throws JsonParseException {
+        Double2ObjectRBTreeMap<AnimationKeyframes.Keyframe> keyframes =
+                new Double2ObjectRBTreeMap<>();
         // 如果是数字
         if (json.isJsonPrimitive()) {
             if (json.getAsJsonPrimitive().isString()) {
                 // 单个 Molang 表达式，作为 data 的三个分量
                 String expr = json.getAsString();
                 String[] dataExpr = {expr, expr, expr};
-                AnimationKeyframes.Keyframe keyframe = new AnimationKeyframes.Keyframe(null, null, null, null, null, null, dataExpr);
+                AnimationKeyframes.Keyframe keyframe =
+                        new AnimationKeyframes.Keyframe(
+                                null, null, null, null, null, null, dataExpr);
                 keyframes.put(0, keyframe);
                 return new AnimationKeyframes(keyframes);
             } else {
                 float value = json.getAsJsonPrimitive().getAsFloat();
                 Vector3f data = new Vector3f(value, value, value);
-                AnimationKeyframes.Keyframe keyframe = new AnimationKeyframes.Keyframe(null, null, data, null);
+                AnimationKeyframes.Keyframe keyframe =
+                        new AnimationKeyframes.Keyframe(null, null, data, null);
                 keyframes.put(0, keyframe);
                 return new AnimationKeyframes(keyframes);
             }
@@ -37,11 +46,14 @@ public class AnimationKeyframesSerializer implements JsonDeserializer<AnimationK
             JsonArray array = json.getAsJsonArray();
             String[] molangExprs = extractMolangFromArray(array);
             if (molangExprs != null) {
-                AnimationKeyframes.Keyframe keyframe = new AnimationKeyframes.Keyframe(null, null, null, null, null, null, molangExprs);
+                AnimationKeyframes.Keyframe keyframe =
+                        new AnimationKeyframes.Keyframe(
+                                null, null, null, null, null, null, molangExprs);
                 keyframes.put(0, keyframe);
             } else {
                 Vector3f data = this.readVector3f(array);
-                AnimationKeyframes.Keyframe keyframe = new AnimationKeyframes.Keyframe(null, null, data, null);
+                AnimationKeyframes.Keyframe keyframe =
+                        new AnimationKeyframes.Keyframe(null, null, data, null);
                 keyframes.put(0, keyframe);
             }
             return new AnimationKeyframes(keyframes);
@@ -65,7 +77,8 @@ public class AnimationKeyframesSerializer implements JsonDeserializer<AnimationK
             JsonArray array = element.getAsJsonArray();
             String[] molangExprs = extractMolangFromArray(array);
             if (molangExprs != null) {
-                return new AnimationKeyframes.Keyframe(null, null, null, null, null, null, molangExprs);
+                return new AnimationKeyframes.Keyframe(
+                        null, null, null, null, null, null, molangExprs);
             }
             Vector3f data = this.readVector3f(array);
             return new AnimationKeyframes.Keyframe(null, null, data, null);
@@ -101,15 +114,14 @@ public class AnimationKeyframesSerializer implements JsonDeserializer<AnimationK
                     }
                 }
             }
-            return new AnimationKeyframes.Keyframe(pre, post, null, lerpMode, preExpressions, postExpressions, null);
+            return new AnimationKeyframes.Keyframe(
+                    pre, post, null, lerpMode, preExpressions, postExpressions, null);
         }
         return new AnimationKeyframes.Keyframe(null, null, null, null);
     }
 
     /**
-     * 检查 JsonArray 中是否包含 Molang 字符串表达式。
-     * 如果任意一个元素是字符串，则返回一个长度为 3 的表达式数组；
-     * 数字元素会被转换为字符串形式的常量。
+     * 检查 JsonArray 中是否包含 Molang 字符串表达式。 如果任意一个元素是字符串，则返回一个长度为 3 的表达式数组； 数字元素会被转换为字符串形式的常量。
      * 如果所有元素都是数字，返回 null。
      */
     @Nullable
@@ -129,7 +141,8 @@ public class AnimationKeyframesSerializer implements JsonDeserializer<AnimationK
                 expressions[i] = elem.getAsString();
             } else {
                 // 数字元素转为常量字符串
-                expressions[i] = String.valueOf(GsonHelper.convertToFloat(elem, "(array i=" + i + ")"));
+                expressions[i] =
+                        String.valueOf(GsonHelper.convertToFloat(elem, "(array i=" + i + ")"));
             }
         }
         return expressions;

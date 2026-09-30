@@ -23,18 +23,16 @@
  */
 package com.github.mcmodderanchor.simplebedrockmodel.v1.molang.parser.ast;
 
-import org.jetbrains.annotations.NotNull;
-
 import static java.util.Objects.requireNonNull;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
- * Unary expression implementation, performs a single operation
- * to a single expression, like logical negation, arithmetical
- * negation, or "return expr;".
+ * Unary expression implementation, performs a single operation to a single expression, like logical
+ * negation, arithmetical negation, or "return expr;".
  *
- * <p>Example unary expressions: {@code -hello}, {@code !p},
- * {@code !q}, {@code -(10 * 5)}, {@code return this},
- * {@code return 5}</p>
+ * <p>Example unary expressions: {@code -hello}, {@code !p}, {@code !q}, {@code -(10 * 5)}, {@code
+ * return this}, {@code return 5}
  *
  * @since 3.0.0
  */
@@ -108,5 +106,4 @@ public final class UnaryExpression implements Expression {
         ARITHMETICAL_NEGATION,
         RETURN
     }
-
 }

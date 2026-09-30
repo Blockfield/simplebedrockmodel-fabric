@@ -23,17 +23,17 @@
  */
 package com.github.mcmodderanchor.simplebedrockmodel.v1.molang.parser.ast;
 
+import static java.util.Objects.requireNonNull;
+
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
-import static java.util.Objects.requireNonNull;
-
 /**
- * Expression implementation for binary expressions
- * (expressions composed by <b>two</b> other expressions)
+ * Expression implementation for binary expressions (expressions composed by <b>two</b> other
+ * expressions)
  *
- * <p>Example binary expressions: {@code 1 + 1}, {@code 5 * 9},
- * {@code a == b}, {@code a < b}, {@code true ?? false}</p>
+ * <p>Example binary expressions: {@code 1 + 1}, {@code 5 * 9}, {@code a == b}, {@code a < b},
+ * {@code true ?? false}
  *
  * @since 3.0.0
  */
@@ -42,7 +42,8 @@ public final class BinaryExpression implements Expression {
     private Expression left;
     private Expression right;
 
-    public BinaryExpression(final @NotNull Op op, final @NotNull Expression left, final @NotNull Expression right) {
+    public BinaryExpression(
+            final @NotNull Op op, final @NotNull Expression left, final @NotNull Expression right) {
         this.op = requireNonNull(op, "op");
         this.left = requireNonNull(left, "left");
         this.right = requireNonNull(right, "right");
@@ -59,8 +60,7 @@ public final class BinaryExpression implements Expression {
     }
 
     /**
-     * Gets the left-hand expression for this
-     * binary expression.
+     * Gets the left-hand expression for this binary expression.
      *
      * @return The left-hand expression
      * @since 3.0.0
@@ -70,8 +70,7 @@ public final class BinaryExpression implements Expression {
     }
 
     /**
-     * Sets the left-hand expression for this
-     * binary expression.
+     * Sets the left-hand expression for this binary expression.
      *
      * @param left The left-hand expression
      * @since 3.0.0
@@ -81,8 +80,7 @@ public final class BinaryExpression implements Expression {
     }
 
     /**
-     * Gets the right-hand expression for this
-     * binary expression.
+     * Gets the right-hand expression for this binary expression.
      *
      * @return The right-hand expression
      * @since 3.0.0
@@ -92,8 +90,7 @@ public final class BinaryExpression implements Expression {
     }
 
     /**
-     * Sets the right-hand expression for this
-     * binary expression.
+     * Sets the right-hand expression for this binary expression.
      *
      * @param right The right-hand expression
      * @since 3.0.0
@@ -158,7 +155,5 @@ public final class BinaryExpression implements Expression {
         public int precedence() {
             return precedence;
         }
-
     }
-
 }

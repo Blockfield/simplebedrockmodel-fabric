@@ -2,6 +2,7 @@ package com.github.mcmodderanchor.simplebedrockmodel.v2.client.compat.accelerate
 
 import com.github.argon4w.acceleratedrendering.core.buffers.accelerated.builders.IBufferGraph;
 import com.github.argon4w.acceleratedrendering.core.meshes.IMesh;
+
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 
 import java.util.Map;

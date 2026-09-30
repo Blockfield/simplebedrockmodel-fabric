@@ -23,16 +23,18 @@
  */
 package com.github.mcmodderanchor.simplebedrockmodel.v1.molang.runtime;
 
-import com.github.mcmodderanchor.simplebedrockmodel.v1.molang.parser.ast.*;
-import org.jetbrains.annotations.NotNull;
-
 import static java.util.Objects.requireNonNull;
+
+import com.github.mcmodderanchor.simplebedrockmodel.v1.molang.parser.ast.*;
+
+import org.jetbrains.annotations.NotNull;
 
 final class ExpressionInliner implements ExpressionVisitor<@NotNull Expression> {
     private final ExpressionInterpreter<?> interpreter;
     private final Scope scope;
 
-    ExpressionInliner(final @NotNull ExpressionInterpreter<?> interpreter, final @NotNull Scope scope) {
+    ExpressionInliner(
+            final @NotNull ExpressionInterpreter<?> interpreter, final @NotNull Scope scope) {
         this.interpreter = requireNonNull(interpreter, "interpreter");
         this.scope = requireNonNull(scope, "scope");
     }
@@ -47,7 +49,8 @@ final class ExpressionInliner implements ExpressionVisitor<@NotNull Expression> 
     }
 
     @Override
-    public @NotNull Expression visitTernaryConditional(final @NotNull TernaryConditionalExpression expression) {
+    public @NotNull Expression visitTernaryConditional(
+            final @NotNull TernaryConditionalExpression expression) {
         final Expression conditionExpr = expression.condition();
         final Expression trueExpr = expression.trueExpression();
         final Expression falseExpr = expression.falseExpression();

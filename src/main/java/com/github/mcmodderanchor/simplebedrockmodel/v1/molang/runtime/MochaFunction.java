@@ -24,6 +24,7 @@
 package com.github.mcmodderanchor.simplebedrockmodel.v1.molang.runtime;
 
 import com.github.mcmodderanchor.simplebedrockmodel.v1.molang.runtime.compiled.MochaCompiledFunction;
+
 import org.jetbrains.annotations.NotNull;
 
 /**

@@ -2,9 +2,11 @@ package cn.sh1rocu.simplebedrockmodel.mixin.client;
 
 import cn.sh1rocu.simplebedrockmodel.api.event.RegisterClientReloadListenersEvent;
 import cn.sh1rocu.simplebedrockmodel.api.event.RenderFrameEvent;
+
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.server.packs.resources.ReloadableResourceManager;
+
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -14,26 +16,52 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Minecraft.class)
 public class MinecraftMixin {
-    @Shadow
-    @Final
-    private ReloadableResourceManager resourceManager;
+    @Shadow @Final private ReloadableResourceManager resourceManager;
 
-    @Shadow
-    @Final
-    private DeltaTracker.Timer timer;
+    @Shadow @Final private DeltaTracker.Timer timer;
 
-    @Inject(method = "<init>", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/platform/Window;updateVsync(Z)V"))
+    @Inject(
+            method = "<init>",
+            at =
+                    @At(
+                            value = "INVOKE",
+                            target = "Lcom/mojang/blaze3d/platform/Window;updateVsync(Z)V"))
     private void sbm$onInit(CallbackInfo ci) {
-        RegisterClientReloadListenersEvent.EVENT.invoker().post(new RegisterClientReloadListenersEvent(this.resourceManager));
+        RegisterClientReloadListenersEvent.EVENT
+                .invoker()
+                .post(new RegisterClientReloadListenersEvent(this.resourceManager));
     }
 
-    @Inject(method = "runTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/GameRenderer;render(Lnet/minecraft/client/DeltaTracker;Z)V"))
+    @Inject(
+            method = "runTick",
+            at =
+                    @At(
+                            value = "INVOKE",
+                            target =
+                                    "Lnet/minecraft/client/renderer/GameRenderer;render(Lnet/minecraft/client/DeltaTracker;Z)V"))
     private void sbm$renderTickStart(boolean tick, CallbackInfo ci) {
-        RenderFrameEvent.EVENT.invoker().post(new RenderFrameEvent((Minecraft) (Object) this, RenderFrameEvent.Phase.START, this.timer));
+        RenderFrameEvent.EVENT
+                .invoker()
+                .post(
+                        new RenderFrameEvent(
+                                (Minecraft) (Object) this,
+                                RenderFrameEvent.Phase.START,
+                                this.timer));
     }
 
-    @Inject(method = "runTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/GameRenderer;render(Lnet/minecraft/client/DeltaTracker;Z)V", shift = At.Shift.AFTER))
+    @Inject(
+            method = "runTick",
+            at =
+                    @At(
+                            value = "INVOKE",
+                            target =
+                                    "Lnet/minecraft/client/renderer/GameRenderer;render(Lnet/minecraft/client/DeltaTracker;Z)V",
+                            shift = At.Shift.AFTER))
     private void sbm$renderTickEnd(boolean tick, CallbackInfo ci) {
-        RenderFrameEvent.EVENT.invoker().post(new RenderFrameEvent((Minecraft) (Object) this, RenderFrameEvent.Phase.END, this.timer));
+        RenderFrameEvent.EVENT
+                .invoker()
+                .post(
+                        new RenderFrameEvent(
+                                (Minecraft) (Object) this, RenderFrameEvent.Phase.END, this.timer));
     }
 }

@@ -8,17 +8,17 @@ import com.github.mcmodderanchor.simplebedrockmodel.v2.common.model.baked.BoneLo
 import com.github.mcmodderanchor.simplebedrockmodel.v2.common.model.baked.QueryTransform;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
+
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 
-/**
- * 运行时模型对象，是动画应用的目标。
- */
+/** 运行时模型对象，是动画应用的目标。 */
 public class BakedModelInstance extends BoneTreeInstance {
     private final BakedBedrockModel baseModel;
 
@@ -32,61 +32,194 @@ public class BakedModelInstance extends BoneTreeInstance {
     }
 
     @Environment(EnvType.CLIENT)
-    public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay) {
+    public void renderToBuffer(
+            PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay) {
         baseModel.renderToBuffer(this, poseStack, buffer, packedLight, packedOverlay);
     }
 
     @Environment(EnvType.CLIENT)
-    public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay,
-                               float red, float green, float blue, float alpha) {
-        renderToBuffer(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha, false);
+    public void renderToBuffer(
+            PoseStack poseStack,
+            VertexConsumer buffer,
+            int packedLight,
+            int packedOverlay,
+            float red,
+            float green,
+            float blue,
+            float alpha) {
+        renderToBuffer(
+                poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha, false);
     }
 
     @Environment(EnvType.CLIENT)
-    public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay,
-                               float red, float green, float blue, float alpha, boolean skipNormalVisibilityCull) {
-        baseModel.renderToBuffer(this, poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha, skipNormalVisibilityCull);
+    public void renderToBuffer(
+            PoseStack poseStack,
+            VertexConsumer buffer,
+            int packedLight,
+            int packedOverlay,
+            float red,
+            float green,
+            float blue,
+            float alpha,
+            boolean skipNormalVisibilityCull) {
+        baseModel.renderToBuffer(
+                this,
+                poseStack,
+                buffer,
+                packedLight,
+                packedOverlay,
+                red,
+                green,
+                blue,
+                alpha,
+                skipNormalVisibilityCull);
     }
 
     @Environment(EnvType.CLIENT)
-    public void renderToBuffer(PoseStack poseStack, MultiBufferSource bufferSource, RenderType quadRenderType,
-                               RenderType triangleRenderType, int packedLight, int packedOverlay) {
-        baseModel.renderToBuffer(this, poseStack, bufferSource, quadRenderType, triangleRenderType, packedLight, packedOverlay);
+    public void renderToBuffer(
+            PoseStack poseStack,
+            MultiBufferSource bufferSource,
+            RenderType quadRenderType,
+            RenderType triangleRenderType,
+            int packedLight,
+            int packedOverlay) {
+        baseModel.renderToBuffer(
+                this,
+                poseStack,
+                bufferSource,
+                quadRenderType,
+                triangleRenderType,
+                packedLight,
+                packedOverlay);
     }
 
     @Environment(EnvType.CLIENT)
-    public void renderToBuffer(PoseStack poseStack, MultiBufferSource bufferSource, RenderType quadRenderType,
-                               RenderType triangleRenderType, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
-        renderToBuffer(poseStack, bufferSource, quadRenderType, triangleRenderType, packedLight, packedOverlay, red, green, blue, alpha, false);
+    public void renderToBuffer(
+            PoseStack poseStack,
+            MultiBufferSource bufferSource,
+            RenderType quadRenderType,
+            RenderType triangleRenderType,
+            int packedLight,
+            int packedOverlay,
+            float red,
+            float green,
+            float blue,
+            float alpha) {
+        renderToBuffer(
+                poseStack,
+                bufferSource,
+                quadRenderType,
+                triangleRenderType,
+                packedLight,
+                packedOverlay,
+                red,
+                green,
+                blue,
+                alpha,
+                false);
     }
 
     @Environment(EnvType.CLIENT)
-    public void renderToBuffer(PoseStack poseStack, MultiBufferSource bufferSource, RenderType quadRenderType,
-                               RenderType triangleRenderType, int packedLight, int packedOverlay, float red, float green, float blue, float alpha,
-                               boolean skipNormalVisibilityCull) {
-        baseModel.renderToBuffer(this, poseStack, bufferSource, quadRenderType, triangleRenderType, packedLight, packedOverlay, red, green, blue, alpha, skipNormalVisibilityCull);
+    public void renderToBuffer(
+            PoseStack poseStack,
+            MultiBufferSource bufferSource,
+            RenderType quadRenderType,
+            RenderType triangleRenderType,
+            int packedLight,
+            int packedOverlay,
+            float red,
+            float green,
+            float blue,
+            float alpha,
+            boolean skipNormalVisibilityCull) {
+        baseModel.renderToBuffer(
+                this,
+                poseStack,
+                bufferSource,
+                quadRenderType,
+                triangleRenderType,
+                packedLight,
+                packedOverlay,
+                red,
+                green,
+                blue,
+                alpha,
+                skipNormalVisibilityCull);
     }
 
     @Environment(EnvType.CLIENT)
-    public void renderSingleBonePass(PoseStack poseStack, int boneIndex, VertexConsumer buffer, int packedLight, int packedOverlay,
-                                     float red, float green, float blue, float alpha, boolean quadsPass, boolean skipNormalVisibilityCull) {
+    public void renderSingleBonePass(
+            PoseStack poseStack,
+            int boneIndex,
+            VertexConsumer buffer,
+            int packedLight,
+            int packedOverlay,
+            float red,
+            float green,
+            float blue,
+            float alpha,
+            boolean quadsPass,
+            boolean skipNormalVisibilityCull) {
         poseStack.pushPose();
         mulParentGlobalTransform(poseStack, boneIndex);
-        baseModel.renderBone(this, boneIndex, poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha,
-                quadsPass, skipNormalVisibilityCull);
+        baseModel.renderBone(
+                this,
+                boneIndex,
+                poseStack,
+                buffer,
+                packedLight,
+                packedOverlay,
+                red,
+                green,
+                blue,
+                alpha,
+                quadsPass,
+                skipNormalVisibilityCull);
         poseStack.popPose();
     }
 
     @Environment(EnvType.CLIENT)
-    public void renderSingleBone(PoseStack poseStack, int boneIndex, MultiBufferSource bufferSource, RenderType quadRenderType,
-                                 RenderType triangleRenderType, int packedLight, int packedOverlay, float red, float green, float blue,
-                                 float alpha, boolean skipNormalVisibilityCull) {
+    public void renderSingleBone(
+            PoseStack poseStack,
+            int boneIndex,
+            MultiBufferSource bufferSource,
+            RenderType quadRenderType,
+            RenderType triangleRenderType,
+            int packedLight,
+            int packedOverlay,
+            float red,
+            float green,
+            float blue,
+            float alpha,
+            boolean skipNormalVisibilityCull) {
         poseStack.pushPose();
         mulParentGlobalTransform(poseStack, boneIndex);
-        baseModel.renderBone(this, boneIndex, poseStack, bufferSource.getBuffer(quadRenderType), packedLight, packedOverlay,
-                red, green, blue, alpha, true, skipNormalVisibilityCull);
-        baseModel.renderBone(this, boneIndex, poseStack, bufferSource.getBuffer(triangleRenderType), packedLight, packedOverlay,
-                red, green, blue, alpha, false, skipNormalVisibilityCull);
+        baseModel.renderBone(
+                this,
+                boneIndex,
+                poseStack,
+                bufferSource.getBuffer(quadRenderType),
+                packedLight,
+                packedOverlay,
+                red,
+                green,
+                blue,
+                alpha,
+                true,
+                skipNormalVisibilityCull);
+        baseModel.renderBone(
+                this,
+                boneIndex,
+                poseStack,
+                bufferSource.getBuffer(triangleRenderType),
+                packedLight,
+                packedOverlay,
+                red,
+                green,
+                blue,
+                alpha,
+                false,
+                skipNormalVisibilityCull);
         poseStack.popPose();
     }
 
@@ -121,8 +254,17 @@ public class BakedModelInstance extends BoneTreeInstance {
             BakedCube[] cubes = geometry.cubes();
             for (int cubeIndex = 0; cubeIndex < cubes.length; cubeIndex++) {
                 BakedCube cube = cubes[cubeIndex];
-                tracer.traceCube(attachmentBoneIndex, cubeIndex, cube.x(), cube.y(), cube.z(), cube.width(), cube.height(), cube.depth(),
-                        attachmentTransform, cube.localTransform());
+                tracer.traceCube(
+                        attachmentBoneIndex,
+                        cubeIndex,
+                        cube.x(),
+                        cube.y(),
+                        cube.z(),
+                        cube.width(),
+                        cube.height(),
+                        cube.depth(),
+                        attachmentTransform,
+                        cube.localTransform());
             }
         }
     }
@@ -151,9 +293,10 @@ public class BakedModelInstance extends BoneTreeInstance {
     }
 
     private Matrix4f resolveQueryTransform(QueryTransform queryTransform) {
-        Matrix4f transform = queryTransform.attachBoneIndex() >= 0
-                ? new Matrix4f(getGlobalTransform(queryTransform.attachBoneIndex()))
-                : new Matrix4f();
+        Matrix4f transform =
+                queryTransform.attachBoneIndex() >= 0
+                        ? new Matrix4f(getGlobalTransform(queryTransform.attachBoneIndex()))
+                        : new Matrix4f();
         return transform.mul(queryTransform.localTransform());
     }
 
@@ -164,10 +307,11 @@ public class BakedModelInstance extends BoneTreeInstance {
         }
         float[] rotation = locator.rotation();
         if (rotation[0] != 0 || rotation[1] != 0 || rotation[2] != 0) {
-            Quaternionf q = new Quaternionf()
-                    .rotateZ((float) Math.toRadians(rotation[2]))
-                    .rotateY((float) Math.toRadians(rotation[1]))
-                    .rotateX((float) Math.toRadians(rotation[0]));
+            Quaternionf q =
+                    new Quaternionf()
+                            .rotateZ((float) Math.toRadians(rotation[2]))
+                            .rotateY((float) Math.toRadians(rotation[1]))
+                            .rotateX((float) Math.toRadians(rotation[0]));
             transform.rotate(q);
         }
     }

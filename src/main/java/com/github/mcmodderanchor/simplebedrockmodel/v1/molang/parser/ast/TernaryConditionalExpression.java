@@ -23,22 +23,21 @@
  */
 package com.github.mcmodderanchor.simplebedrockmodel.v1.molang.parser.ast;
 
+import static java.util.Objects.requireNonNull;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-import static java.util.Objects.requireNonNull;
-
 /**
- * Ternary conditional expression implementation, similar to
- * "if {...} else {...}" expressions in other languages.
+ * Ternary conditional expression implementation, similar to "if {...} else {...}" expressions in
+ * other languages.
  *
- * <p>If the {@code conditional} expression evaluates to a
- * truthy value, then {@code trueExpression} is evaluated
- * as the result, otherwise, {@code falseExpression} is.</p>
+ * <p>If the {@code conditional} expression evaluates to a truthy value, then {@code trueExpression}
+ * is evaluated as the result, otherwise, {@code falseExpression} is.
  *
- * <p>Example ternary conditional expressions: {@code true ? 1 : 0},
- * {@code (age > 18) ? 'adult' : 'minor'}, {@code open ? 'open' : 'closed'}</p>
+ * <p>Example ternary conditional expressions: {@code true ? 1 : 0}, {@code (age > 18) ? 'adult' :
+ * 'minor'}, {@code open ? 'open' : 'closed'}
  *
  * @since 3.0.0
  */
@@ -47,7 +46,10 @@ public final class TernaryConditionalExpression implements Expression {
     private Expression trueExpression;
     private Expression falseExpression;
 
-    public TernaryConditionalExpression(final @NotNull Expression conditional, final @NotNull Expression trueExpression, final @NotNull Expression falseExpression) {
+    public TernaryConditionalExpression(
+            final @NotNull Expression conditional,
+            final @NotNull Expression trueExpression,
+            final @NotNull Expression falseExpression) {
         this.conditional = requireNonNull(conditional, "conditional");
         this.trueExpression = requireNonNull(trueExpression, "trueExpression");
         this.falseExpression = requireNonNull(falseExpression, "falseExpression");
@@ -73,8 +75,7 @@ public final class TernaryConditionalExpression implements Expression {
     }
 
     /**
-     * Gets the expression that should be used when
-     * condition is evaluated as a truthy value.
+     * Gets the expression that should be used when condition is evaluated as a truthy value.
      *
      * @since 3.0.0
      */
@@ -83,8 +84,7 @@ public final class TernaryConditionalExpression implements Expression {
     }
 
     /**
-     * Sets the expression that should be used when
-     * condition is evaluated as a truthy value.
+     * Sets the expression that should be used when condition is evaluated as a truthy value.
      *
      * @param trueExpression The true expression
      * @since 3.0.0
@@ -94,8 +94,7 @@ public final class TernaryConditionalExpression implements Expression {
     }
 
     /**
-     * Gets the expression that should be used when
-     * condition is evaluated as a falsy value.
+     * Gets the expression that should be used when condition is evaluated as a falsy value.
      *
      * @since 3.0.0
      */
@@ -104,8 +103,7 @@ public final class TernaryConditionalExpression implements Expression {
     }
 
     /**
-     * Sets the expression that should be used when
-     * condition is evaluated as a falsy value.
+     * Sets the expression that should be used when condition is evaluated as a falsy value.
      *
      * @param falseExpression The false expression
      * @since 3.0.0
@@ -121,9 +119,13 @@ public final class TernaryConditionalExpression implements Expression {
 
     @Override
     public String toString() {
-        return "TernaryCondition(" + conditional + ", "
-                + trueExpression + ", "
-                + falseExpression + ")";
+        return "TernaryCondition("
+                + conditional
+                + ", "
+                + trueExpression
+                + ", "
+                + falseExpression
+                + ")";
     }
 
     @Override
@@ -140,5 +142,4 @@ public final class TernaryConditionalExpression implements Expression {
     public int hashCode() {
         return Objects.hash(conditional, trueExpression, falseExpression);
     }
-
 }

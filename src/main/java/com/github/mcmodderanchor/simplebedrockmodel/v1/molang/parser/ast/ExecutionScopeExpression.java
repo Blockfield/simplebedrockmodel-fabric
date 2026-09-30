@@ -29,12 +29,11 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * Execution scope expression implementation. Execution
- * scopes define a new scope and a new sequence of
- * expressions to evaluate.
+ * Execution scope expression implementation. Execution scopes define a new scope and a new sequence
+ * of expressions to evaluate.
  *
- * <p>Execution scope expression examples: {@code { print('a'); print('b'); }},
- * {@code { doThisFirst(); thenDoThis(); }}, {@code { v.x = v.x + 1; }}</p>
+ * <p>Execution scope expression examples: {@code { print('a'); print('b'); }}, {@code {
+ * doThisFirst(); thenDoThis(); }}, {@code { v.x = v.x + 1; }}
  *
  * @since 3.0.0
  */
@@ -46,10 +45,7 @@ public final class ExecutionScopeExpression implements Expression {
         this.expressions = Objects.requireNonNull(expressions, "expressions");
     }
 
-    /**
-     * Returns the expressions inside this
-     * execution scope, never null
-     */
+    /** Returns the expressions inside this execution scope, never null */
     public @NotNull List<Expression> expressions() {
         return expressions;
     }
@@ -76,5 +72,4 @@ public final class ExecutionScopeExpression implements Expression {
     public int hashCode() {
         return Objects.hash(expressions);
     }
-
 }

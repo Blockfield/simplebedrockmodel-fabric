@@ -1,5 +1,7 @@
 package com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.component;
 
+import static com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.ParticleJsonUtils.*;
+
 import com.github.mcmodderanchor.simplebedrockmodel.v1.molang.runtime.MolangContext;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.molang.runtime.MolangExpression;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.runtime.ParticleInstance;
@@ -7,17 +9,16 @@ import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.runtime.Particle
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import org.jetbrains.annotations.Nullable;
 
-import static com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.ParticleJsonUtils.*;
+import org.jetbrains.annotations.Nullable;
 
 public record ParticleAppearanceBillboard(
         MolangExpression[] size,
         FaceCameraMode faceCameraMode,
         @Nullable UVConfig uv,
         @Nullable FlipbookConfig flipbook,
-        boolean dynamicSize
-) implements IParticleComponentDefinition, IParticleComponent {
+        boolean dynamicSize)
+        implements IParticleComponentDefinition, IParticleComponent {
 
     @Override
     public int order() {
@@ -48,12 +49,16 @@ public record ParticleAppearanceBillboard(
         if (flipbook != null) {
             var fb = flipbook;
             int maxFrame = (int) fb.maxFrame().evaluate(ctx);
-            float frame = fb.stretchToLifetime() && p.maxLifetime > 0
-                    ? (p.age / p.maxLifetime) * maxFrame
-                    : p.age * fb.framesPerSecond();
-            int frameIdx = Math.max(0, fb.loop() && maxFrame > 0
-                    ? ((int) frame) % maxFrame
-                    : Math.min((int) frame, maxFrame - 1));
+            float frame =
+                    fb.stretchToLifetime() && p.maxLifetime > 0
+                            ? (p.age / p.maxLifetime) * maxFrame
+                            : p.age * fb.framesPerSecond();
+            int frameIdx =
+                    Math.max(
+                            0,
+                            fb.loop() && maxFrame > 0
+                                    ? ((int) frame) % maxFrame
+                                    : Math.min((int) frame, maxFrame - 1));
 
             float baseU = (float) fb.baseUV()[0].evaluate(ctx);
             float baseV = (float) fb.baseUV()[1].evaluate(ctx);
@@ -70,35 +75,53 @@ public record ParticleAppearanceBillboard(
         } else if (uv != null) {
             p.u0 = (float) uv.u().evaluate(ctx) / uv.textureWidth();
             p.v0 = (float) uv.v().evaluate(ctx) / uv.textureHeight();
-            p.u1 = ((float) uv.u().evaluate(ctx) + (float) uv.width().evaluate(ctx)) / uv.textureWidth();
-            p.v1 = ((float) uv.v().evaluate(ctx) + (float) uv.height().evaluate(ctx)) / uv.textureHeight();
+            p.u1 =
+                    ((float) uv.u().evaluate(ctx) + (float) uv.width().evaluate(ctx))
+                            / uv.textureWidth();
+            p.v1 =
+                    ((float) uv.v().evaluate(ctx) + (float) uv.height().evaluate(ctx))
+                            / uv.textureHeight();
         }
     }
 
     public enum FaceCameraMode {
-        ROTATE_XYZ, ROTATE_Y, LOOKAT_XYZ, LOOKAT_Y, LOOKAT_DIRECTION,
-        DIRECTION_X, DIRECTION_Y, DIRECTION_Z,
-        EMITTER_TRANSFORM_XY, EMITTER_TRANSFORM_XZ, EMITTER_TRANSFORM_YZ
+        ROTATE_XYZ,
+        ROTATE_Y,
+        LOOKAT_XYZ,
+        LOOKAT_Y,
+        LOOKAT_DIRECTION,
+        DIRECTION_X,
+        DIRECTION_Y,
+        DIRECTION_Z,
+        EMITTER_TRANSFORM_XY,
+        EMITTER_TRANSFORM_XZ,
+        EMITTER_TRANSFORM_YZ
     }
 
     public record UVConfig(
-            MolangExpression u, MolangExpression v,
-            MolangExpression width, MolangExpression height,
-            int textureWidth, int textureHeight
-    ) {
-    }
+            MolangExpression u,
+            MolangExpression v,
+            MolangExpression width,
+            MolangExpression height,
+            int textureWidth,
+            int textureHeight) {}
 
     public record FlipbookConfig(
-            MolangExpression[] baseUV, MolangExpression[] sizeUV, MolangExpression[] stepUV,
-            float framesPerSecond, MolangExpression maxFrame,
-            boolean stretchToLifetime, boolean loop,
-            int textureWidth, int textureHeight
-    ) {
-    }
+            MolangExpression[] baseUV,
+            MolangExpression[] sizeUV,
+            MolangExpression[] stepUV,
+            float framesPerSecond,
+            MolangExpression maxFrame,
+            boolean stretchToLifetime,
+            boolean loop,
+            int textureWidth,
+            int textureHeight) {}
 
-    public static ParticleAppearanceBillboard fromJson(JsonObject obj, ParticleMolangEnvironment molang) {
+    public static ParticleAppearanceBillboard fromJson(
+            JsonObject obj, ParticleMolangEnvironment molang) {
         String[] sizeStr = getMolangArray(obj, "size", 2, "0.1", "0.1");
-        MolangExpression[] size = new MolangExpression[]{molang.compile(sizeStr[0]), molang.compile(sizeStr[1])};
+        MolangExpression[] size =
+                new MolangExpression[] {molang.compile(sizeStr[0]), molang.compile(sizeStr[1])};
         boolean dynamicSize = !isNumericLiteral(sizeStr[0]) || !isNumericLiteral(sizeStr[1]);
 
         String modeStr = getString(obj, "facing_camera_mode", "rotate_xyz");
@@ -133,10 +156,16 @@ public record ParticleAppearanceBillboard(
         };
     }
 
-    private static UVConfig parseUVConfig(@Nullable JsonObject uvObj, ParticleMolangEnvironment molang) {
+    private static UVConfig parseUVConfig(
+            @Nullable JsonObject uvObj, ParticleMolangEnvironment molang) {
         if (uvObj == null) {
-            return new UVConfig(MolangExpression.zero(), MolangExpression.zero(),
-                    MolangExpression.constant(1), MolangExpression.constant(1), 1, 1);
+            return new UVConfig(
+                    MolangExpression.zero(),
+                    MolangExpression.zero(),
+                    MolangExpression.constant(1),
+                    MolangExpression.constant(1),
+                    1,
+                    1);
         }
         int texW = uvObj.has("texture_width") ? uvObj.get("texture_width").getAsInt() : 1;
         int texH = uvObj.has("texture_height") ? uvObj.get("texture_height").getAsInt() : 1;
@@ -157,20 +186,29 @@ public record ParticleAppearanceBillboard(
                 return new UVConfig(u, v, w, h, texW, texH);
             }
         }
-        return new UVConfig(MolangExpression.zero(), MolangExpression.zero(),
-                MolangExpression.constant(texW), MolangExpression.constant(texH), texW, texH);
+        return new UVConfig(
+                MolangExpression.zero(),
+                MolangExpression.zero(),
+                MolangExpression.constant(texW),
+                MolangExpression.constant(texH),
+                texW,
+                texH);
     }
 
-    private static FlipbookConfig parseFlipbookConfig(JsonObject uvObj, ParticleMolangEnvironment molang) {
+    private static FlipbookConfig parseFlipbookConfig(
+            JsonObject uvObj, ParticleMolangEnvironment molang) {
         int texW = uvObj.has("texture_width") ? uvObj.get("texture_width").getAsInt() : 1;
         int texH = uvObj.has("texture_height") ? uvObj.get("texture_height").getAsInt() : 1;
         JsonObject fb = uvObj.getAsJsonObject("flipbook");
         String[] baseStr = getMolangArray(fb, "base_UV", 2, "0", "0");
         String[] sizeStr = getMolangArray(fb, "size_UV", 2, "1", "1");
         String[] stepStr = getMolangArray(fb, "step_UV", 2, "0", "0");
-        MolangExpression[] baseUV = new MolangExpression[]{molang.compile(baseStr[0]), molang.compile(baseStr[1])};
-        MolangExpression[] sizeUV = new MolangExpression[]{molang.compile(sizeStr[0]), molang.compile(sizeStr[1])};
-        MolangExpression[] stepUV = new MolangExpression[]{molang.compile(stepStr[0]), molang.compile(stepStr[1])};
+        MolangExpression[] baseUV =
+                new MolangExpression[] {molang.compile(baseStr[0]), molang.compile(baseStr[1])};
+        MolangExpression[] sizeUV =
+                new MolangExpression[] {molang.compile(sizeStr[0]), molang.compile(sizeStr[1])};
+        MolangExpression[] stepUV =
+                new MolangExpression[] {molang.compile(stepStr[0]), molang.compile(stepStr[1])};
         float fps = fb.has("frames_per_second") ? fb.get("frames_per_second").getAsFloat() : 1;
         MolangExpression maxFrame = molang.compile(getMolang(fb, "max_frame", "1"));
         boolean stretch = getBoolean(fb, "stretch_to_lifetime", false);
@@ -178,9 +216,7 @@ public record ParticleAppearanceBillboard(
         return new FlipbookConfig(baseUV, sizeUV, stepUV, fps, maxFrame, stretch, loop, texW, texH);
     }
 
-    /**
-     * 检查字符串是否为纯数字字面量（整数或浮点数）。
-     */
+    /** 检查字符串是否为纯数字字面量（整数或浮点数）。 */
     private static boolean isNumericLiteral(String s) {
         try {
             Double.parseDouble(s);

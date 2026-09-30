@@ -3,29 +3,20 @@ package com.github.mcmodderanchor.simplebedrockmodel.v1.client.model;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.common.model.BedrockBone;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.common.model.BedrockModel;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.common.resource.pojo.BedrockModelPOJO;
+
 import org.jetbrains.annotations.Nullable;
 
-/**
- * 专门用于盔甲的 BedrockModel 子类，缓存盔甲各部分的骨骼引用以提高性能
- */
+/** 专门用于盔甲的 BedrockModel 子类，缓存盔甲各部分的骨骼引用以提高性能 */
 public class BedrockArmorModel extends BedrockModel {
     // 缓存的盔甲部位骨骼
-    @Nullable
-    private final BedrockBone armorHead;
-    @Nullable
-    private final BedrockBone armorBody;
-    @Nullable
-    private final BedrockBone armorRightArm;
-    @Nullable
-    private final BedrockBone armorLeftArm;
-    @Nullable
-    private final BedrockBone armorRightLeg;
-    @Nullable
-    private final BedrockBone armorLeftLeg;
-    @Nullable
-    private final BedrockBone armorRightBoot;
-    @Nullable
-    private final BedrockBone armorLeftBoot;
+    @Nullable private final BedrockBone armorHead;
+    @Nullable private final BedrockBone armorBody;
+    @Nullable private final BedrockBone armorRightArm;
+    @Nullable private final BedrockBone armorLeftArm;
+    @Nullable private final BedrockBone armorRightLeg;
+    @Nullable private final BedrockBone armorLeftLeg;
+    @Nullable private final BedrockBone armorRightBoot;
+    @Nullable private final BedrockBone armorLeftBoot;
 
     public BedrockArmorModel(BedrockModelPOJO pojo) {
         super(pojo);

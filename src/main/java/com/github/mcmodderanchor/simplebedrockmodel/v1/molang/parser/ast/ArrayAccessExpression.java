@@ -23,17 +23,16 @@
  */
 package com.github.mcmodderanchor.simplebedrockmodel.v1.molang.parser.ast;
 
+import static java.util.Objects.requireNonNull;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static java.util.Objects.requireNonNull;
-
 /**
- * Array accessing expression implementation, access to a value in
- * an array, by its index.
+ * Array accessing expression implementation, access to a value in an array, by its index.
  *
- * <p>Example array accessing expressions: {@code my_geometries[0]},
- * {@code array.my_geometries[query.anim_time]}, {@code array.my_geos[math.cos(90)]}</p>
+ * <p>Example array accessing expressions: {@code my_geometries[0]}, {@code
+ * array.my_geometries[query.anim_time]}, {@code array.my_geos[math.cos(90)]}
  *
  * @since 3.0.0
  */
@@ -47,8 +46,7 @@ public final class ArrayAccessExpression implements Expression {
     }
 
     /**
-     * Gets the 'array' expression, the index is evaluated on this
-     * expression's result.
+     * Gets the 'array' expression, the index is evaluated on this expression's result.
      *
      * @return The array expression.
      * @since 3.0.0
@@ -58,8 +56,7 @@ public final class ArrayAccessExpression implements Expression {
     }
 
     /**
-     * Sets the 'array' expression, the index is evaluated on this
-     * expression's result.
+     * Sets the 'array' expression, the index is evaluated on this expression's result.
      *
      * @param array The new array expression.
      * @since 3.0.0
@@ -69,8 +66,7 @@ public final class ArrayAccessExpression implements Expression {
     }
 
     /**
-     * Gets the 'index' expression, the index is evaluated on this
-     * expression's result.
+     * Gets the 'index' expression, the index is evaluated on this expression's result.
      *
      * @return The index expression.
      * @since 3.0.0
@@ -80,8 +76,7 @@ public final class ArrayAccessExpression implements Expression {
     }
 
     /**
-     * Sets the 'index' expression, the index is evaluated on this
-     * expression's result.
+     * Sets the 'index' expression, the index is evaluated on this expression's result.
      *
      * @param index The new index expression.
      * @since 3.0.0

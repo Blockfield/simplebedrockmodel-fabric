@@ -16,14 +16,15 @@ public record CubePerFace(
         float[][] uvs,
         int emptyFacesMask,
         float @Nullable [] pivot,
-        @Nullable Quaternionf rotation
-) implements ICube {
+        @Nullable Quaternionf rotation)
+        implements ICube {
     public CubePerFace {
         float[][] uvCopy = new float[6][8];
         if (uvs != null) {
             int faceCount = Math.min(uvs.length, uvCopy.length);
             for (int i = 0; i < faceCount; i++) {
-                if (uvs[i] != null) System.arraycopy(uvs[i], 0, uvCopy[i], 0, Math.min(uvs[i].length, 8));
+                if (uvs[i] != null)
+                    System.arraycopy(uvs[i], 0, uvCopy[i], 0, Math.min(uvs[i].length, 8));
             }
         }
         uvs = uvCopy;

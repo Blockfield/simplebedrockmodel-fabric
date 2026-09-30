@@ -25,15 +25,10 @@ package com.github.mcmodderanchor.simplebedrockmodel.v1.molang.lexer;
 
 import org.jetbrains.annotations.ApiStatus;
 
-/**
- * Utility class holding utility static
- * methods for working with character
- * tokens
- */
+/** Utility class holding utility static methods for working with character tokens */
 @ApiStatus.Internal
 final class Characters {
-    private Characters() {
-    }
+    private Characters() {}
 
     public static boolean isValidForWordStart(final int c) {
         return ('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z') || c == '_';

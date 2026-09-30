@@ -23,6 +23,8 @@
  */
 package com.github.mcmodderanchor.simplebedrockmodel.v1.molang;
 
+import static java.util.Objects.requireNonNull;
+
 import com.github.mcmodderanchor.simplebedrockmodel.v1.molang.parser.ParseException;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.molang.parser.ast.Expression;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.molang.runtime.MochaFunction;
@@ -33,6 +35,7 @@ import com.github.mcmodderanchor.simplebedrockmodel.v1.molang.runtime.compiled.M
 import com.github.mcmodderanchor.simplebedrockmodel.v1.molang.runtime.standard.MochaMath;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.molang.runtime.value.MutableObjectBinding;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.molang.runtime.value.ObjectValue;
+
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -44,18 +47,15 @@ import java.io.UncheckedIOException;
 import java.util.List;
 import java.util.function.Consumer;
 
-import static java.util.Objects.requireNonNull;
-
 /**
- * The engine's entry class. Provides methods to evaluate
- * and parse Molang code from strings and readers.
+ * The engine's entry class. Provides methods to evaluate and parse Molang code from strings and
+ * readers.
  *
  * @since 3.0.0
  */
 public interface MochaEngine<T> {
     static <T> MochaEngine<T> create(T entity) {
-        return new MochaEngineImpl<>(entity, b -> {
-        });
+        return new MochaEngineImpl<>(entity, b -> {});
     }
 
     static <T> MochaEngine<T> create(T entity, Consumer<Scope.Builder> scopeBuilder) {
@@ -63,30 +63,32 @@ public interface MochaEngine<T> {
     }
 
     static MochaEngine<?> create() {
-        return new MochaEngineImpl<>(null, b -> {
-        });
+        return new MochaEngineImpl<>(null, b -> {});
     }
 
     /**
-     * Creates a new, clean and empty {@link MochaEngine} instance
-     * with the standard, default bindings.
+     * Creates a new, clean and empty {@link MochaEngine} instance with the standard, default
+     * bindings.
      *
      * @return The created {@link MochaEngine} instance.
      * @since 3.0.0
      */
     @Contract("_ -> new")
     static <T> @NotNull MochaEngine<T> createStandard(T entity) {
-        return create(entity, builder -> {
-            builder.set("math", JavaObjectBinding.of(MochaMath.class, null, new MochaMath()));
-            final MutableObjectBinding variableBinding = new MutableObjectBinding();
-            builder.set("variable", variableBinding);
-            builder.set("v", variableBinding);
-        });
+        return create(
+                entity,
+                builder -> {
+                    builder.set(
+                            "math", JavaObjectBinding.of(MochaMath.class, null, new MochaMath()));
+                    final MutableObjectBinding variableBinding = new MutableObjectBinding();
+                    builder.set("variable", variableBinding);
+                    builder.set("v", variableBinding);
+                });
     }
 
     /**
-     * Creates a new, clean and empty {@link MochaEngine} instance
-     * with the standard, default bindings.
+     * Creates a new, clean and empty {@link MochaEngine} instance with the standard, default
+     * bindings.
      *
      * @return The created {@link MochaEngine} instance.
      * @since 3.0.0
@@ -96,26 +98,23 @@ public interface MochaEngine<T> {
         return createStandard(null);
     }
 
-    //#region PARSING API
+    // #region PARSING API
 
     /**
-     * Parses the data from the given {@code reader}
-     * to a {@link List} of {@link Expression}
+     * Parses the data from the given {@code reader} to a {@link List} of {@link Expression}
      *
-     * <strong>Note that this method won't close
-     * the given {@code reader}</strong>
+     * <p><strong>Note that this method won't close the given {@code reader}</strong>
      *
      * @param reader The reader to read the data from
      * @return The list of parsed expressions
-     * @throws ParseException If read failed or there
-     *                        are syntax errors in the script
+     * @throws ParseException If read failed or there are syntax errors in the script
      * @since 3.0.0
      */
-    @NotNull List<Expression> parse(final @NotNull Reader reader) throws IOException;
+    @NotNull
+    List<Expression> parse(final @NotNull Reader reader) throws IOException;
 
     /**
-     * Parses the given {@code string} to a list of
-     * {@link Expression}
+     * Parses the given {@code string} to a list of {@link Expression}
      *
      * @param string The MoLang string
      * @return The list of parsed expressions
@@ -127,17 +126,18 @@ public interface MochaEngine<T> {
         } catch (final ParseException e) {
             throw e;
         } catch (final IOException e) {
-            throw new UncheckedIOException("Error occurred reading the source code: '" + string + "'", e);
+            throw new UncheckedIOException(
+                    "Error occurred reading the source code: '" + string + "'", e);
         }
     }
 
-    //#endregion END PARSING API
+    // #endregion END PARSING API
 
-    //#region INTERPRETER API
+    // #region INTERPRETER API
 
     /**
-     * Evaluates the given {@code expressions}, these expressions
-     * are already parsed and are interpreted as fast as possible.
+     * Evaluates the given {@code expressions}, these expressions are already parsed and are
+     * interpreted as fast as possible.
      *
      * @param expressions The expressions to evaluate.
      * @return The result of the evaluation.
@@ -148,11 +148,9 @@ public interface MochaEngine<T> {
     /**
      * Parses and evaluates the given Molang source.
      *
-     * <p>Note that the engine instance is not responsible
-     * for caching parsed expressions, so if you want to
-     * re-use parsed expressions, you should use the
-     * {@link #parse(Reader)} and {@link #eval(List)}
-     * methods.</p>
+     * <p>Note that the engine instance is not responsible for caching parsed expressions, so if you
+     * want to re-use parsed expressions, you should use the {@link #parse(Reader)} and {@link
+     * #eval(List)} methods.
      *
      * @param source The source to evaluate.
      * @return The result of the evaluation.
@@ -165,11 +163,9 @@ public interface MochaEngine<T> {
     /**
      * Parses and evaluates the given Molang source.
      *
-     * <p>Note that the engine instance is not responsible
-     * for caching parsed expressions, so if you want to
-     * re-use parsed expressions, you should use the
-     * {@link #parse(String)} and {@link #eval(List)}
-     * methods.</p>
+     * <p>Note that the engine instance is not responsible for caching parsed expressions, so if you
+     * want to re-use parsed expressions, you should use the {@link #parse(String)} and {@link
+     * #eval(List)} methods.
      *
      * @param source The source to evaluate.
      * @return The result of the evaluation.
@@ -185,31 +181,29 @@ public interface MochaEngine<T> {
     }
 
     /**
-     * Parses the data from the given {@code reader} and
-     * returns a cached, interpretable {@link MochaFunction}.
+     * Parses the data from the given {@code reader} and returns a cached, interpretable {@link
+     * MochaFunction}.
      *
      * <pre><strong>Note that this method won't close the given
      * {@code reader}</strong></pre>
      *
-     * <p>This approach is the same as parsing to a List of
-     * expressions, caching them and then evaluating using
-     * {@link #eval(List)}, but easier, since it already keeps
-     * this {@link MochaEngine} instance.</p>
+     * <p>This approach is the same as parsing to a List of expressions, caching them and then
+     * evaluating using {@link #eval(List)}, but easier, since it already keeps this {@link
+     * MochaEngine} instance.
      *
      * @param reader The reader to read the data from
      * @return The cached, interpretable function
      * @since 3.0.0
      */
-    @NotNull MochaFunction prepareEval(final @NotNull Reader reader);
+    @NotNull
+    MochaFunction prepareEval(final @NotNull Reader reader);
 
     /**
-     * Parses the given {@code string} and returns a cached,
-     * interpretable {@link MochaFunction}.
+     * Parses the given {@code string} and returns a cached, interpretable {@link MochaFunction}.
      *
-     * <p>This approach is the same as parsing to a List of
-     * expressions, caching them and then evaluating using
-     * {@link #eval(List)}, but easier, since it already keeps
-     * this {@link MochaEngine} instance.</p>
+     * <p>This approach is the same as parsing to a List of expressions, caching them and then
+     * evaluating using {@link #eval(List)}, but easier, since it already keeps this {@link
+     * MochaEngine} instance.
      *
      * @param string The MoLang string
      * @return The cached, interpretable function
@@ -220,33 +214,32 @@ public interface MochaEngine<T> {
             return prepareEval(reader);
         }
     }
-    //#endregion END INTERPRETER API
 
-    //#region COMPILING API
+    // #endregion END INTERPRETER API
+
+    // #region COMPILING API
 
     /**
-     * Compiles the given code into a Molang function
-     * that can take arguments.
+     * Compiles the given code into a Molang function that can take arguments.
      *
-     * @param reader        The code to compile.
-     * @param interfaceType The interface to implement, must
-     *                      have a single method.
+     * @param reader The code to compile.
+     * @param interfaceType The interface to implement, must have a single method.
      * @return The compiled function.
      * @since 3.0.0
      */
-    <F extends MochaCompiledFunction> @NotNull F compile(final @NotNull Reader reader, final @NotNull Class<F> interfaceType);
+    <F extends MochaCompiledFunction> @NotNull F compile(
+            final @NotNull Reader reader, final @NotNull Class<F> interfaceType);
 
     /**
-     * Compiles the given code into a Molang function
-     * that can take arguments.
+     * Compiles the given code into a Molang function that can take arguments.
      *
-     * @param code          The code to compile.
-     * @param interfaceType The interface to implement, must
-     *                      have a single method.
+     * @param code The code to compile.
+     * @param interfaceType The interface to implement, must have a single method.
      * @return The compiled function.
      * @since 3.0.0
      */
-    default <F extends MochaCompiledFunction> @NotNull F compile(final @NotNull String code, final @NotNull Class<F> interfaceType) {
+    default <F extends MochaCompiledFunction> @NotNull F compile(
+            final @NotNull String code, final @NotNull Class<F> interfaceType) {
         requireNonNull(code, "code");
         try (final StringReader reader = new StringReader(code)) {
             return compile(reader, interfaceType);
@@ -254,8 +247,7 @@ public interface MochaEngine<T> {
     }
 
     /**
-     * Compiles the given code into a Molang function
-     * that takes no arguments.
+     * Compiles the given code into a Molang function that takes no arguments.
      *
      * @param reader The code to compile.
      * @return The compiled function.
@@ -266,8 +258,7 @@ public interface MochaEngine<T> {
     }
 
     /**
-     * Compiles the given code into a Molang function
-     * that takes no arguments.
+     * Compiles the given code into a Molang function that takes no arguments.
      *
      * @param code The code to compile.
      * @return The compiled function.
@@ -279,23 +270,24 @@ public interface MochaEngine<T> {
             return compile(reader);
         }
     }
-    //#endregion END COMPILING API
 
-    //#region BINDING API
+    // #endregion END COMPILING API
+
+    // #region BINDING API
 
     /**
      * Binds the given {@code clazz} static fields and methods.
      *
-     * <p>Fields and methods are bound in the following format:</p>
+     * <p>Fields and methods are bound in the following format:
+     *
      * <pre>
      *     namespace.field
      *     namespace.method()
      *     namespace.method(arg1, arg2)
      * </pre>
      *
-     * <p>Where {@code namespace} is given by the given class'
-     * {@link Binding} annotation, and the field and method
-     * names are also given by {@link Binding} annotations.</p>
+     * <p>Where {@code namespace} is given by the given class' {@link Binding} annotation, and the
+     * field and method names are also given by {@link Binding} annotations.
      *
      * @param clazz The class to bind.
      * @see Binding
@@ -306,89 +298,95 @@ public interface MochaEngine<T> {
     /**
      * Binds the given {@code instance} non-static fields and methods.
      *
-     * <p>Fields and methods are bound in the following format:</p>
+     * <p>Fields and methods are bound in the following format:
+     *
      * <pre>
      *     name.field
      *     name.method()
      *     name.method(arg1, arg2)
      * </pre>
      *
-     * <p>Where {@code name} is given by the {@code name} parameter,
-     * and the field and method names are given by {@link Binding}
-     * annotations.</p>
+     * <p>Where {@code name} is given by the {@code name} parameter, and the field and method names
+     * are given by {@link Binding} annotations.
      *
-     * @param clazz    The instance's class (or interface) to use.
+     * @param clazz The instance's class (or interface) to use.
      * @param instance The instance to bind.
-     * @param name     The name to bind the instance to.
-     * @param aliases  The aliases to bind the instance to.
-     * @param <B>      The instance's type.
+     * @param name The name to bind the instance to.
+     * @param aliases The aliases to bind the instance to.
+     * @param <B> The instance's type.
      * @since 3.0.0
      */
-    <B> void bindInstance(final @NotNull Class<? super B> clazz, final @NotNull B instance, final @NotNull String name, final @NotNull String @NotNull ... aliases);
-    //#endregion
+    <B> void bindInstance(
+            final @NotNull Class<? super B> clazz,
+            final @NotNull B instance,
+            final @NotNull String name,
+            final @NotNull String @NotNull ... aliases);
 
-    //#region CONFIGURATION API
+    // #endregion
+
+    // #region CONFIGURATION API
 
     /**
-     * Sets the boolean value for the "warn on reflective function usage"
-     * option.
+     * Sets the boolean value for the "warn on reflective function usage" option.
      *
-     * <p>When set to true, {@link #eval} may log a warning when evaluating
-     * code that includes a call to a function that was registered using only
-     * annotations, and for so, has to be called using Reflection, taking some
-     * extra time.</p>
+     * <p>When set to true, {@link #eval} may log a warning when evaluating code that includes a
+     * call to a function that was registered using only annotations, and for so, has to be called
+     * using Reflection, taking some extra time.
      *
-     * <p>Note that this behavior can be avoided by setting a {@link ObjectValue}
-     * when binding static or non-static methods and fields</p>
+     * <p>Note that this behavior can be avoided by setting a {@link ObjectValue} when binding
+     * static or non-static methods and fields
      *
-     * <p>By default this is false.</p>
+     * <p>By default this is false.
      *
      * @param warnOnReflectiveFunctionUsage The new value for the option
      * @return This engine instance
      * @since 3.0.0
      */
     @Contract("_ -> this")
-    @NotNull MochaEngine<T> warnOnReflectiveFunctionUsage(final boolean warnOnReflectiveFunctionUsage);
+    @NotNull
+    MochaEngine<T> warnOnReflectiveFunctionUsage(final boolean warnOnReflectiveFunctionUsage);
 
     /**
-     * Sets the {@link ParseException} handler. This handler will be called
-     * whenever an internal call to the {@link #parse} method fails. These
-     * internal calls commonly include interpreting or compiling code.
+     * Sets the {@link ParseException} handler. This handler will be called whenever an internal
+     * call to the {@link #parse} method fails. These internal calls commonly include interpreting
+     * or compiling code.
      *
-     * <p>Usually useful for logging/debugging purposes.</p>
+     * <p>Usually useful for logging/debugging purposes.
      *
-     * <p>By default this is null.</p>
+     * <p>By default this is null.
      *
      * @param exceptionHandler The new parse exception handler
      * @return This engine instance
      * @since 3.0.0
      */
     @Contract("_ -> this")
-    @NotNull MochaEngine<T> handleParseExceptions(final @Nullable Consumer<@NotNull ParseException> exceptionHandler);
+    @NotNull
+    MochaEngine<T> handleParseExceptions(
+            final @Nullable Consumer<@NotNull ParseException> exceptionHandler);
 
     /**
-     * Sets the post-compile function, which is called after a script
-     * is compiled to a new class, and before it is loaded. The received
-     * argument is the class bytecode, which can be written to a file for
-     * debugging purposes.
+     * Sets the post-compile function, which is called after a script is compiled to a new class,
+     * and before it is loaded. The received argument is the class bytecode, which can be written to
+     * a file for debugging purposes.
      *
-     * <p>By default this is set to null.</p>
+     * <p>By default this is set to null.
      *
      * @param bytecodeConsumer The new post-compile function
      * @return This engine instance
      * @since 3.0.0
      */
     @Contract("_ -> this")
-    @NotNull MochaEngine<T> postCompile(final @Nullable Consumer<byte @NotNull []> bytecodeConsumer);
+    @NotNull
+    MochaEngine<T> postCompile(final @Nullable Consumer<byte @NotNull []> bytecodeConsumer);
 
-    //#endregion
+    // #endregion
 
     /**
-     * Returns the bindings for this Molang engine
-     * instance.
+     * Returns the bindings for this Molang engine instance.
      *
      * @return This engine's bindings
      * @since 3.0.0
      */
-    @NotNull Scope scope();
+    @NotNull
+    Scope scope();
 }

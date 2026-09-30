@@ -5,13 +5,9 @@ import org.joml.Matrix4fc;
 
 import java.util.Objects;
 
-/**
- * An axis-aligned cube bounds in a bone or attachment-local coordinate space.
- */
+/** An axis-aligned cube bounds in a bone or attachment-local coordinate space. */
 public record LocalCubeBounds(
-        float minX, float minY, float minZ,
-        float maxX, float maxY, float maxZ
-) {
+        float minX, float minY, float minZ, float maxX, float maxY, float maxZ) {
     public static Builder builder() {
         return new Builder();
     }
@@ -34,7 +30,14 @@ public record LocalCubeBounds(
             return this;
         }
 
-        public Builder includeCube(float x, float y, float z, float width, float height, float depth, Matrix4fc transform) {
+        public Builder includeCube(
+                float x,
+                float y,
+                float z,
+                float width,
+                float height,
+                float depth,
+                Matrix4fc transform) {
             Objects.requireNonNull(transform, "transform");
             float maxCubeX = x + width;
             float maxCubeY = y + height;
@@ -52,15 +55,25 @@ public record LocalCubeBounds(
 
         @Nullable
         public LocalCubeBounds build() {
-            return minX == Float.POSITIVE_INFINITY ? null : new LocalCubeBounds(minX, minY, minZ, maxX, maxY, maxZ);
+            return minX == Float.POSITIVE_INFINITY
+                    ? null
+                    : new LocalCubeBounds(minX, minY, minZ, maxX, maxY, maxZ);
         }
 
         private void includeTransformed(float x, float y, float z, Matrix4fc transform) {
             include(
-                    transform.m00() * x + transform.m10() * y + transform.m20() * z + transform.m30(),
-                    transform.m01() * x + transform.m11() * y + transform.m21() * z + transform.m31(),
-                    transform.m02() * x + transform.m12() * y + transform.m22() * z + transform.m32()
-            );
+                    transform.m00() * x
+                            + transform.m10() * y
+                            + transform.m20() * z
+                            + transform.m30(),
+                    transform.m01() * x
+                            + transform.m11() * y
+                            + transform.m21() * z
+                            + transform.m31(),
+                    transform.m02() * x
+                            + transform.m12() * y
+                            + transform.m22() * z
+                            + transform.m32());
         }
     }
 }

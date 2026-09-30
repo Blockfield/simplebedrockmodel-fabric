@@ -1,8 +1,10 @@
 package com.github.mcmodderanchor.simplebedrockmodel.v2.common.model.baked;
 
 import com.github.mcmodderanchor.simplebedrockmodel.v2.client.compat.acceleratedrendering.AcceleratedBedrockGeometryCache;
+
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+
 import org.jetbrains.annotations.ApiStatus;
 
 public final class BakedGeometryChunk {
@@ -14,7 +16,11 @@ public final class BakedGeometryChunk {
     @Environment(EnvType.CLIENT)
     private AcceleratedBedrockGeometryCache cache;
 
-    public BakedGeometryChunk(int attachBoneIndex, BakedQuadData quads, BakedVertexData vertices, String[] sourceBones) {
+    public BakedGeometryChunk(
+            int attachBoneIndex,
+            BakedQuadData quads,
+            BakedVertexData vertices,
+            String[] sourceBones) {
         this.attachBoneIndex = attachBoneIndex;
         this.quads = quads == null ? BakedQuadData.EMPTY : quads;
         this.vertices = vertices == null ? BakedVertexData.EMPTY : vertices;

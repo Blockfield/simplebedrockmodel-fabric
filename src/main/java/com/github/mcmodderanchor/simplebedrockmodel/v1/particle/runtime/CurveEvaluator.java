@@ -5,16 +5,13 @@ import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.curve.Curve
 import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.curve.CurveType;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.curve.ParticleCurve;
 
-/**
- * 粒子曲线求值器。
- */
+/** 粒子曲线求值器。 */
 public final class CurveEvaluator {
     private static final CurveNode FIRST_CHAIN_NODE = new CurveNode(0f, 0f);
     private static final CurveNode LAST_CHAIN_NODE = new CurveNode(0f, 0f);
     private static final float ONE_THIRD = 1f / 3f;
 
-    private CurveEvaluator() {
-    }
+    private CurveEvaluator() {}
 
     public static float evaluate(ParticleCurve curve, MolangContext<?> ctx, String curveName) {
         float input = (float) curve.input().evaluate(ctx);
@@ -78,10 +75,11 @@ public final class CurveEvaluator {
         float tt = localT * localT;
         float ttt = tt * localT;
 
-        return 0.5f * ((2f * p1)
-                + (-p0 + p2) * localT
-                + (2f * p0 - 5f * p1 + 4f * p2 - p3) * tt
-                + (-p0 + 3f * p1 - 3f * p2 + p3) * ttt);
+        return 0.5f
+                * ((2f * p1)
+                        + (-p0 + p2) * localT
+                        + (2f * p0 - 5f * p1 + 4f * p2 - p3) * tt
+                        + (-p0 + 3f * p1 - 3f * p2 + p3) * ttt);
     }
 
     private static float evaluateBezierChain(float[] keys, CurveNode[] nodes, float t) {
@@ -112,10 +110,7 @@ public final class CurveEvaluator {
         float inv = 1f - t;
         float inv2 = inv * inv;
         float t2 = t * t;
-        return inv2 * inv * v0
-                + 3f * inv2 * t * v1
-                + 3f * inv * t2 * v2
-                + t2 * t * v3;
+        return inv2 * inv * v0 + 3f * inv2 * t * v1 + 3f * inv * t2 * v2 + t2 * t * v3;
     }
 
     private static float clamp01(float value) {

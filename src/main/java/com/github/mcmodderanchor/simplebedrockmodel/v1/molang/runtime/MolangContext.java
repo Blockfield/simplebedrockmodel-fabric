@@ -52,19 +52,14 @@ public class MolangContext<T> implements IEvaluationContext {
 
     // === @QueryBinding 属性 ===
 
-    /**
-     * 当前动画播放时间（秒），对应 Molang {@code query.anim_time}。
-     */
+    /** 当前动画播放时间（秒），对应 Molang {@code query.anim_time}。 */
     @QueryBinding("anim_time")
     public double queryAnimTime() {
         return animTime;
     }
 
     // === Variable 存储 ===
-    /**
-     * 获取此 context 独立的 variable 存储。
-     * 对应 Molang 中的 variable / v 命名空间。
-     */
+    /** 获取此 context 独立的 variable 存储。 对应 Molang 中的 variable / v 命名空间。 */
     public MutableObjectBinding getVariableStorage() {
         return variableStorage;
     }

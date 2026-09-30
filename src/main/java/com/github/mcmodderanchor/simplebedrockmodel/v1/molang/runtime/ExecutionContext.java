@@ -25,15 +25,18 @@ package com.github.mcmodderanchor.simplebedrockmodel.v1.molang.runtime;
 
 import com.github.mcmodderanchor.simplebedrockmodel.v1.molang.parser.ast.Expression;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.molang.runtime.value.Value;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public interface ExecutionContext<T> {
     T entity();
 
-    @Nullable Value eval(final @NotNull Expression expression);
+    @Nullable
+    Value eval(final @NotNull Expression expression);
 
-    @Nullable Object flag();
+    @Nullable
+    Object flag();
 
     void flag(final @Nullable Object flag);
 }

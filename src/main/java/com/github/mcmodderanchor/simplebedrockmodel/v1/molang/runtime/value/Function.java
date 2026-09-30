@@ -26,17 +26,16 @@ package com.github.mcmodderanchor.simplebedrockmodel.v1.molang.runtime.value;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.molang.parser.ast.Expression;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.molang.runtime.ExecutionContext;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.molang.runtime.ExpressionInterpreter;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Represents a Molang function. Receives a certain amount of
- * parameters and (optionally) returns a value. Can be called
- * from Molang code using call expressions: {@code my_function(1, 2, 3)}
+ * Represents a Molang function. Receives a certain amount of parameters and (optionally) returns a
+ * value. Can be called from Molang code using call expressions: {@code my_function(1, 2, 3)}
  *
- * <p>This is a very low-level function that is "expression-sensitive",
- * this means, it takes the raw expression arguments instead of the
- * evaluated expression argument values.</p>
+ * <p>This is a very low-level function that is "expression-sensitive", this means, it takes the raw
+ * expression arguments instead of the evaluated expression argument values.
  *
  * @since 3.0.0
  */
@@ -45,12 +44,13 @@ public interface Function<T> extends Value {
     /**
      * Executes this function with the given arguments.
      *
-     * @param context   The execution context
+     * @param context The execution context
      * @param arguments The arguments
      * @return The function result
      * @since 3.0.0
      */
-    @Nullable Value evaluate(final @NotNull ExecutionContext<T> context, final @NotNull Arguments arguments);
+    @Nullable
+    Value evaluate(final @NotNull ExecutionContext<T> context, final @NotNull Arguments arguments);
 
     /**
      * Executes this function.
@@ -66,16 +66,16 @@ public interface Function<T> extends Value {
     /**
      * Determines if this function is pure or not.
      *
-     * <p>A pure function is a function that has the following properties:</p>
+     * <p>A pure function is a function that has the following properties:
+     *
      * <ol>
-     *     <li>The function return values are <b>identical for identical
-     *     arguments</b>, and</li>
-     *     <li>The function has <b>no side effects</b></li>
+     *   <li>The function return values are <b>identical for identical arguments</b>, and
+     *   <li>The function has <b>no side effects</b>
      * </ol>
      *
-     * <p>The compiler or interpreter may pre-evaluate these functions ahead
-     * of time. In case of compiling, the function may be called during compile
-     * time, to use the function's result instead.</p>
+     * <p>The compiler or interpreter may pre-evaluate these functions ahead of time. In case of
+     * compiling, the function may be called during compile time, to use the function's result
+     * instead.
      *
      * @return If this function is pure or not.
      * @since 3.0.0
@@ -95,14 +95,13 @@ public interface Function<T> extends Value {
         }
 
         /**
-         * Gets the next argument. If there are
-         * no more arguments, returns an {@link Argument}
-         * with no expression and that can be evaluated
-         * to null-like values (0 for numbers).
+         * Gets the next argument. If there are no more arguments, returns an {@link Argument} with
+         * no expression and that can be evaluated to null-like values (0 for numbers).
          *
          * @return The next argument.
          */
-        @NotNull Argument next();
+        @NotNull
+        Argument next();
 
         /**
          * Gets the amount of arguments.
@@ -114,21 +113,21 @@ public interface Function<T> extends Value {
     }
 
     /**
-     * Represents a {@link Function} argument. It is an expression
-     * that can be easily evaluated inside the function.
+     * Represents a {@link Function} argument. It is an expression that can be easily evaluated
+     * inside the function.
      *
      * @since 3.0.0
      */
     interface Argument {
         /**
-         * Gets the argument expression. Null if and only if
-         * the argument wasn't actually provided and is just
-         * returned by {@link Arguments} for ease of use.
+         * Gets the argument expression. Null if and only if the argument wasn't actually provided
+         * and is just returned by {@link Arguments} for ease of use.
          *
          * @return The argument expression.
          * @since 3.0.0
          */
-        @Nullable Expression expression();
+        @Nullable
+        Expression expression();
 
         /**
          * Evaluates the argument expression.
@@ -136,6 +135,7 @@ public interface Function<T> extends Value {
          * @return The evaluation result.
          * @since 3.0.0
          */
-        @Nullable Value eval();
+        @Nullable
+        Value eval();
     }
 }

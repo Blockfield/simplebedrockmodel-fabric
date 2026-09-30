@@ -26,6 +26,7 @@ package com.github.mcmodderanchor.simplebedrockmodel.v1.molang.runtime.binding;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.molang.runtime.ExecutionContext;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.molang.runtime.value.Function;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.molang.runtime.value.Value;
+
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -39,7 +40,11 @@ public final class JavaFunction<T> implements Function<T> {
     private final boolean pure;
     private Function<T> function;
 
-    JavaFunction(final @Nullable Object object, final @Nullable Method method, final @Nullable Function<T> function, final boolean pure) {
+    JavaFunction(
+            final @Nullable Object object,
+            final @Nullable Method method,
+            final @Nullable Function<T> function,
+            final boolean pure) {
         this.object = object;
         this.method = method;
         this.function = function;
@@ -50,7 +55,8 @@ public final class JavaFunction<T> implements Function<T> {
     private void evaluate() {
         if (function == null) {
             if (method == null) {
-                throw new IllegalArgumentException("Either the method or a generic function must be given.");
+                throw new IllegalArgumentException(
+                        "Either the method or a generic function must be given.");
             }
 
             // create the generic function from the method
@@ -67,7 +73,8 @@ public final class JavaFunction<T> implements Function<T> {
     }
 
     @Override
-    public @Nullable Value evaluate(final @NotNull ExecutionContext<T> context, final @NotNull Arguments arguments) {
+    public @Nullable Value evaluate(
+            final @NotNull ExecutionContext<T> context, final @NotNull Arguments arguments) {
         return function.evaluate(context, arguments);
     }
 

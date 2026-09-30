@@ -1,6 +1,7 @@
 package com.github.mcmodderanchor.simplebedrockmodel.v1.client.renderer;
 
 import cn.sh1rocu.simplebedrockmodel.api.event.ViewportEvent;
+
 import com.github.mcmodderanchor.simplebedrockmodel.v1.client.animation.IFPAnimationInstance;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.client.model.PositionableModel;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.client.model.SlotModel;
@@ -8,6 +9,7 @@ import com.github.mcmodderanchor.simplebedrockmodel.v1.common.model.BedrockModel
 import com.github.mcmodderanchor.simplebedrockmodel.v1.util.RenderDistance;
 import com.maydaymemory.mae.basic.YXZRotationView;
 import com.mojang.blaze3d.vertex.PoseStack;
+
 import net.fabricmc.fabric.api.client.rendering.v1.BuiltinItemRendererRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -20,6 +22,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Quaternionf;
@@ -33,12 +36,15 @@ import javax.annotation.ParametersAreNonnullByDefault;
  * @param <M> 基岩版模型
  */
 public abstract class AbstractGeoItemRenderer<M extends BedrockModel>
-        extends BlockEntityWithoutLevelRenderer implements IFPGeoItemRenderer, BuiltinItemRendererRegistry.DynamicItemRenderer {
+        extends BlockEntityWithoutLevelRenderer
+        implements IFPGeoItemRenderer, BuiltinItemRendererRegistry.DynamicItemRenderer {
     public static final String FP_CAMERA_BONE_NAME = "camera";
     private static final SlotModel SLOT_MODEL = new SlotModel();
 
     public AbstractGeoItemRenderer() {
-        super(Minecraft.getInstance().getBlockEntityRenderDispatcher(), Minecraft.getInstance().getEntityModels());
+        super(
+                Minecraft.getInstance().getBlockEntityRenderDispatcher(),
+                Minecraft.getInstance().getEntityModels());
     }
 
     @Nullable
@@ -50,12 +56,15 @@ public abstract class AbstractGeoItemRenderer<M extends BedrockModel>
     @Nullable
     public abstract ResourceLocation getSlotTexture(ItemStack stack);
 
-    /**
-     * 应用摄像机动画对世界的变换（只有旋转生效）
-     */
+    /** 应用摄像机动画对世界的变换（只有旋转生效） */
     @Override
-    public void applyLevelCameraAnimation(ViewportEvent.ComputeCameraAngles event, ItemStack stack, Quaternionf animateRot, float partialTicks) {
-        Quaternionf initialRotation = new Quaternionf().rotateYXZ(-event.getYaw(), -event.getPitch(), -event.getRoll());
+    public void applyLevelCameraAnimation(
+            ViewportEvent.ComputeCameraAngles event,
+            ItemStack stack,
+            Quaternionf animateRot,
+            float partialTicks) {
+        Quaternionf initialRotation =
+                new Quaternionf().rotateYXZ(-event.getYaw(), -event.getPitch(), -event.getRoll());
         YXZRotationView rotationView = new YXZRotationView(initialRotation.mul(animateRot));
         Vector3fc eulerAngle = rotationView.asEulerAngle();
         event.setYaw(-eulerAngle.y());
@@ -63,18 +72,20 @@ public abstract class AbstractGeoItemRenderer<M extends BedrockModel>
         event.setRoll(-eulerAngle.z());
     }
 
-    /**
-     * 应用摄像机动画对手持物品的变换（只有旋转生效）
-     */
+    /** 应用摄像机动画对手持物品的变换（只有旋转生效） */
     @Override
-    public void applyItemInHandCameraAnimation(PoseStack poseStack, ItemStack stack, Quaternionf animateRot, float partialTicks) {
+    public void applyItemInHandCameraAnimation(
+            PoseStack poseStack, ItemStack stack, Quaternionf animateRot, float partialTicks) {
         poseStack.mulPose(animateRot);
     }
 
-    /**
-     * 渲染模型前调用。默认会应用定位组变换。可以用于施加动画的影响。
-     */
-    protected void beforeRender(PoseStack poseStack, ItemDisplayContext ctx, M model, ItemStack stack, float partialTicks) {
+    /** 渲染模型前调用。默认会应用定位组变换。可以用于施加动画的影响。 */
+    protected void beforeRender(
+            PoseStack poseStack,
+            ItemDisplayContext ctx,
+            M model,
+            ItemStack stack,
+            float partialTicks) {
         if (ctx == ItemDisplayContext.GROUND) {
             poseStack.translate(0.5, 0.3125, 0.5);
         } else if (!ctx.firstPerson()) {
@@ -85,15 +96,24 @@ public abstract class AbstractGeoItemRenderer<M extends BedrockModel>
         }
     }
 
-    /**
-     * 渲染模型后调用。可以做一些清理工作，例如将 bind pose 应用给模型以清除动画影响。默认什么都不会做。
-     */
-    protected void afterRender(PoseStack poseStack, ItemDisplayContext ctx, M model, ItemStack stack, MultiBufferSource bufferSource,
-                               int light, float partialTicks) {
-    }
+    /** 渲染模型后调用。可以做一些清理工作，例如将 bind pose 应用给模型以清除动画影响。默认什么都不会做。 */
+    protected void afterRender(
+            PoseStack poseStack,
+            ItemDisplayContext ctx,
+            M model,
+            ItemStack stack,
+            MultiBufferSource bufferSource,
+            int light,
+            float partialTicks) {}
 
-    public void renderFirstPerson(LocalPlayer player, ItemStack stack, ItemDisplayContext ctx, PoseStack poseStack, MultiBufferSource bufferSource,
-                                  int light, float partialTick) {
+    public void renderFirstPerson(
+            LocalPlayer player,
+            ItemStack stack,
+            ItemDisplayContext ctx,
+            PoseStack poseStack,
+            MultiBufferSource bufferSource,
+            int light,
+            float partialTick) {
         // 默认的左右手位移
         int i = ctx == ItemDisplayContext.FIRST_PERSON_RIGHT_HAND ? 1 : -1;
         poseStack.translate((float) i * 0.5F, -0.75F, -0.75F);
@@ -102,16 +122,34 @@ public abstract class AbstractGeoItemRenderer<M extends BedrockModel>
 
     @ParametersAreNonnullByDefault
     @Override
-    public void renderByItem(ItemStack stack, ItemDisplayContext ctx, PoseStack poseStack, MultiBufferSource bufferSource,
-                             int light, int overlay) {
+    public void renderByItem(
+            ItemStack stack,
+            ItemDisplayContext ctx,
+            PoseStack poseStack,
+            MultiBufferSource bufferSource,
+            int light,
+            int overlay) {
         if (ctx.firstPerson()) {
             return;
         }
-        render(stack, ctx, poseStack, bufferSource, light, overlay, Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(true));
+        render(
+                stack,
+                ctx,
+                poseStack,
+                bufferSource,
+                light,
+                overlay,
+                Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(true));
     }
 
-    protected void render(ItemStack stack, ItemDisplayContext ctx, PoseStack poseStack, MultiBufferSource bufferSource,
-                          int light, int overlay, float partialTicks) {
+    protected void render(
+            ItemStack stack,
+            ItemDisplayContext ctx,
+            PoseStack poseStack,
+            MultiBufferSource bufferSource,
+            int light,
+            int overlay,
+            float partialTicks) {
         Pair<M, RenderType> modelAndRenderType = null;
         // 如果不在高模渲染距离内，则尝试获取低模，如果低模不存在，仍然用高模作为 fallback
         if (!RenderDistance.inRenderHighPolyModelDistance(poseStack, 16) && !ctx.firstPerson()) {
@@ -135,19 +173,32 @@ public abstract class AbstractGeoItemRenderer<M extends BedrockModel>
         poseStack.popPose();
     }
 
-    public void renderSlot(ItemStack stack, PoseStack poseStack, MultiBufferSource bufferSource, int light, int overlay, Pair<M, RenderType> modelAndRenderType) {
+    public void renderSlot(
+            ItemStack stack,
+            PoseStack poseStack,
+            MultiBufferSource bufferSource,
+            int light,
+            int overlay,
+            Pair<M, RenderType> modelAndRenderType) {
         ResourceLocation slotTexture = getSlotTexture(stack);
         if (slotTexture != null) {
             poseStack.pushPose();
             poseStack.translate(0.5, 0.5, 0);
-            SLOT_MODEL.renderToBuffer(poseStack, bufferSource.getBuffer(RenderType.entityTranslucent(slotTexture)), light, overlay, 0xFFFFFFFF);
+            SLOT_MODEL.renderToBuffer(
+                    poseStack,
+                    bufferSource.getBuffer(RenderType.entityTranslucent(slotTexture)),
+                    light,
+                    overlay,
+                    0xFFFFFFFF);
             poseStack.popPose();
         } else if (modelAndRenderType == null) {
             // 模型和 gui texture 都不存在，渲染 missing texture
             poseStack.pushPose();
             poseStack.translate(0.5, 0.5, 0);
-            RenderType renderType1 = RenderType.entityTranslucent(MissingTextureAtlasSprite.getLocation());
-            SLOT_MODEL.renderToBuffer(poseStack, bufferSource.getBuffer(renderType1), light, overlay, 0xFFFFFFFF);
+            RenderType renderType1 =
+                    RenderType.entityTranslucent(MissingTextureAtlasSprite.getLocation());
+            SLOT_MODEL.renderToBuffer(
+                    poseStack, bufferSource.getBuffer(renderType1), light, overlay, 0xFFFFFFFF);
             poseStack.popPose();
         }
     }
@@ -168,8 +219,8 @@ public abstract class AbstractGeoItemRenderer<M extends BedrockModel>
     }
 
     /**
-     * Check if the given ItemStack should be considered the same as the current one.
-     * If false is returned, a new IFPAnimationInstance will be created for the new item.
+     * Check if the given ItemStack should be considered the same as the current one. If false is
+     * returned, a new IFPAnimationInstance will be created for the new item.
      *
      * @param oldStack current item stack
      * @param newStack the new item stack

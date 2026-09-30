@@ -32,14 +32,15 @@ public record ParticleLifetimeKillPlane(float a, float b, float c, float d)
     }
 
     public static ParticleLifetimeKillPlane fromJson(JsonElement value) {
-        if (!value.isJsonArray()) throw new JsonParseException("particle_lifetime_kill_plane must be a JSON array");
+        if (!value.isJsonArray())
+            throw new JsonParseException("particle_lifetime_kill_plane must be a JSON array");
         JsonArray arr = value.getAsJsonArray();
-        if (arr.size() != 4) throw new JsonParseException("particle_lifetime_kill_plane array must have 4 elements");
+        if (arr.size() != 4)
+            throw new JsonParseException("particle_lifetime_kill_plane array must have 4 elements");
         return new ParticleLifetimeKillPlane(
                 arr.get(0).getAsFloat(),
                 arr.get(1).getAsFloat(),
                 arr.get(2).getAsFloat(),
-                arr.get(3).getAsFloat()
-        );
+                arr.get(3).getAsFloat());
     }
 }

@@ -2,15 +2,19 @@ package com.github.mcmodderanchor.simplebedrockmodel.v1.network.message;
 
 import com.github.mcmodderanchor.simplebedrockmodel.SimpleBedrockModel;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.client.event.SwapItemWithOffHand;
+
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+
 import org.jetbrains.annotations.NotNull;
 
 public record ServerMessageSwapItem() implements CustomPacketPayload {
-    public static final CustomPacketPayload.Type<ServerMessageSwapItem> TYPE = new CustomPacketPayload.Type<>(SimpleBedrockModel.modLoc("swap_item"));
-    public static final StreamCodec<RegistryFriendlyByteBuf, ServerMessageSwapItem> STREAM_CODEC = StreamCodec.unit(new ServerMessageSwapItem());
+    public static final CustomPacketPayload.Type<ServerMessageSwapItem> TYPE =
+            new CustomPacketPayload.Type<>(SimpleBedrockModel.modLoc("swap_item"));
+    public static final StreamCodec<RegistryFriendlyByteBuf, ServerMessageSwapItem> STREAM_CODEC =
+            StreamCodec.unit(new ServerMessageSwapItem());
 
     @NotNull
     @Override
@@ -19,6 +23,7 @@ public record ServerMessageSwapItem() implements CustomPacketPayload {
     }
 
     public static void handle(ServerMessageSwapItem message, ClientPlayNetworking.Context context) {
-        context.client().execute(() -> SwapItemWithOffHand.EVENT.invoker().post(new SwapItemWithOffHand()));
+        context.client()
+                .execute(() -> SwapItemWithOffHand.EVENT.invoker().post(new SwapItemWithOffHand()));
     }
 }

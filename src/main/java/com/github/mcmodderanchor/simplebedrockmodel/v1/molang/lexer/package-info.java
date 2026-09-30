@@ -22,12 +22,10 @@
  * SOFTWARE.
  */
 /**
- * Package containing classes related to lexicographical
- * analysis of Molang code.
+ * Package containing classes related to lexicographical analysis of Molang code.
  *
- * <p>This means converting simple text, to a stream of
- * tokens, e.g. (1 + 2 + 3) -> (double plus double plus double),
- * or ('hello'.length()) -> (string dot identifier lparen rparen)</p>
+ * <p>This means converting simple text, to a stream of tokens, e.g. (1 + 2 + 3) -> (double plus
+ * double plus double), or ('hello'.length()) -> (string dot identifier lparen rparen)
  *
  * @since 3.0.0
  */

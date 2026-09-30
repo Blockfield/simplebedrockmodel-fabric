@@ -28,11 +28,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 
 /**
- * Mutable class that tracks the position of characters
- * when performing lexical analysis
+ * Mutable class that tracks the position of characters when performing lexical analysis
  *
- * <p>Can be used to show the position of lexical errors
- * in a human-readable way</p>
+ * <p>Can be used to show the position of lexical errors in a human-readable way
  *
  * @since 3.0.0
  */
@@ -46,8 +44,7 @@ public final class Cursor implements Cloneable {
         this.column = column;
     }
 
-    public Cursor() {
-    }
+    public Cursor() {}
 
     public int index() {
         return index;

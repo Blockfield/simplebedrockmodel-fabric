@@ -13,42 +13,40 @@ import com.google.gson.JsonObject;
 import com.maydaymemory.mae.basic.*;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
+
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.world.phys.AABB;
+
+import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Quaternionfc;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
 
-import org.jetbrains.annotations.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.*;
+
+import javax.annotation.ParametersAreNonnullByDefault;
 
 public class BedrockModel implements Skeleton, BoneIndexProvider {
     private static final Vector3f NORMAL_SCALE = new Vector3f(1, 1, 1);
-    /**
-     * 储存 name -> bone 的映射关系
-     */
+
+    /** 储存 name -> bone 的映射关系 */
     protected final HashMap<String, BedrockBone> boneMap = new HashMap<>();
-    /**
-     * 储存 index -> bone 的映射关系
-     */
+
+    /** 储存 index -> bone 的映射关系 */
     protected final ArrayList<BedrockBone> boneIndex = new ArrayList<>();
-    /**
-     * 顶层 bone，没有对应的 name 和 index
-     */
+
+    /** 顶层 bone，没有对应的 name 和 index */
     protected final BedrockBone root = new BedrockBone();
-    /**
-     * 模型的 AABB
-     */
+
+    /** 模型的 AABB */
     protected AABB renderBoundingBox;
-    /**
-     * 模型默认的 Pose
-     */
+
+    /** 模型默认的 Pose */
     private final Pose bindingPose;
 
     public BedrockModel(BedrockModelPOJO pojo) {
@@ -65,12 +63,12 @@ public class BedrockModel implements Skeleton, BoneIndexProvider {
         PoseBuilder poseBuilder = new ArrayPoseBuilder();
         for (int i = 0; i < boneIndex.size(); i++) {
             BedrockBone part = boneIndex.get(i);
-            BoneTransform boneTransform = new BoneTransform(
-                    i,
-                    new Vector3f(part.x, part.y, part.z),
-                    new BindRotationView(part.rotation, part.rotationInEuler),
-                    NORMAL_SCALE
-            );
+            BoneTransform boneTransform =
+                    new BoneTransform(
+                            i,
+                            new Vector3f(part.x, part.y, part.z),
+                            new BindRotationView(part.rotation, part.rotationInEuler),
+                            NORMAL_SCALE);
             poseBuilder.addBoneTransform(boneTransform);
         }
         return poseBuilder.toPose();
@@ -93,7 +91,14 @@ public class BedrockModel implements Skeleton, BoneIndexProvider {
             float offsetZ = offset[2];
             float width = description.getVisibleBoundsWidth() / 2.0f;
             float height = description.getVisibleBoundsHeight() / 2.0f;
-            renderBoundingBox = new AABB(offsetX - width, offsetY - height, offsetZ - width, offsetX + width, offsetY + height, offsetZ + width);
+            renderBoundingBox =
+                    new AABB(
+                            offsetX - width,
+                            offsetY - height,
+                            offsetZ - width,
+                            offsetX + width,
+                            offsetY + height,
+                            offsetZ + width);
             initialWithBoneItems(bones, texWidth, texHeight);
         } else {
             initialWithBoneItems(bones, 0, 0);
@@ -116,7 +121,14 @@ public class BedrockModel implements Skeleton, BoneIndexProvider {
             float offsetZ = offset[2];
             float width = pojo.getGeometryModelLegacy().getVisibleBoundsWidth() / 2.0f;
             float height = pojo.getGeometryModelLegacy().getVisibleBoundsHeight() / 2.0f;
-            renderBoundingBox = new AABB(offsetX - width, offsetY - height, offsetZ - width, offsetX + width, offsetY + height, offsetZ + width);
+            renderBoundingBox =
+                    new AABB(
+                            offsetX - width,
+                            offsetY - height,
+                            offsetZ - width,
+                            offsetX + width,
+                            offsetY + height,
+                            offsetZ + width);
 
             initialWithBoneItems(bones, texWidth, texHeight);
         } else {
@@ -124,39 +136,75 @@ public class BedrockModel implements Skeleton, BoneIndexProvider {
         }
     }
 
-    protected BedrockCube createCubeBox(float texOffX, float texOffY, float x, float y, float z, float width, float height, float depth,
-                                        float delta, boolean mirror, float texWidth, float texHeight) {
+    protected BedrockCube createCubeBox(
+            float texOffX,
+            float texOffY,
+            float x,
+            float y,
+            float z,
+            float width,
+            float height,
+            float depth,
+            float delta,
+            boolean mirror,
+            float texWidth,
+            float texHeight) {
         if (SodiumCompat.isSodiumInstalled()) {
-            return new SodiumBedrockCubeBox(texOffX, texOffY, x, y, z, width, height, depth, delta, mirror, texWidth, texHeight);
+            return new SodiumBedrockCubeBox(
+                    texOffX, texOffY, x, y, z, width, height, depth, delta, mirror, texWidth,
+                    texHeight);
         }
-        return new BedrockCubeBox(texOffX, texOffY, x, y, z, width, height, depth, delta, mirror, texWidth, texHeight);
+        return new BedrockCubeBox(
+                texOffX, texOffY, x, y, z, width, height, depth, delta, mirror, texWidth,
+                texHeight);
     }
 
-    protected BedrockCube createCubePerFace(float x, float y, float z, float width, float height, float depth, float delta,
-                                            float texWidth, float texHeight, FaceUVsItem faces) {
+    protected BedrockCube createCubePerFace(
+            float x,
+            float y,
+            float z,
+            float width,
+            float height,
+            float depth,
+            float delta,
+            float texWidth,
+            float texHeight,
+            FaceUVsItem faces) {
         if (SodiumCompat.isSodiumInstalled()) {
-            return new SodiumBedrockCubePerFace(x, y, z, width, height, depth, delta, texWidth, texHeight, faces);
+            return new SodiumBedrockCubePerFace(
+                    x, y, z, width, height, depth, delta, texWidth, texHeight, faces);
         }
-        return new BedrockCubePerFace(x, y, z, width, height, depth, delta, texWidth, texHeight, faces);
+        return new BedrockCubePerFace(
+                x, y, z, width, height, depth, delta, texWidth, texHeight, faces);
     }
 
-    protected BedrockMesh createPolyMesh(PolyMeshItem polyMesh, BedrockBone part, float texWidth, float texHeight) {
+    protected BedrockMesh createPolyMesh(
+            PolyMeshItem polyMesh, BedrockBone part, float texWidth, float texHeight) {
         // 这东西有问题，先不用它了
-//        if (SodiumCompat.isSodiumInstalled()) {
-//            return new SodiumBedrockPolyMesh(polyMesh, part, texWidth, texHeight);
-//        }
+        //        if (SodiumCompat.isSodiumInstalled()) {
+        //            return new SodiumBedrockPolyMesh(polyMesh, part, texWidth, texHeight);
+        //        }
         return new BedrockPolyMesh(polyMesh, part, texWidth, texHeight);
     }
 
     @Environment(EnvType.CLIENT)
     @ParametersAreNonnullByDefault
-    public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay) {
+    public void renderToBuffer(
+            PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay) {
         root.render(poseStack, buffer, packedLight, packedOverlay);
     }
 
     @Environment(EnvType.CLIENT)
     @ParametersAreNonnullByDefault
-    public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
+    public void renderToBuffer(
+            PoseStack poseStack,
+            VertexConsumer buffer,
+            int packedLight,
+            int packedOverlay,
+            float red,
+            float green,
+            float blue,
+            float alpha) {
         root.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
     }
 
@@ -166,29 +214,62 @@ public class BedrockModel implements Skeleton, BoneIndexProvider {
      * @param poseStack
      * @param bufferSource
      * @param quadRenderType 用于渲染 cube 的 RenderType
-     * @param triangleRenderType 用于渲染 mesh。需要 VertexFormat.Mode 为 TRIANGLES，参见 {@link BedrockModelRenderTypes}
+     * @param triangleRenderType 用于渲染 mesh。需要 VertexFormat.Mode 为 TRIANGLES，参见 {@link
+     *     BedrockModelRenderTypes}
      * @param packedLight
      * @param packedOverlay
      */
     @Environment(EnvType.CLIENT)
     @ParametersAreNonnullByDefault
-    public void renderToBuffer(PoseStack poseStack, MultiBufferSource bufferSource, RenderType quadRenderType, RenderType triangleRenderType,
-                               int packedLight, int packedOverlay) {
-        this.renderToBuffer(poseStack, bufferSource, quadRenderType, triangleRenderType, packedLight, packedOverlay,
-                1.0F, 1.0F, 1.0F, 1.0F);
+    public void renderToBuffer(
+            PoseStack poseStack,
+            MultiBufferSource bufferSource,
+            RenderType quadRenderType,
+            RenderType triangleRenderType,
+            int packedLight,
+            int packedOverlay) {
+        this.renderToBuffer(
+                poseStack,
+                bufferSource,
+                quadRenderType,
+                triangleRenderType,
+                packedLight,
+                packedOverlay,
+                1.0F,
+                1.0F,
+                1.0F,
+                1.0F);
     }
 
     @Environment(EnvType.CLIENT)
     @ParametersAreNonnullByDefault
-    public void renderToBuffer(PoseStack poseStack, MultiBufferSource bufferSource, RenderType quadRenderType, RenderType triangleRenderType,
-                               int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
+    public void renderToBuffer(
+            PoseStack poseStack,
+            MultiBufferSource bufferSource,
+            RenderType quadRenderType,
+            RenderType triangleRenderType,
+            int packedLight,
+            int packedOverlay,
+            float red,
+            float green,
+            float blue,
+            float alpha) {
         if (root.hasCubesInTree()) {
             VertexConsumer quadConsumer = bufferSource.getBuffer(quadRenderType);
-            root.renderCubes(poseStack, quadConsumer, packedLight, packedOverlay, red, green, blue, alpha);
+            root.renderCubes(
+                    poseStack, quadConsumer, packedLight, packedOverlay, red, green, blue, alpha);
         }
         if (root.hasMeshesInTree()) {
             VertexConsumer triangleConsumer = bufferSource.getBuffer(triangleRenderType);
-            root.renderMeshes(poseStack, triangleConsumer, packedLight, packedOverlay, red, green, blue, alpha);
+            root.renderMeshes(
+                    poseStack,
+                    triangleConsumer,
+                    packedLight,
+                    packedOverlay,
+                    red,
+                    green,
+                    blue,
+                    alpha);
         }
     }
 
@@ -224,7 +305,8 @@ public class BedrockModel implements Skeleton, BoneIndexProvider {
         for (BonesItem bone : bones) {
             BedrockBone part = new BedrockBone();
             float[] pivot = bone.getPivot() != null ? Arrays.copyOf(bone.getPivot(), 3) : null;
-            float[] rotation = bone.getRotation() != null ? Arrays.copyOf(bone.getRotation(), 3) : null;
+            float[] rotation =
+                    bone.getRotation() != null ? Arrays.copyOf(bone.getRotation(), 3) : null;
             // 这里先简单的将左手系坐标转换为右手系坐标，待父子关系建立后再转换为相对坐标
             if (pivot != null) {
                 part.x = -pivot[0];
@@ -260,7 +342,8 @@ public class BedrockModel implements Skeleton, BoneIndexProvider {
             // 塞入 cubes
             part.setLocators(parseLocators(bone, part));
             if (bone.getPolyMesh() != null) {
-                BedrockMesh polyMesh = createPolyMesh(bone.getPolyMesh(), part, texWidth, texHeight);
+                BedrockMesh polyMesh =
+                        createPolyMesh(bone.getPolyMesh(), part, texWidth, texHeight);
                 if (polyMesh != null) {
                     part.meshes.add(polyMesh);
                 }
@@ -271,8 +354,14 @@ public class BedrockModel implements Skeleton, BoneIndexProvider {
                     @Nullable FaceUVsItem faceUv = cube.getFaceUv();
                     float[] size = cube.getSize();
                     float[] origin = Arrays.copyOf(cube.getOrigin(), 3);
-                    @Nullable float[] cubeRotation = cube.getRotation() != null ? Arrays.copyOf(cube.getRotation(), 3) : null;
-                    @Nullable float[] cubePivot = cube.getPivot() != null ? Arrays.copyOf(cube.getPivot(), 3) : null;
+                    @Nullable
+                    float[] cubeRotation =
+                            cube.getRotation() != null
+                                    ? Arrays.copyOf(cube.getRotation(), 3)
+                                    : null;
+                    @Nullable
+                    float[] cubePivot =
+                            cube.getPivot() != null ? Arrays.copyOf(cube.getPivot(), 3) : null;
                     boolean mirror = cube.isMirror();
                     float inflate = cube.getInflate();
                     // 先将 origin 的 x 轴坐标处理一下，先加上 size.x 再镜像。
@@ -288,22 +377,22 @@ public class BedrockModel implements Skeleton, BoneIndexProvider {
                     }
                     // 根据情况建立好 BedrockCube 实例
                     BedrockCube cubeInstance;
-                    float originX = cubePivot == null ? origin[0] - part.x : origin[0] - cubePivot[0];
-                    float originY = cubePivot == null ? origin[1] - part.y : origin[1] - cubePivot[1];
-                    float originZ = cubePivot == null ? origin[2] - part.z : origin[2] - cubePivot[2];
+                    float originX =
+                            cubePivot == null ? origin[0] - part.x : origin[0] - cubePivot[0];
+                    float originY =
+                            cubePivot == null ? origin[1] - part.y : origin[1] - cubePivot[1];
+                    float originZ =
+                            cubePivot == null ? origin[2] - part.z : origin[2] - cubePivot[2];
                     if (faceUv == null) {
-                        cubeInstance = createCubeBox(
-                                uv[0], uv[1],
-                                originX, originY, originZ,
-                                size[0], size[1], size[2],
-                                inflate, mirror, texWidth, texHeight
-                        );
+                        cubeInstance =
+                                createCubeBox(
+                                        uv[0], uv[1], originX, originY, originZ, size[0], size[1],
+                                        size[2], inflate, mirror, texWidth, texHeight);
                     } else {
-                        cubeInstance = createCubePerFace(
-                                originX, originY, originZ,
-                                size[0], size[1], size[2],
-                                inflate, texWidth, texHeight, faceUv
-                        );
+                        cubeInstance =
+                                createCubePerFace(
+                                        originX, originY, originZ, size[0], size[1], size[2],
+                                        inflate, texWidth, texHeight, faceUv);
                     }
                     if (cubeRotation == null || cubePivot == null) {
                         // 普通 cube 直接放入 cubes
@@ -314,7 +403,8 @@ public class BedrockModel implements Skeleton, BoneIndexProvider {
                         cubeRenderer.x = cubePivot[0];
                         cubeRenderer.y = cubePivot[1];
                         cubeRenderer.z = cubePivot[2];
-                        cubeRenderer.rotation.rotateZYX(cubeRotation[2], cubeRotation[1], cubeRotation[0]);
+                        cubeRenderer.rotation.rotateZYX(
+                                cubeRotation[2], cubeRotation[1], cubeRotation[0]);
                         cubeRenderer.cubes.add(cubeInstance);
                         // 添加进父骨骼中
                         cubeRenderer.parent = part;
@@ -352,17 +442,23 @@ public class BedrockModel implements Skeleton, BoneIndexProvider {
             float relX = -absOffset[0] - part.x;
             float relY = absOffset[1] - part.y;
             float relZ = absOffset[2] - part.z;
-            return new LocatorData(new float[]{relX, relY, relZ}, new float[3]);
+            return new LocatorData(new float[] {relX, relY, relZ}, new float[3]);
         }
         if (element.isJsonObject()) {
             JsonObject object = element.getAsJsonObject();
-            float[] absOffset = object.has("offset") ? parseLocatorArray(object.getAsJsonArray("offset")) : new float[3];
-            float[] rotation = object.has("rotation") ? parseLocatorArray(object.getAsJsonArray("rotation")) : new float[3];
+            float[] absOffset =
+                    object.has("offset")
+                            ? parseLocatorArray(object.getAsJsonArray("offset"))
+                            : new float[3];
+            float[] rotation =
+                    object.has("rotation")
+                            ? parseLocatorArray(object.getAsJsonArray("rotation"))
+                            : new float[3];
             // 左手系转右手系，然后减去骨骼的绝对 pivot 得到相对偏移
             float relX = -absOffset[0] - part.x;
             float relY = absOffset[1] - part.y;
             float relZ = absOffset[2] - part.z;
-            return new LocatorData(new float[]{relX, relY, relZ}, rotation);
+            return new LocatorData(new float[] {relX, relY, relZ}, rotation);
         }
         return LocatorData.EMPTY;
     }
@@ -473,22 +569,22 @@ public class BedrockModel implements Skeleton, BoneIndexProvider {
         // 应用 locator 旋转（度转弧度，ZYX 顺序）
         float[] rotation = locator.rotation();
         if (rotation[0] != 0 || rotation[1] != 0 || rotation[2] != 0) {
-            Quaternionf q = new Quaternionf()
-                    .rotateZ((float) Math.toRadians(rotation[2]))
-                    .rotateY((float) Math.toRadians(rotation[1]))
-                    .rotateX((float) Math.toRadians(rotation[0]));
+            Quaternionf q =
+                    new Quaternionf()
+                            .rotateZ((float) Math.toRadians(rotation[2]))
+                            .rotateY((float) Math.toRadians(rotation[1]))
+                            .rotateX((float) Math.toRadians(rotation[0]));
             transform.rotate(q);
         }
 
         return transform;
     }
 
-    /**
-     * locator 查找结果。
-     */
+    /** locator 查找结果。 */
     public record LocatorResult(BedrockBone bone, LocatorData locator) {}
 
-    private record BindRotationView(Quaternionfc quaternion, Vector3fc euler) implements RotationView {
+    private record BindRotationView(Quaternionfc quaternion, Vector3fc euler)
+            implements RotationView {
         private BindRotationView(Quaternionfc quaternion, Vector3fc euler) {
             this.quaternion = new Quaternionf(quaternion);
             this.euler = new Vector3f(euler);

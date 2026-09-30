@@ -23,11 +23,14 @@
  */
 package com.github.mcmodderanchor.simplebedrockmodel.v1.molang.runtime.binding;
 
+import static java.util.Objects.requireNonNull;
+
 import com.github.mcmodderanchor.simplebedrockmodel.v1.molang.runtime.value.Function;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.molang.runtime.value.ObjectProperty;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.molang.runtime.value.ObjectValue;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.molang.runtime.value.Value;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.molang.util.CaseInsensitiveStringHashMap;
+
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -37,8 +40,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Map;
-
-import static java.util.Objects.requireNonNull;
 
 @ApiStatus.Internal
 public final class JavaObjectBinding implements ObjectValue {
@@ -53,7 +54,10 @@ public final class JavaObjectBinding implements ObjectValue {
         this.names = new String[0];
     }
 
-    private static <T extends Value> T getBacking(final @Nullable Map<String, ObjectProperty> backingProperties, final @NotNull String functionName, final Class<T> valueType) {
+    private static <T extends Value> T getBacking(
+            final @Nullable Map<String, ObjectProperty> backingProperties,
+            final @NotNull String functionName,
+            final Class<T> valueType) {
         if (backingProperties != null) {
             final ObjectProperty property = backingProperties.get(functionName);
             if (property != null && valueType.isInstance(property.value())) {
@@ -63,18 +67,25 @@ public final class JavaObjectBinding implements ObjectValue {
         return null;
     }
 
-    public static <T> @NotNull JavaObjectBinding of(final @NotNull Class<T> clazz, final @Nullable T instance, final @Nullable ObjectValue backingObject) {
+    public static <T> @NotNull JavaObjectBinding of(
+            final @NotNull Class<T> clazz,
+            final @Nullable T instance,
+            final @Nullable ObjectValue backingObject) {
         final Binding binding = clazz.getDeclaredAnnotation(Binding.class);
         if (binding == null && instance == null) {
-            throw new IllegalArgumentException("Statically bound " + clazz + " is not annotated with @Binding");
+            throw new IllegalArgumentException(
+                    "Statically bound " + clazz + " is not annotated with @Binding");
         }
 
-        final JavaObjectBinding object = binding != null ? new JavaObjectBinding(binding.value()) : new JavaObjectBinding();
-        final Map<String, ObjectProperty> backingProperties = backingObject != null ? backingObject.entries() : null;
+        final JavaObjectBinding object =
+                binding != null ? new JavaObjectBinding(binding.value()) : new JavaObjectBinding();
+        final Map<String, ObjectProperty> backingProperties =
+                backingObject != null ? backingObject.entries() : null;
 
         {
             // check external bindings
-            final BindExternalFunction.Multiple annotation = clazz.getDeclaredAnnotation(BindExternalFunction.Multiple.class);
+            final BindExternalFunction.Multiple annotation =
+                    clazz.getDeclaredAnnotation(BindExternalFunction.Multiple.class);
             if (annotation != null) {
                 for (final BindExternalFunction externalFunctionBinding : annotation.value()) {
                     final Class<?> atClass = externalFunctionBinding.at();
@@ -85,9 +96,15 @@ public final class JavaObjectBinding implements ObjectValue {
                     try {
                         method = atClass.getDeclaredMethod(methodName, parameterTypes);
                     } catch (final NoSuchMethodException e) {
-                        throw new IllegalArgumentException("No method found with name " + methodName
-                                + " and parameter types " + Arrays.toString(parameterTypes) + ". Declared as"
-                                + " external binding for " + clazz, e);
+                        throw new IllegalArgumentException(
+                                "No method found with name "
+                                        + methodName
+                                        + " and parameter types "
+                                        + Arrays.toString(parameterTypes)
+                                        + ". Declared as"
+                                        + " external binding for "
+                                        + clazz,
+                                e);
                     }
 
                     final String functionName;
@@ -100,14 +117,19 @@ public final class JavaObjectBinding implements ObjectValue {
                         }
                     }
 
-                    final Function backing = getBacking(backingProperties, functionName, Function.class);
+                    final Function backing =
+                            getBacking(backingProperties, functionName, Function.class);
                     final boolean pure = externalFunctionBinding.pure();
 
                     if (backing != null && backing.pure() != pure) {
-                        throw new IllegalStateException("Different 'pure' values for interface and Java functions for function " + functionName);
+                        throw new IllegalStateException(
+                                "Different 'pure' values for interface and Java functions for"
+                                        + " function "
+                                        + functionName);
                     }
 
-                    object.entries.put(functionName, new JavaFunction<>(instance, method, backing, pure));
+                    object.entries.put(
+                            functionName, new JavaFunction<>(instance, method, backing, pure));
                 }
             }
         }
@@ -135,7 +157,9 @@ public final class JavaObjectBinding implements ObjectValue {
                 throw new IllegalArgumentException("No property names declared for field " + field);
             }
             final Value backingValue = getBacking(backingProperties, propertyNames[0], Value.class);
-            final JavaFieldBinding fieldBinding = new JavaFieldBinding(instance, field, backingValue == null ? null : () -> backingValue);
+            final JavaFieldBinding fieldBinding =
+                    new JavaFieldBinding(
+                            instance, field, backingValue == null ? null : () -> backingValue);
             for (final String propertyName : propertyNames) {
                 object.entries.put(propertyName, fieldBinding);
             }
@@ -165,13 +189,17 @@ public final class JavaObjectBinding implements ObjectValue {
 
             final String[] functionNames = annotation.value();
             if (functionNames.length < 1) {
-                throw new IllegalArgumentException("No function names declared for method " + method);
+                throw new IllegalArgumentException(
+                        "No function names declared for method " + method);
             }
-            final Function backing = getBacking(backingProperties, functionNames[0], Function.class);
+            final Function backing =
+                    getBacking(backingProperties, functionNames[0], Function.class);
             final boolean pure = annotation.pure();
 
             if (backing != null && backing.pure() != pure) {
-                throw new IllegalStateException("Different 'pure' values for interface and Java functions for function " + functionNames[0]);
+                throw new IllegalStateException(
+                        "Different 'pure' values for interface and Java functions for function "
+                                + functionNames[0]);
             }
 
             final Function javaFunction = new JavaFunction(instance, method, backing, pure);
@@ -203,9 +231,7 @@ public final class JavaObjectBinding implements ObjectValue {
             return null;
         } else if (value instanceof JavaFieldBinding) {
             return ObjectProperty.property(
-                    ((JavaFieldBinding) value).get(),
-                    ((JavaFieldBinding) value).constant()
-            );
+                    ((JavaFieldBinding) value).get(), ((JavaFieldBinding) value).constant());
         } else {
             return ObjectProperty.property((Value) value, true);
         }

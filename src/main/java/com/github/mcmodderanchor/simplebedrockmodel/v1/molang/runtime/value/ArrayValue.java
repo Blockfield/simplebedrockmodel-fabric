@@ -23,12 +23,12 @@
  */
 package com.github.mcmodderanchor.simplebedrockmodel.v1.molang.runtime.value;
 
+import static java.util.Objects.requireNonNull;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
-
-import static java.util.Objects.requireNonNull;
 
 public final class ArrayValue implements Value {
     private final Value[] values;

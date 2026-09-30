@@ -6,17 +6,18 @@ import com.maydaymemory.mae.basic.BaseKeyframe;
 import com.maydaymemory.mae.basic.IEvaluationContext;
 import com.maydaymemory.mae.basic.InterpolatableKeyframe;
 import com.maydaymemory.mae.basic.Interpolator;
+
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
 
 /**
- * 支持 Molang 表达式的 Vector3f 关键帧。
- * 每次获取 pre/post 值时，会实时求值 Molang 表达式。
- * <p>
- * 必须通过 {@link IEvaluationContext} 参数传入上下文（{@link #getPre(IEvaluationContext)} /
- * {@link #getPost(IEvaluationContext)}）。无参版本返回零向量。
+ * 支持 Molang 表达式的 Vector3f 关键帧。 每次获取 pre/post 值时，会实时求值 Molang 表达式。
+ *
+ * <p>必须通过 {@link IEvaluationContext} 参数传入上下文（{@link #getPre(IEvaluationContext)} / {@link
+ * #getPost(IEvaluationContext)}）。无参版本返回零向量。
  */
-public class MolangVector3fKeyframe extends BaseKeyframe<Vector3fc> implements InterpolatableKeyframe<Vector3fc> {
+public class MolangVector3fKeyframe extends BaseKeyframe<Vector3fc>
+        implements InterpolatableKeyframe<Vector3fc> {
     private static final Vector3fc ZERO = new Vector3f();
 
     private final MolangExpression[] preFunctions;
@@ -24,15 +25,16 @@ public class MolangVector3fKeyframe extends BaseKeyframe<Vector3fc> implements I
     private final Interpolator<Vector3fc> interpolator;
 
     /**
-     * @param timeS         关键帧时间（秒）
-     * @param preFunctions  pre 值的 3 个 Molang 表达式 (x, y, z)
+     * @param timeS 关键帧时间（秒）
+     * @param preFunctions pre 值的 3 个 Molang 表达式 (x, y, z)
      * @param postFunctions post 值的 3 个 Molang 表达式 (x, y, z)
-     * @param interpolator  插值器
+     * @param interpolator 插值器
      */
-    public MolangVector3fKeyframe(float timeS,
-                                  MolangExpression[] preFunctions,
-                                  MolangExpression[] postFunctions,
-                                  Interpolator<Vector3fc> interpolator) {
+    public MolangVector3fKeyframe(
+            float timeS,
+            MolangExpression[] preFunctions,
+            MolangExpression[] postFunctions,
+            Interpolator<Vector3fc> interpolator) {
         super(timeS);
         this.preFunctions = preFunctions;
         this.postFunctions = postFunctions;
@@ -87,7 +89,6 @@ public class MolangVector3fKeyframe extends BaseKeyframe<Vector3fc> implements I
         return new Vector3f(
                 (float) functions[0].evaluate(ctx),
                 (float) functions[1].evaluate(ctx),
-                (float) functions[2].evaluate(ctx)
-        );
+                (float) functions[2].evaluate(ctx));
     }
 }

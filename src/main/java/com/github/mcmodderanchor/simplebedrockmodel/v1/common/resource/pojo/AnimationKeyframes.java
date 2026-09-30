@@ -1,6 +1,7 @@
 package com.github.mcmodderanchor.simplebedrockmodel.v1.common.resource.pojo;
 
 import it.unimi.dsi.fastutil.doubles.Double2ObjectRBTreeMap;
+
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 
@@ -26,15 +27,22 @@ public class AnimationKeyframes {
         private final String[] postExpressions;
         private final String[] dataExpressions;
 
-        public Keyframe(@Nullable Vector3f pre, @Nullable Vector3f post,
-                        @Nullable Vector3f data, @Nullable String lerpMode) {
+        public Keyframe(
+                @Nullable Vector3f pre,
+                @Nullable Vector3f post,
+                @Nullable Vector3f data,
+                @Nullable String lerpMode) {
             this(pre, post, data, lerpMode, null, null, null);
         }
 
-        public Keyframe(@Nullable Vector3f pre, @Nullable Vector3f post,
-                        @Nullable Vector3f data, @Nullable String lerpMode,
-                        @Nullable String[] preExpressions, @Nullable String[] postExpressions,
-                        @Nullable String[] dataExpressions) {
+        public Keyframe(
+                @Nullable Vector3f pre,
+                @Nullable Vector3f post,
+                @Nullable Vector3f data,
+                @Nullable String lerpMode,
+                @Nullable String[] preExpressions,
+                @Nullable String[] postExpressions,
+                @Nullable String[] dataExpressions) {
             this.pre = pre;
             this.post = post;
             this.data = data;
@@ -60,9 +68,7 @@ public class AnimationKeyframes {
             return lerpMode;
         }
 
-        /**
-         * 是否包含 Molang 表达式
-         */
+        /** 是否包含 Molang 表达式 */
         public boolean hasMolang() {
             return preExpressions != null || postExpressions != null || dataExpressions != null;
         }

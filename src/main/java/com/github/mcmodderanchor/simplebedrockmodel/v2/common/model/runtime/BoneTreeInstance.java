@@ -2,9 +2,11 @@ package com.github.mcmodderanchor.simplebedrockmodel.v2.common.model.runtime;
 
 import com.maydaymemory.mae.basic.*;
 import com.mojang.blaze3d.vertex.PoseStack;
+
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.world.phys.Vec3;
+
 import org.jetbrains.annotations.Nullable;
 import org.joml.*;
 
@@ -67,9 +69,9 @@ public abstract class BoneTreeInstance implements Skeleton {
     }
 
     /**
-     * Returns the inverse-transpose normal matrix for a bone's current global transform.
-     * Invalid or non-invertible transforms fall back to the identity matrix so they cannot
-     * introduce non-finite values into a render pose.
+     * Returns the inverse-transpose normal matrix for a bone's current global transform. Invalid or
+     * non-invertible transforms fall back to the identity matrix so they cannot introduce
+     * non-finite values into a render pose.
      */
     public Matrix3f getGlobalNormal(int index) {
         Matrix3f normal = new Matrix3f(getGlobalTransform(index));
@@ -82,9 +84,9 @@ public abstract class BoneTreeInstance implements Skeleton {
     }
 
     /**
-     * Multiplies the current pose by a bone's global position and normal transforms.
-     * Callers retain responsibility for matching {@link PoseStack#pushPose()} and
-     * {@link PoseStack#popPose()} calls.
+     * Multiplies the current pose by a bone's global position and normal transforms. Callers retain
+     * responsibility for matching {@link PoseStack#pushPose()} and {@link PoseStack#popPose()}
+     * calls.
      */
     @Environment(EnvType.CLIENT)
     public void mulGlobalTransform(PoseStack poseStack, int index) {
@@ -93,9 +95,9 @@ public abstract class BoneTreeInstance implements Skeleton {
     }
 
     /**
-     * Multiplies the current pose by the parent transform of {@code boneIndex}.
-     * This is intended for rendering that bone through an existing {@code renderBone(...)}
-     * method, which applies the target bone's local transform itself.
+     * Multiplies the current pose by the parent transform of {@code boneIndex}. This is intended
+     * for rendering that bone through an existing {@code renderBone(...)} method, which applies the
+     * target bone's local transform itself.
      */
     @Environment(EnvType.CLIENT)
     public void mulParentGlobalTransform(PoseStack poseStack, int boneIndex) {
@@ -104,9 +106,15 @@ public abstract class BoneTreeInstance implements Skeleton {
     }
 
     private static boolean isFinite(Matrix3f matrix) {
-        return Float.isFinite(matrix.m00()) && Float.isFinite(matrix.m01()) && Float.isFinite(matrix.m02())
-                && Float.isFinite(matrix.m10()) && Float.isFinite(matrix.m11()) && Float.isFinite(matrix.m12())
-                && Float.isFinite(matrix.m20()) && Float.isFinite(matrix.m21()) && Float.isFinite(matrix.m22());
+        return Float.isFinite(matrix.m00())
+                && Float.isFinite(matrix.m01())
+                && Float.isFinite(matrix.m02())
+                && Float.isFinite(matrix.m10())
+                && Float.isFinite(matrix.m11())
+                && Float.isFinite(matrix.m12())
+                && Float.isFinite(matrix.m20())
+                && Float.isFinite(matrix.m21())
+                && Float.isFinite(matrix.m22());
     }
 
     @Override
@@ -162,10 +170,12 @@ public abstract class BoneTreeInstance implements Skeleton {
     }
 
     /**
-     * Traces the closed world-space line segment against the current cube pose and returns its nearest hit.
+     * Traces the closed world-space line segment against the current cube pose and returns its
+     * nearest hit.
      */
     @Nullable
-    public final ModelRayTraceResult rayTrace(Matrix4fc modelRotation, Vec3 modelOrigin, Vec3 rayStart, Vec3 rayEnd) {
+    public final ModelRayTraceResult rayTrace(
+            Matrix4fc modelRotation, Vec3 modelOrigin, Vec3 rayStart, Vec3 rayEnd) {
         Objects.requireNonNull(modelRotation, "modelRotation");
         Objects.requireNonNull(modelOrigin, "modelOrigin");
         Objects.requireNonNull(rayStart, "rayStart");

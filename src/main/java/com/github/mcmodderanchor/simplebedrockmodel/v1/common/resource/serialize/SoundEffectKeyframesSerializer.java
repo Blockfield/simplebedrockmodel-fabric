@@ -2,7 +2,9 @@ package com.github.mcmodderanchor.simplebedrockmodel.v1.common.resource.serializ
 
 import com.github.mcmodderanchor.simplebedrockmodel.v1.common.resource.pojo.SoundEffectKeyframes;
 import com.google.gson.*;
+
 import it.unimi.dsi.fastutil.doubles.Double2ObjectRBTreeMap;
+
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 
@@ -12,7 +14,9 @@ import java.util.Map;
 @SuppressWarnings("ALL")
 public class SoundEffectKeyframesSerializer implements JsonDeserializer<SoundEffectKeyframes> {
     @Override
-    public SoundEffectKeyframes deserialize(JsonElement json, Type type, JsonDeserializationContext context) throws JsonParseException {
+    public SoundEffectKeyframes deserialize(
+            JsonElement json, Type type, JsonDeserializationContext context)
+            throws JsonParseException {
         Double2ObjectRBTreeMap<ResourceLocation> keyframes = new Double2ObjectRBTreeMap<>();
         // 如果是对象
         if (json.isJsonObject()) {

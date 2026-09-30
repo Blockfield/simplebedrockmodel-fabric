@@ -23,12 +23,12 @@
  */
 package com.github.mcmodderanchor.simplebedrockmodel.v1.molang.lexer;
 
+import static java.util.Objects.requireNonNull;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.io.Reader;
-
-import static java.util.Objects.requireNonNull;
 
 final class MolangLexerImpl implements MolangLexer {
     // the source reader
@@ -116,14 +116,26 @@ final class MolangLexerImpl implements MolangLexer {
             String word = builder.toString();
             TokenKind kind;
             switch (word.toLowerCase()) {
-                //@formatter:off
-                case "break": kind = TokenKind.BREAK; break;
-                case "continue": kind = TokenKind.CONTINUE; break;
-                case "return": kind = TokenKind.RETURN; break;
-                case "true": kind = TokenKind.TRUE; break;
-                case "false": kind = TokenKind.FALSE; break;
-                default: kind = TokenKind.IDENTIFIER; break;
-                //@formatter:on
+                // @formatter:off
+                case "break":
+                    kind = TokenKind.BREAK;
+                    break;
+                case "continue":
+                    kind = TokenKind.CONTINUE;
+                    break;
+                case "return":
+                    kind = TokenKind.RETURN;
+                    break;
+                case "true":
+                    kind = TokenKind.TRUE;
+                    break;
+                case "false":
+                    kind = TokenKind.FALSE;
+                    break;
+                default:
+                    kind = TokenKind.IDENTIFIER;
+                    break;
+                    // @formatter:on
             }
 
             return new Token(
@@ -131,15 +143,18 @@ final class MolangLexerImpl implements MolangLexer {
                     // keywords do not have values
                     kind == TokenKind.IDENTIFIER ? word : null,
                     start,
-                    cursor.index()
-            );
+                    cursor.index());
         } else if (c == '\'') { // single quote means string start
             StringBuilder value = new StringBuilder(16);
             while (true) {
                 c = read();
                 if (c == -1) {
                     // the heck? you didn't close the string
-                    return new Token(TokenKind.ERROR, "Found end-of-file before closing quote", start, cursor.index());
+                    return new Token(
+                            TokenKind.ERROR,
+                            "Found end-of-file before closing quote",
+                            start,
+                            cursor.index());
                 } else if (c == '\'') {
                     // string was closed!
                     break;
@@ -163,114 +178,160 @@ final class MolangLexerImpl implements MolangLexer {
             String value = null; // only set of token kind = ERROR, value is error message
             int c1 = -2; // only set if "c" may have a continuation, for example "==", "!=", "??"
             switch (c) {
-                case '!': {
-                    c1 = read();
-                    if (c1 == '=') {
-                        read();
-                        tokenKind = TokenKind.BANGEQ;
-                    } else {
-                        tokenKind = TokenKind.BANG;
+                case '!':
+                    {
+                        c1 = read();
+                        if (c1 == '=') {
+                            read();
+                            tokenKind = TokenKind.BANGEQ;
+                        } else {
+                            tokenKind = TokenKind.BANG;
+                        }
+                        break;
                     }
+                case '&':
+                    {
+                        c1 = read();
+                        if (c1 == '&') {
+                            read();
+                            tokenKind = TokenKind.AMPAMP;
+                        } else {
+                            tokenKind = TokenKind.ERROR;
+                            value =
+                                    "Unexpected token '"
+                                            + ((char) c1)
+                                            + "', expected '&' (Molang doesn't support bitwise"
+                                            + " operators)";
+                        }
+                        break;
+                    }
+                case '|':
+                    {
+                        c1 = read();
+                        if (c1 == '|') {
+                            read();
+                            tokenKind = TokenKind.BARBAR;
+                        } else {
+                            tokenKind = TokenKind.ERROR;
+                            value =
+                                    "Unexpected token '"
+                                            + ((char) c1)
+                                            + "', expected '|' (Molang doesn't support bitwise"
+                                            + " operators)";
+                        }
+                        break;
+                    }
+                case '<':
+                    {
+                        c1 = read();
+                        if (c1 == '=') {
+                            read();
+                            tokenKind = TokenKind.LTE;
+                        } else {
+                            tokenKind = TokenKind.LT;
+                        }
+                        break;
+                    }
+                case '>':
+                    {
+                        c1 = read();
+                        if (c1 == '=') {
+                            read();
+                            tokenKind = TokenKind.GTE;
+                        } else {
+                            tokenKind = TokenKind.GT;
+                        }
+                        break;
+                    }
+                case '=':
+                    {
+                        c1 = read();
+                        if (c1 == '=') {
+                            read();
+                            tokenKind = TokenKind.EQEQ;
+                        } else {
+                            tokenKind = TokenKind.EQ;
+                        }
+                        break;
+                    }
+                case '-':
+                    {
+                        c1 = read();
+                        if (c1 == '>') {
+                            read();
+                            tokenKind = TokenKind.ARROW;
+                        } else {
+                            tokenKind = TokenKind.SUB;
+                        }
+                        break;
+                    }
+                case '?':
+                    {
+                        c1 = read();
+                        if (c1 == '?') {
+                            read();
+                            tokenKind = TokenKind.QUESQUES;
+                        } else {
+                            tokenKind = TokenKind.QUES;
+                        }
+                        break;
+                    }
+                // @formatter:off
+                case '/':
+                    tokenKind = TokenKind.SLASH;
                     break;
-                }
-                case '&': {
-                    c1 = read();
-                    if (c1 == '&') {
-                        read();
-                        tokenKind = TokenKind.AMPAMP;
-                    } else {
+                case '*':
+                    tokenKind = TokenKind.STAR;
+                    break;
+                case '+':
+                    tokenKind = TokenKind.PLUS;
+                    break;
+                case ',':
+                    tokenKind = TokenKind.COMMA;
+                    break;
+                case '.':
+                    tokenKind = TokenKind.DOT;
+                    break;
+                case '(':
+                    tokenKind = TokenKind.LPAREN;
+                    break;
+                case ')':
+                    tokenKind = TokenKind.RPAREN;
+                    break;
+                case '{':
+                    tokenKind = TokenKind.LBRACE;
+                    break;
+                case '}':
+                    tokenKind = TokenKind.RBRACE;
+                    break;
+                case ':':
+                    tokenKind = TokenKind.COLON;
+                    break;
+                case '[':
+                    tokenKind = TokenKind.LBRACKET;
+                    break;
+                case ']':
+                    tokenKind = TokenKind.RBRACKET;
+                    break;
+                case ';':
+                    tokenKind = TokenKind.SEMICOLON;
+                    break;
+                // @formatter:on
+                case '"':
+                    {
                         tokenKind = TokenKind.ERROR;
-                        value = "Unexpected token '" + ((char) c1) + "', expected '&' (Molang doesn't support bitwise operators)";
+                        value =
+                                "Unexpected token '\"', expected single quote (') to start a string"
+                                        + " literal";
+                        break;
                     }
-                    break;
-                }
-                case '|': {
-                    c1 = read();
-                    if (c1 == '|') {
-                        read();
-                        tokenKind = TokenKind.BARBAR;
-                    } else {
+                default:
+                    {
+                        // "c" is something we don't know about!
                         tokenKind = TokenKind.ERROR;
-                        value = "Unexpected token '" + ((char) c1) + "', expected '|' (Molang doesn't support bitwise operators)";
+                        value = "Unexpected token '" + ((char) c) + "': invalid token";
+                        break;
                     }
-                    break;
-                }
-                case '<': {
-                    c1 = read();
-                    if (c1 == '=') {
-                        read();
-                        tokenKind = TokenKind.LTE;
-                    } else {
-                        tokenKind = TokenKind.LT;
-                    }
-                    break;
-                }
-                case '>': {
-                    c1 = read();
-                    if (c1 == '=') {
-                        read();
-                        tokenKind = TokenKind.GTE;
-                    } else {
-                        tokenKind = TokenKind.GT;
-                    }
-                    break;
-                }
-                case '=': {
-                    c1 = read();
-                    if (c1 == '=') {
-                        read();
-                        tokenKind = TokenKind.EQEQ;
-                    } else {
-                        tokenKind = TokenKind.EQ;
-                    }
-                    break;
-                }
-                case '-': {
-                    c1 = read();
-                    if (c1 == '>') {
-                        read();
-                        tokenKind = TokenKind.ARROW;
-                    } else {
-                        tokenKind = TokenKind.SUB;
-                    }
-                    break;
-                }
-                case '?': {
-                    c1 = read();
-                    if (c1 == '?') {
-                        read();
-                        tokenKind = TokenKind.QUESQUES;
-                    } else {
-                        tokenKind = TokenKind.QUES;
-                    }
-                    break;
-                }
-                //@formatter:off
-                case '/': tokenKind = TokenKind.SLASH; break;
-                case '*': tokenKind = TokenKind.STAR; break;
-                case '+': tokenKind = TokenKind.PLUS; break;
-                case ',': tokenKind = TokenKind.COMMA; break;
-                case '.': tokenKind = TokenKind.DOT; break;
-                case '(': tokenKind = TokenKind.LPAREN; break;
-                case ')': tokenKind = TokenKind.RPAREN; break;
-                case '{': tokenKind = TokenKind.LBRACE; break;
-                case '}': tokenKind = TokenKind.RBRACE; break;
-                case ':': tokenKind = TokenKind.COLON; break;
-                case '[': tokenKind = TokenKind.LBRACKET; break;
-                case ']': tokenKind = TokenKind.RBRACKET; break;
-                case ';': tokenKind = TokenKind.SEMICOLON; break;
-                //@formatter:on
-                case '"': {
-                    tokenKind = TokenKind.ERROR;
-                    value = "Unexpected token '\"', expected single quote (') to start a string literal";
-                    break;
-                }
-                default: {
-                    // "c" is something we don't know about!
-                    tokenKind = TokenKind.ERROR;
-                    value = "Unexpected token '" + ((char) c) + "': invalid token";
-                    break;
-                }
             }
 
             if (c1 == -2) {

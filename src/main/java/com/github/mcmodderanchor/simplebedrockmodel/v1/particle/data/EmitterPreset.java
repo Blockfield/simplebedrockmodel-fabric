@@ -9,8 +9,8 @@ import java.util.*;
 
 /**
  * 发射器组件预设。从 {@link ParticleEffectDefinition} 构建，不可变。
- * <p>
- * 存储 {@link IEmitterComponentDefinition}，按 {@code order()} 排序。
+ *
+ * <p>存储 {@link IEmitterComponentDefinition}，按 {@code order()} 排序。
  */
 public final class EmitterPreset {
 
@@ -29,9 +29,10 @@ public final class EmitterPreset {
         sorted.sort(Comparator.comparingInt(IEmitterComponentDefinition::order));
         this.components = Collections.unmodifiableList(sorted);
 
-        this.updateComponents = this.components.stream()
-                .filter(IEmitterComponentDefinition::requireUpdate)
-                .toList();
+        this.updateComponents =
+                this.components.stream()
+                        .filter(IEmitterComponentDefinition::requireUpdate)
+                        .toList();
 
         Map<Class<? extends IComponent>, IComponent> map = new HashMap<>();
         for (IEmitterComponentDefinition c : this.components) {
@@ -77,16 +78,12 @@ public final class EmitterPreset {
 
     // ===== 公共 API =====
 
-    /**
-     * 全部发射器定义组件（已排序，不可变）
-     */
+    /** 全部发射器定义组件（已排序，不可变） */
     public List<IEmitterComponentDefinition> components() {
         return components;
     }
 
-    /**
-     * requireUpdate()=true 的定义组件子集
-     */
+    /** requireUpdate()=true 的定义组件子集 */
     public List<IEmitterComponentDefinition> updateComponents() {
         return updateComponents;
     }

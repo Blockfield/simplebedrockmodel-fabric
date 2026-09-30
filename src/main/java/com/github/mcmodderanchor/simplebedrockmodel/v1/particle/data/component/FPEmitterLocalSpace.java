@@ -1,11 +1,12 @@
 package com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.component;
 
+import static com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.ParticleJsonUtils.getBoolean;
+
 import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.runtime.ParticleEmitterInstance;
 import com.google.gson.JsonObject;
 
-import static com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.ParticleJsonUtils.getBoolean;
-
-public record FPEmitterLocalSpace(boolean position, boolean rotation, boolean velocity, boolean toWorld)
+public record FPEmitterLocalSpace(
+        boolean position, boolean rotation, boolean velocity, boolean toWorld)
         implements IEmitterComponentDefinition, IEmitterComponent {
 
     @Override

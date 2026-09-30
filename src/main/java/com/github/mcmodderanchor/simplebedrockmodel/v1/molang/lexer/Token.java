@@ -23,18 +23,17 @@
  */
 package com.github.mcmodderanchor.simplebedrockmodel.v1.molang.lexer;
 
+import static java.util.Objects.requireNonNull;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnknownNullability;
 
 import java.util.Objects;
 
-import static java.util.Objects.requireNonNull;
-
 /**
- * Class representing a Molang token. Each token has some
- * information set by the lexer (i.e. start/end position,
- * token kind and optional value)
+ * Class representing a Molang token. Each token has some information set by the lexer (i.e.
+ * start/end position, token kind and optional value)
  *
  * @since 3.0.0
  */
@@ -48,8 +47,7 @@ public final class Token {
             final @NotNull TokenKind kind,
             final @Nullable String value,
             final int start,
-            final int end
-    ) {
+            final int end) {
         this.kind = requireNonNull(kind, "kind");
         this.value = value;
         this.start = start;
@@ -57,8 +55,8 @@ public final class Token {
 
         // verify state, token kinds that have HAS_VALUE tag, must have a non-null value
         if (kind.hasTag(TokenKind.Tag.HAS_VALUE) && value == null) {
-            throw new IllegalArgumentException("A token with kind "
-                    + kind + " must have a non-null value");
+            throw new IllegalArgumentException(
+                    "A token with kind " + kind + " must have a non-null value");
         }
     }
 
@@ -73,8 +71,7 @@ public final class Token {
     }
 
     /**
-     * Gets the token value. Null if this kind
-     * of tokens doesn't allow values.
+     * Gets the token value. Null if this kind of tokens doesn't allow values.
      *
      * @return The token value
      * @since 3.0.0

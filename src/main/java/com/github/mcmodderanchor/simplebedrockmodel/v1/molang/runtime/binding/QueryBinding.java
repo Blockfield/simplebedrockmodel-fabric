@@ -4,8 +4,9 @@ import java.lang.annotation.*;
 
 /**
  * 将 MolangContext 子类上的无参方法映射为 Molang 命名空间下的属性。
- * <p>
- * 用法：在 MolangContext 的子类中，对返回 {@code double} 的无参方法标注此注解。
+ *
+ * <p>用法：在 MolangContext 的子类中，对返回 {@code double} 的无参方法标注此注解。
+ *
  * <pre>
  * public class MyContext extends MolangContext&lt;MyEntity&gt; {
  *     &#64;QueryBinding("is_on_ground")
@@ -16,8 +17,8 @@ import java.lang.annotation.*;
  *     public double isJumping() { return ...; }
  * }
  * </pre>
- * 编译后 {@code query.is_on_ground} 和 {@code input.is_jumping}
- * 分别生成直接 INVOKEVIRTUAL 调用。
+ *
+ * 编译后 {@code query.is_on_ground} 和 {@code input.is_jumping} 分别生成直接 INVOKEVIRTUAL 调用。
  */
 @Documented
 @Target(ElementType.METHOD)

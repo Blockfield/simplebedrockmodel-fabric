@@ -1,13 +1,12 @@
 package com.github.mcmodderanchor.simplebedrockmodel.v1.particle.runtime;
 
 import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.component.IParticleComponent;
+
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-/**
- * 单个粒子实例。所有坐标都在局部坐标系中。
- */
+/** 单个粒子实例。所有坐标都在局部坐标系中。 */
 public class ParticleInstance {
     // 位置（局部坐标）
     public float x, y, z;
@@ -38,23 +37,15 @@ public class ParticleInstance {
     // KillPlane 符号追踪
     public boolean insideKillPlane = false;
 
-    /**
-     * 所属发射器（用于事件触发和 Molang 上下文访问）
-     */
-    @Nullable
-    public ParticleEmitterInstance emitter;
+    /** 所属发射器（用于事件触发和 Molang 上下文访问） */
+    @Nullable public ParticleEmitterInstance emitter;
 
-    /**
-     * 粒子运行时组件列表
-     */
+    /** 粒子运行时组件列表 */
     public List<IParticleComponent> updateComponents = List.of();
 
-    public ParticleInstance() {
-    }
+    public ParticleInstance() {}
 
-    /**
-     * 重置粒子状态以便复用（对象池）。
-     */
+    /** 重置粒子状态以便复用（对象池）。 */
     public void reset() {
         x = y = z = 0;
         vx = vy = vz = 0;

@@ -1,6 +1,7 @@
 package cn.sh1rocu.simplebedrockmodel.api.event;
 
 import com.github.mcmodderanchor.simplebedrockmodel.SimpleBedrockModel;
+
 import net.minecraft.resources.ResourceLocation;
 
 public class BaseEvent {

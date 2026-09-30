@@ -1,7 +1,9 @@
 package com.github.mcmodderanchor.simplebedrockmodel.v1.client.handler;
 
 import cn.sh1rocu.simplebedrockmodel.api.event.RenderArmEvent;
+
 import com.github.mcmodderanchor.simplebedrockmodel.v1.client.renderer.IFPArmorHandRenderer;
+
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
@@ -16,16 +18,16 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
-/**
- * 通用的第一人称盔甲手臂渲染处理器。
- * 监听 RenderArmEvent，在玩家手臂上叠加渲染 Bedrock 盔甲模型的手臂部分。
- */
+/** 通用的第一人称盔甲手臂渲染处理器。 监听 RenderArmEvent，在玩家手臂上叠加渲染 Bedrock 盔甲模型的手臂部分。 */
 @Environment(EnvType.CLIENT)
 public class FirstPersonArmorHandler {
 
-    // Fabric's ArmorRendererRegistry keeps only the drawing lambda, so the renderer object itself is
-    // unreachable from here; mods publish it separately (NeoForge took it from getHumanoidArmorModel).
-    private static final Map<Item, Supplier<? extends IFPArmorHandRenderer>> CHEST_RENDERERS = new HashMap<>();
+    // Fabric's ArmorRendererRegistry keeps only the drawing lambda, so the renderer object itself
+    // is
+    // unreachable from here; mods publish it separately (NeoForge took it from
+    // getHumanoidArmorModel).
+    private static final Map<Item, Supplier<? extends IFPArmorHandRenderer>> CHEST_RENDERERS =
+            new HashMap<>();
 
     private static HumanoidModel<?> defaultModel;
 
@@ -35,9 +37,11 @@ public class FirstPersonArmorHandler {
 
     private static HumanoidModel<?> getDefaultModel() {
         if (defaultModel == null) {
-            defaultModel = new HumanoidModel<>(
-                    Minecraft.getInstance().getEntityModels().bakeLayer(ModelLayers.PLAYER_INNER_ARMOR)
-            );
+            defaultModel =
+                    new HumanoidModel<>(
+                            Minecraft.getInstance()
+                                    .getEntityModels()
+                                    .bakeLayer(ModelLayers.PLAYER_INNER_ARMOR));
             defaultModel.young = false;
         }
         return defaultModel;
@@ -47,7 +51,8 @@ public class FirstPersonArmorHandler {
         AbstractClientPlayer player = event.getPlayer();
         ItemStack chestStack = player.getItemBySlot(EquipmentSlot.CHEST);
 
-        Supplier<? extends IFPArmorHandRenderer> supplier = CHEST_RENDERERS.get(chestStack.getItem());
+        Supplier<? extends IFPArmorHandRenderer> supplier =
+                CHEST_RENDERERS.get(chestStack.getItem());
         if (supplier == null) return;
 
         IFPArmorHandRenderer armorRenderer = supplier.get();
@@ -57,7 +62,6 @@ public class FirstPersonArmorHandler {
                 event.getArm(),
                 event.getPoseStack(),
                 event.getMultiBufferSource(),
-                event.getPackedLight()
-        );
+                event.getPackedLight());
     }
 }

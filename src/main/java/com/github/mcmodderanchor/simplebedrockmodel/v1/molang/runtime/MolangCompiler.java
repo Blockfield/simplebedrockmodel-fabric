@@ -23,12 +23,15 @@
  */
 package com.github.mcmodderanchor.simplebedrockmodel.v1.molang.runtime;
 
+import static java.util.Objects.requireNonNull;
+
 import com.github.mcmodderanchor.simplebedrockmodel.v1.molang.parser.ast.Expression;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.molang.runtime.binding.Entity;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.molang.runtime.compiled.MochaCompiledFunction;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.molang.runtime.compiled.Named;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.molang.util.AsmUtil;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.molang.util.CaseInsensitiveStringHashMap;
+
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -43,8 +46,6 @@ import java.util.Map;
 import java.util.Random;
 import java.util.function.Consumer;
 
-import static java.util.Objects.requireNonNull;
-
 @ApiStatus.Internal
 public final class MolangCompiler {
     private static final Random RANDOM = new Random();
@@ -54,7 +55,10 @@ public final class MolangCompiler {
     private final Scope scope;
     private Consumer<byte @NotNull []> postCompile;
 
-    public MolangCompiler(final @Nullable Object entity, final @NotNull ClassLoader classLoader, final @NotNull Scope scope) {
+    public MolangCompiler(
+            final @Nullable Object entity,
+            final @NotNull ClassLoader classLoader,
+            final @NotNull Scope scope) {
         this.entity = entity;
         this.classLoader = requireNonNull(classLoader, "classLoader");
         this.scope = requireNonNull(scope, "scope");
@@ -68,7 +72,8 @@ public final class MolangCompiler {
         this.postCompile = postCompile;
     }
 
-    public <T extends MochaCompiledFunction> @NotNull T compile(final @NotNull List<Expression> expressions, final @NotNull Class<T> clazz) {
+    public <T extends MochaCompiledFunction> @NotNull T compile(
+            final @NotNull List<Expression> expressions, final @NotNull Class<T> clazz) {
         requireNonNull(expressions, "expressions");
         requireNonNull(clazz, "clazz");
 
@@ -79,10 +84,12 @@ public final class MolangCompiler {
         return compileBytecode(expressions, clazz);
     }
 
-    private <T extends MochaCompiledFunction> @NotNull T compileBytecode(final @NotNull List<Expression> expressions, final @NotNull Class<T> clazz) {
+    private <T extends MochaCompiledFunction> @NotNull T compileBytecode(
+            final @NotNull List<Expression> expressions, final @NotNull Class<T> clazz) {
 
         if (!clazz.isInterface()) {
-            throw new IllegalArgumentException("Target type must be an interface: " + clazz.getName());
+            throw new IllegalArgumentException(
+                    "Target type must be an interface: " + clazz.getName());
         }
 
         Method implementedMethod = null;
@@ -91,13 +98,15 @@ public final class MolangCompiler {
                 continue;
             }
             if (implementedMethod != null) {
-                throw new IllegalArgumentException("Target type must have only one method: " + clazz.getName());
+                throw new IllegalArgumentException(
+                        "Target type must have only one method: " + clazz.getName());
             }
             implementedMethod = method;
         }
 
         if (implementedMethod == null) {
-            throw new IllegalArgumentException("Target type must have a method to implement: " + clazz.getName());
+            throw new IllegalArgumentException(
+                    "Target type must have a method to implement: " + clazz.getName());
         }
 
         final Map<String, Integer> argumentParameterIndexes = new CaseInsensitiveStringHashMap<>();
@@ -123,8 +132,12 @@ public final class MolangCompiler {
                     } else if (parameter.isNamePresent()) {
                         name = parameter.getName();
                     } else {
-                        throw new IllegalArgumentException("Parameter " + parameter.getName() + " (index " + i
-                                + ") must be annotated with @Named and specify a name");
+                        throw new IllegalArgumentException(
+                                "Parameter "
+                                        + parameter.getName()
+                                        + " (index "
+                                        + i
+                                        + ") must be annotated with @Named and specify a name");
                     }
 
                     argumentParameterIndexes.put(name, i);
@@ -140,8 +153,16 @@ public final class MolangCompiler {
         }
 
         final String interfaceInternalName = Type.getInternalName(clazz);
-        final String scriptClassName = getClass().getPackage().getName().replace('.', '/') + "/MolangFunctionImpl_" + clazz.getSimpleName() + "_" + implementedMethod.getName()
-                + "_" + Long.toHexString(System.currentTimeMillis()) + "_" + Integer.toHexString(RANDOM.nextInt(2024));
+        final String scriptClassName =
+                getClass().getPackage().getName().replace('.', '/')
+                        + "/MolangFunctionImpl_"
+                        + clazz.getSimpleName()
+                        + "_"
+                        + implementedMethod.getName()
+                        + "_"
+                        + Long.toHexString(System.currentTimeMillis())
+                        + "_"
+                        + Integer.toHexString(RANDOM.nextInt(2024));
 
         final Class<?> returnType = implementedMethod.getReturnType();
         final Type returnAsmType = Type.getType(returnType);
@@ -155,35 +176,50 @@ public final class MolangCompiler {
         final String methodDescriptor = Type.getMethodDescriptor(returnAsmType, paramAsmTypes);
 
         // Create ClassWriter with COMPUTE_FRAMES to auto-compute stack map and max stack/locals
-        final ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES) {
-            @Override
-            protected String getCommonSuperClass(String type1, String type2) {
-                // In mod environment, we may not be able to load all classes from the default classloader.
-                // Fall back to "java/lang/Object" to avoid ClassNotFoundException.
-                try {
-                    return super.getCommonSuperClass(type1, type2);
-                } catch (Exception e) {
-                    return "java/lang/Object";
-                }
-            }
-        };
+        final ClassWriter cw =
+                new ClassWriter(ClassWriter.COMPUTE_FRAMES) {
+                    @Override
+                    protected String getCommonSuperClass(String type1, String type2) {
+                        // In mod environment, we may not be able to load all classes from the
+                        // default classloader.
+                        // Fall back to "java/lang/Object" to avoid ClassNotFoundException.
+                        try {
+                            return super.getCommonSuperClass(type1, type2);
+                        } catch (Exception e) {
+                            return "java/lang/Object";
+                        }
+                    }
+                };
 
-        cw.visit(Opcodes.V17, Opcodes.ACC_PUBLIC | Opcodes.ACC_FINAL,
-                scriptClassName, null, "java/lang/Object",
-                new String[]{interfaceInternalName});
+        cw.visit(
+                Opcodes.V17,
+                Opcodes.ACC_PUBLIC | Opcodes.ACC_FINAL,
+                scriptClassName,
+                null,
+                "java/lang/Object",
+                new String[] {interfaceInternalName});
 
         // We'll collect requirements during compilation, then add fields + constructor after
         // First, generate the main method
-        final MethodVisitor mv = cw.visitMethod(
-                Opcodes.ACC_PUBLIC | Opcodes.ACC_FINAL,
-                implementedMethod.getName(),
-                methodDescriptor,
-                null, null);
+        final MethodVisitor mv =
+                cw.visitMethod(
+                        Opcodes.ACC_PUBLIC | Opcodes.ACC_FINAL,
+                        implementedMethod.getName(),
+                        methodDescriptor,
+                        null,
+                        null);
         mv.visitCode();
 
-        final FunctionCompileState compileState = new FunctionCompileState(
-                this, scriptClassName, mv, implementedMethod, scope,
-                argumentParameterIndexes, entityParameterLoadIndex, entityParameterType);
+        final FunctionCompileState compileState =
+                new FunctionCompileState(
+                        this,
+                        scriptClassName,
+                        mv,
+                        implementedMethod,
+                        scope,
+                        argumentParameterIndexes,
+                        entityParameterLoadIndex,
+                        entityParameterType);
 
         // compute initial max locals
         {
@@ -201,19 +237,22 @@ public final class MolangCompiler {
             final MolangCompilingVisitor compiler = new MolangCompilingVisitor(compileState);
             CompileVisitResult lastVisitResult = null;
 
-            final ExpressionInliner inliner = new ExpressionInliner(new ExpressionInterpreter<>(null, scope), scope);
+            final ExpressionInliner inliner =
+                    new ExpressionInliner(new ExpressionInterpreter<>(null, scope), scope);
 
             for (final Expression expression : expressions) {
                 lastVisitResult = expression.visit(inliner).visit(compiler);
             }
 
             if (lastVisitResult == null || !lastVisitResult.returned()) {
-                if (lastVisitResult == null || !returnAsmType.equals(lastVisitResult.lastPushedType())) {
+                if (lastVisitResult == null
+                        || !returnAsmType.equals(lastVisitResult.lastPushedType())) {
                     AsmUtil.addCast(
                             mv,
-                            lastVisitResult == null ? Type.DOUBLE_TYPE : lastVisitResult.lastPushedType(),
-                            returnAsmType
-                    );
+                            lastVisitResult == null
+                                    ? Type.DOUBLE_TYPE
+                                    : lastVisitResult.lastPushedType(),
+                            returnAsmType);
                 }
 
                 compiler.endVisit();
@@ -241,10 +280,13 @@ public final class MolangCompiler {
             }
             constructorDesc.append(")V");
 
-            final MethodVisitor ctorMv = cw.visitMethod(Opcodes.ACC_PUBLIC, "<init>", constructorDesc.toString(), null, null);
+            final MethodVisitor ctorMv =
+                    cw.visitMethod(
+                            Opcodes.ACC_PUBLIC, "<init>", constructorDesc.toString(), null, null);
             ctorMv.visitCode();
             ctorMv.visitVarInsn(Opcodes.ALOAD, 0); // load this
-            ctorMv.visitMethodInsn(Opcodes.INVOKESPECIAL, "java/lang/Object", "<init>", "()V", false); // super()
+            ctorMv.visitMethodInsn(
+                    Opcodes.INVOKESPECIAL, "java/lang/Object", "<init>", "()V", false); // super()
 
             int parameterIndex = 1;
             for (final Map.Entry<String, Object> entry : requirements.entrySet()) {
@@ -254,7 +296,8 @@ public final class MolangCompiler {
 
                 ctorMv.visitVarInsn(Opcodes.ALOAD, 0); // load this
                 ctorMv.visitVarInsn(Opcodes.ALOAD, parameterIndex); // load parameter
-                ctorMv.visitFieldInsn(Opcodes.PUTFIELD, scriptClassName, fieldName, fieldDescriptor);
+                ctorMv.visitFieldInsn(
+                        Opcodes.PUTFIELD, scriptClassName, fieldName, fieldDescriptor);
                 parameterIndex++;
             }
 
@@ -289,7 +332,8 @@ public final class MolangCompiler {
         try {
             constructor = compiledClass.getDeclaredConstructor(constructorParameterTypes);
         } catch (final NoSuchMethodException e) {
-            throw new IllegalStateException("Couldn't find constructor with parameters " + requirements.keySet(), e);
+            throw new IllegalStateException(
+                    "Couldn't find constructor with parameters " + requirements.keySet(), e);
         }
         final Object instance;
         try {
@@ -300,9 +344,7 @@ public final class MolangCompiler {
         return clazz.cast(instance);
     }
 
-    /**
-     * Custom ClassLoader for loading generated Molang classes.
-     */
+    /** Custom ClassLoader for loading generated Molang classes. */
     private static final class MolangClassLoader extends ClassLoader {
         MolangClassLoader(ClassLoader parent) {
             super(parent);

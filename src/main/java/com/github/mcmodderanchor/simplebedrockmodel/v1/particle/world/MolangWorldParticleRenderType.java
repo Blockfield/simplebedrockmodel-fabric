@@ -7,6 +7,7 @@ import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
+
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
@@ -19,34 +20,34 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 世界粒子的自定义 {@link ParticleRenderType}。
- * <p>
- * 每个纹理+材质组合对应一个实例，通过 {@link #get(ParticleDescription.Material, ResourceLocation)} 获取。<br/>
+ *
+ * <p>每个纹理+材质组合对应一个实例，通过 {@link #get(ParticleDescription.Material, ResourceLocation)} 获取。<br>
  * todo 目前没用atlas，一个贴图一个，考虑优化 ？
  */
 @Environment(EnvType.CLIENT)
 public final class MolangWorldParticleRenderType implements ParticleRenderType {
 
-    private static final Map<String, MolangWorldParticleRenderType> CACHE = new ConcurrentHashMap<>();
+    private static final Map<String, MolangWorldParticleRenderType> CACHE =
+            new ConcurrentHashMap<>();
 
     private final ParticleDescription.Material material;
     private final ResourceLocation texture;
 
-    private MolangWorldParticleRenderType(ParticleDescription.Material material, ResourceLocation texture) {
+    private MolangWorldParticleRenderType(
+            ParticleDescription.Material material, ResourceLocation texture) {
         this.material = material;
         this.texture = texture;
     }
 
-    /**
-     * 获取或创建指定材质+纹理的 RenderType 实例。
-     */
-    public static MolangWorldParticleRenderType get(ParticleDescription.Material material, ResourceLocation texture) {
+    /** 获取或创建指定材质+纹理的 RenderType 实例。 */
+    public static MolangWorldParticleRenderType get(
+            ParticleDescription.Material material, ResourceLocation texture) {
         String key = material.name() + ":" + texture;
-        return CACHE.computeIfAbsent(key, k -> new MolangWorldParticleRenderType(material, texture));
+        return CACHE.computeIfAbsent(
+                key, k -> new MolangWorldParticleRenderType(material, texture));
     }
 
-    /**
-     * 清除缓存（资源重载时调用）。
-     */
+    /** 清除缓存（资源重载时调用）。 */
     public static void clearCache() {
         CACHE.clear();
     }
@@ -65,17 +66,22 @@ public final class MolangWorldParticleRenderType implements ParticleRenderType {
             case PARTICLES_ALPHA -> {
                 RenderSystem.depthMask(true);
                 RenderSystem.enableBlend();
-                RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+                RenderSystem.blendFunc(
+                        GlStateManager.SourceFactor.SRC_ALPHA,
+                        GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
             }
             case PARTICLES_BLEND -> {
                 RenderSystem.depthMask(true);
                 RenderSystem.enableBlend();
-                RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+                RenderSystem.blendFunc(
+                        GlStateManager.SourceFactor.SRC_ALPHA,
+                        GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
             }
             case PARTICLES_ADD -> {
                 RenderSystem.depthMask(false);
                 RenderSystem.enableBlend();
-                RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE);
+                RenderSystem.blendFunc(
+                        GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE);
             }
         }
 

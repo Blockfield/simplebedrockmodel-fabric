@@ -1,6 +1,7 @@
 package com.github.mcmodderanchor.simplebedrockmodel.v2.event;
 
 import cn.sh1rocu.simplebedrockmodel.api.event.BaseEvent;
+
 import com.github.mcmodderanchor.simplebedrockmodel.v1.common.animation.BedrockAnimation;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.resource.RawResourceLoader;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.resource.RawResourceLoaders;
@@ -12,6 +13,7 @@ import com.github.mcmodderanchor.simplebedrockmodel.v2.resource.BedrockModelEntr
 import com.github.mcmodderanchor.simplebedrockmodel.v2.resource.BedrockModelResource;
 import com.github.mcmodderanchor.simplebedrockmodel.v2.resource.ModelType;
 import com.google.common.collect.Maps;
+
 import net.fabricmc.api.EnvType;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
@@ -30,11 +32,15 @@ public class RegisterV2BedrockResourcesEvent extends BaseEvent {
     private final List<Consumer<Map<ResourceLocation, BedrockModelResource>>> reloadListeners;
     private final EnvType dist;
 
-    public static final Event<Callback> EVENT = EventFactory.createArrayBacked(Callback.class, callbacks -> event -> {
-        for (Callback callback : callbacks) {
-            callback.post(event);
-        }
-    });
+    public static final Event<Callback> EVENT =
+            EventFactory.createArrayBacked(
+                    Callback.class,
+                    callbacks ->
+                            event -> {
+                                for (Callback callback : callbacks) {
+                                    callback.post(event);
+                                }
+                            });
 
     public RegisterV2BedrockResourcesEvent(EnvType dist) {
         this.modelRegistry = Maps.newHashMap();
@@ -51,7 +57,8 @@ public class RegisterV2BedrockResourcesEvent extends BaseEvent {
         return treeModel(modelId, sourceId, RawResourceLoaders.COMMON_LOADER);
     }
 
-    public ModelBuilder treeModel(ResourceLocation modelId, ResourceLocation sourceId, RawResourceLoader modelLoader) {
+    public ModelBuilder treeModel(
+            ResourceLocation modelId, ResourceLocation sourceId, RawResourceLoader modelLoader) {
         return new ModelBuilder(modelId, sourceId, modelLoader, ModelType.TREE);
     }
 
@@ -63,13 +70,14 @@ public class RegisterV2BedrockResourcesEvent extends BaseEvent {
         return bakedModel(modelId, sourceId, RawResourceLoaders.COMMON_LOADER);
     }
 
-    public ModelBuilder bakedModel(ResourceLocation modelId, ResourceLocation sourceId, RawResourceLoader modelLoader) {
+    public ModelBuilder bakedModel(
+            ResourceLocation modelId, ResourceLocation sourceId, RawResourceLoader modelLoader) {
         return new ModelBuilder(modelId, sourceId, modelLoader, ModelType.BAKED);
     }
 
     /**
-     * @deprecated Use {@link #bakedModel(ResourceLocation)} or {@link #treeModel(ResourceLocation)} to make the
-     * runtime model type explicit.
+     * @deprecated Use {@link #bakedModel(ResourceLocation)} or {@link #treeModel(ResourceLocation)}
+     *     to make the runtime model type explicit.
      */
     @Deprecated
     public ModelBuilder model(ResourceLocation modelId) {
@@ -78,7 +86,8 @@ public class RegisterV2BedrockResourcesEvent extends BaseEvent {
 
     /**
      * @deprecated Use {@link #bakedModel(ResourceLocation, ResourceLocation, RawResourceLoader)} or
-     * {@link #treeModel(ResourceLocation, ResourceLocation, RawResourceLoader)} to make the runtime model type explicit.
+     *     {@link #treeModel(ResourceLocation, ResourceLocation, RawResourceLoader)} to make the
+     *     runtime model type explicit.
      */
     @Deprecated
     public ModelBuilder model(ResourceLocation modelId, RawResourceLoader modelLoader) {
@@ -114,11 +123,16 @@ public class RegisterV2BedrockResourcesEvent extends BaseEvent {
         private final ResourceLocation sourceId;
         private final RawResourceLoader modelLoader;
         private final ModelType kind;
-        private final LinkedHashMap<ResourceLocation, AnimationRegistration> animations = new LinkedHashMap<>();
+        private final LinkedHashMap<ResourceLocation, AnimationRegistration> animations =
+                new LinkedHashMap<>();
         private Function<BedrockModelBakeContext, BakerOptions> optionsFactory;
         private boolean lazy;
 
-        private ModelBuilder(ResourceLocation modelId, ResourceLocation sourceId, RawResourceLoader modelLoader, ModelType kind) {
+        private ModelBuilder(
+                ResourceLocation modelId,
+                ResourceLocation sourceId,
+                RawResourceLoader modelLoader,
+                ModelType kind) {
             this.modelId = modelId;
             this.sourceId = sourceId;
             this.modelLoader = modelLoader;
@@ -134,41 +148,59 @@ public class RegisterV2BedrockResourcesEvent extends BaseEvent {
             return options(context -> options);
         }
 
-        public ModelBuilder options(Function<BedrockModelBakeContext, BakerOptions> optionsFactory) {
+        public ModelBuilder options(
+                Function<BedrockModelBakeContext, BakerOptions> optionsFactory) {
             this.optionsFactory = optionsFactory;
             return this;
         }
 
         public ModelBuilder animation(ResourceLocation animationId) {
-            return animation(animationId, RawResourceLoaders.COMMON_LOADER, BedrockAnimation::createAnimation);
+            return animation(
+                    animationId,
+                    RawResourceLoaders.COMMON_LOADER,
+                    BedrockAnimation::createAnimation);
         }
 
-        public ModelBuilder animation(ResourceLocation animationId, BedrockAnimationFactory factory) {
+        public ModelBuilder animation(
+                ResourceLocation animationId, BedrockAnimationFactory factory) {
             return animation(animationId, RawResourceLoaders.COMMON_LOADER, factory);
         }
 
-        public ModelBuilder animation(ResourceLocation animationId, RawResourceLoader animationLoader, BedrockAnimationFactory factory) {
+        public ModelBuilder animation(
+                ResourceLocation animationId,
+                RawResourceLoader animationLoader,
+                BedrockAnimationFactory factory) {
             animations.put(animationId, new AnimationRegistration(animationLoader, factory));
             return this;
         }
 
         public void register() {
-            Function<BedrockModelBakeContext, BakerOptions> factory = optionsFactory != null
-                    ? optionsFactory
-                    : context -> animations.isEmpty() ? BakerOptions.defaults() : context.optionsFromAnimations();
-            modelRegistry.put(modelId, new BedrockModelEntry(
-                    modelLoader, sourceId, kind, factory, new ArrayList<>(animations.keySet()), lazy));
+            Function<BedrockModelBakeContext, BakerOptions> factory =
+                    optionsFactory != null
+                            ? optionsFactory
+                            : context ->
+                                    animations.isEmpty()
+                                            ? BakerOptions.defaults()
+                                            : context.optionsFromAnimations();
+            modelRegistry.put(
+                    modelId,
+                    new BedrockModelEntry(
+                            modelLoader,
+                            sourceId,
+                            kind,
+                            factory,
+                            new ArrayList<>(animations.keySet()),
+                            lazy));
             for (Map.Entry<ResourceLocation, AnimationRegistration> entry : animations.entrySet()) {
                 AnimationRegistration animation = entry.getValue();
-                animationRegistry.put(entry.getKey(), new BedrockAnimationEntry(
-                        animation.loader(), modelId, animation.factory(), lazy, true));
+                animationRegistry.put(
+                        entry.getKey(),
+                        new BedrockAnimationEntry(
+                                animation.loader(), modelId, animation.factory(), lazy, true));
             }
         }
     }
 
     private record AnimationRegistration(
-            RawResourceLoader loader,
-            BedrockAnimationFactory factory
-    ) {
-    }
+            RawResourceLoader loader, BedrockAnimationFactory factory) {}
 }

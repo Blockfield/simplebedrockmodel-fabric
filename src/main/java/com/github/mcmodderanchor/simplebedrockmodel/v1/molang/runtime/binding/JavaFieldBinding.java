@@ -23,7 +23,10 @@
  */
 package com.github.mcmodderanchor.simplebedrockmodel.v1.molang.runtime.binding;
 
+import static java.util.Objects.requireNonNull;
+
 import com.github.mcmodderanchor.simplebedrockmodel.v1.molang.runtime.value.Value;
+
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -34,8 +37,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Supplier;
-
-import static java.util.Objects.requireNonNull;
 
 @ApiStatus.Internal
 public final class JavaFieldBinding implements RegisteredBinding {
@@ -62,7 +63,10 @@ public final class JavaFieldBinding implements RegisteredBinding {
     private Supplier<Value> value;
     private boolean constant;
 
-    JavaFieldBinding(final @Nullable Object object, final @Nullable Field field, final @Nullable Supplier<Value> value) {
+    JavaFieldBinding(
+            final @Nullable Object object,
+            final @Nullable Field field,
+            final @Nullable Supplier<Value> value) {
         this.object = object;
         this.field = field;
         this.value = value;
@@ -95,9 +99,7 @@ public final class JavaFieldBinding implements RegisteredBinding {
         return field;
     }
 
-    /**
-     * Returns the object instance that holds this field, or null for static fields.
-     */
+    /** Returns the object instance that holds this field, or null for static fields. */
     public @Nullable Object holder() {
         return object;
     }

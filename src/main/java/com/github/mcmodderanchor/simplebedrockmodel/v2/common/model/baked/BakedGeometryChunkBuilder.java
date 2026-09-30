@@ -20,8 +20,20 @@ public class BakedGeometryChunkBuilder {
         sourceBones.add(sourceBone);
     }
 
-    void addQuad(Vector3fc p0, Vector3fc p1, Vector3fc p2, Vector3fc p3, Vector3fc normal,
-                 float u0, float v0, float u1, float v1, float u2, float v2, float u3, float v3) {
+    void addQuad(
+            Vector3fc p0,
+            Vector3fc p1,
+            Vector3fc p2,
+            Vector3fc p3,
+            Vector3fc normal,
+            float u0,
+            float v0,
+            float u1,
+            float v1,
+            float u2,
+            float v2,
+            float u3,
+            float v3) {
         quadPositions.add(p0.x(), p0.y(), p0.z());
         quadPositions.add(p1.x(), p1.y(), p1.z());
         quadPositions.add(p2.x(), p2.y(), p2.z());
@@ -46,9 +58,18 @@ public class BakedGeometryChunkBuilder {
     }
 
     BakedGeometryChunk toChunk(int attachBoneIndex) {
-        return new BakedGeometryChunk(attachBoneIndex,
-                new BakedQuadData(quadPositions.toArray(), quadNormals.toArray(), quadUvs.toArray(), quadCount),
-                new BakedVertexData(vertexPositions.toArray(), vertexNormals.toArray(), vertexUvs.toArray(), vertexCount),
+        return new BakedGeometryChunk(
+                attachBoneIndex,
+                new BakedQuadData(
+                        quadPositions.toArray(),
+                        quadNormals.toArray(),
+                        quadUvs.toArray(),
+                        quadCount),
+                new BakedVertexData(
+                        vertexPositions.toArray(),
+                        vertexNormals.toArray(),
+                        vertexUvs.toArray(),
+                        vertexCount),
                 sourceBones.toArray(String[]::new));
     }
 

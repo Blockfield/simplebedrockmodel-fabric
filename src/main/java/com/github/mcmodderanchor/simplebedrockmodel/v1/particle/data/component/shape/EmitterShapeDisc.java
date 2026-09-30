@@ -3,13 +3,19 @@ package com.github.mcmodderanchor.simplebedrockmodel.v1.particle.data.component.
 import com.github.mcmodderanchor.simplebedrockmodel.v1.molang.runtime.MolangContext;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.molang.runtime.MolangExpression;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.particle.runtime.ParticleInstance;
+
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Random;
 
-public record EmitterShapeDisc(MolangExpression[] offset, MolangExpression radius, PlaneNormal planeNormal,
-                               boolean surfaceOnly, @Nullable MolangExpression[] direction,
-                               DirectionMode directionMode) implements EmitterShape {
+public record EmitterShapeDisc(
+        MolangExpression[] offset,
+        MolangExpression radius,
+        PlaneNormal planeNormal,
+        boolean surfaceOnly,
+        @Nullable MolangExpression[] direction,
+        DirectionMode directionMode)
+        implements EmitterShape {
     @Override
     public void applyPosition(ParticleInstance p, MolangContext<?> ctx, Random random) {
         float ox = (float) offset[0].evaluate(ctx);

@@ -28,12 +28,12 @@ import com.github.mcmodderanchor.simplebedrockmodel.v1.molang.runtime.value.Func
 import com.github.mcmodderanchor.simplebedrockmodel.v1.molang.runtime.value.ObjectProperty;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.molang.runtime.value.ObjectValue;
 import com.github.mcmodderanchor.simplebedrockmodel.v1.molang.runtime.value.Value;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * A {@link ExpressionVisitor} that determines whether an expression is
- * constant or not.
+ * A {@link ExpressionVisitor} that determines whether an expression is constant or not.
  *
  * @since 3.0.0
  */
@@ -92,7 +92,8 @@ public final class IsConstantExpression implements ExpressionVisitor<@NotNull Bo
     }
 
     @Override
-    public @NotNull Boolean visitTernaryConditional(final @NotNull TernaryConditionalExpression expression) {
+    public @NotNull Boolean visitTernaryConditional(
+            final @NotNull TernaryConditionalExpression expression) {
         // ternary conditional is only constant if all of its parts are constant
         return expression.condition().visit(this)
                 && expression.trueExpression().visit(this)
@@ -106,7 +107,8 @@ public final class IsConstantExpression implements ExpressionVisitor<@NotNull Bo
     }
 
     @Override
-    public @NotNull Boolean visitExecutionScope(final @NotNull ExecutionScopeExpression expression) {
+    public @NotNull Boolean visitExecutionScope(
+            final @NotNull ExecutionScopeExpression expression) {
         // execution scopes are constant if all of their expressions are constant
         for (final Expression expr : expression.expressions()) {
             if (!expr.visit(this)) {
@@ -143,7 +145,8 @@ public final class IsConstantExpression implements ExpressionVisitor<@NotNull Bo
             return true;
         }
 
-        final ObjectProperty property = ((ObjectValue) objectValue).getProperty(expression.property());
+        final ObjectProperty property =
+                ((ObjectValue) objectValue).getProperty(expression.property());
         if (property == null) {
             // property not found, can't know if it's constant or not
             return false;

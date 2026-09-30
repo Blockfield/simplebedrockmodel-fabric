@@ -23,18 +23,16 @@
  */
 package com.github.mcmodderanchor.simplebedrockmodel.v1.molang.parser.ast;
 
+import static java.util.Objects.requireNonNull;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-import static java.util.Objects.requireNonNull;
-
 /**
- * Call expression implementation, executes functions
- * with certain arguments.
+ * Call expression implementation, executes functions with certain arguments.
  *
- * <p>Example call expressions: {@code print('hello')},
- * {@code math.sqrt(9)}, {@code math.pow(3, 2)}</p>
+ * <p>Example call expressions: {@code print('hello')}, {@code math.sqrt(9)}, {@code math.pow(3, 2)}
  *
  * @since 3.0.0
  */
@@ -42,7 +40,8 @@ public final class CallExpression implements Expression {
     private final List<Expression> arguments;
     private Expression function;
 
-    public CallExpression(final @NotNull Expression function, final @NotNull List<Expression> arguments) {
+    public CallExpression(
+            final @NotNull Expression function, final @NotNull List<Expression> arguments) {
         this.function = requireNonNull(function, "function");
         this.arguments = requireNonNull(arguments, "arguments");
     }
@@ -66,8 +65,7 @@ public final class CallExpression implements Expression {
     }
 
     /**
-     * Gets the list of arguments to pass to
-     * the function.
+     * Gets the list of arguments to pass to the function.
      *
      * @since 3.0.0
      */
@@ -100,5 +98,4 @@ public final class CallExpression implements Expression {
         result = 31 * result + arguments.hashCode();
         return result;
     }
-
 }

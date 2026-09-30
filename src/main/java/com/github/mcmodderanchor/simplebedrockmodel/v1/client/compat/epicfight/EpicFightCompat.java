@@ -19,15 +19,17 @@ public class EpicFightCompat {
 
     public static class EpicFightRegister {
         private static void register() {
-//            try {
-//                HumanoidModelBaker.registerNewTransformer(new BedrockArmorTransformer());
-//
-//                // TODO EpicFight这个Event并非继承自NeoForge的Event，如何注册？
-////                NeoForge.EVENT_BUS.addListener(BedrockArmorTransformer::getBedrockArmorTexturePath);
-//            } catch (Exception e) {
-//                throw new RuntimeException("Failed to register Epic Fight compatibility", e);
-//            }
+            //            try {
+            //                HumanoidModelBaker.registerNewTransformer(new
+            // BedrockArmorTransformer());
+            //
+            //                // TODO EpicFight这个Event并非继承自NeoForge的Event，如何注册？
+            ////
+            // NeoForge.EVENT_BUS.addListener(BedrockArmorTransformer::getBedrockArmorTexturePath);
+            //            } catch (Exception e) {
+            //                throw new RuntimeException("Failed to register Epic Fight
+            // compatibility", e);
+            //            }
         }
     }
-
 }

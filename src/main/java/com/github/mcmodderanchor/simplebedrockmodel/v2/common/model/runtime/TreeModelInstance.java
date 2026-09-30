@@ -6,10 +6,12 @@ import com.github.mcmodderanchor.simplebedrockmodel.v2.common.model.tree.TreeBed
 import com.github.mcmodderanchor.simplebedrockmodel.v2.common.model.tree.TreeBoneDefinition;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
+
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 
@@ -28,61 +30,194 @@ public class TreeModelInstance extends BoneTreeInstance {
     }
 
     @Environment(EnvType.CLIENT)
-    public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay) {
+    public void renderToBuffer(
+            PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay) {
         baseModel.renderToBuffer(this, poseStack, buffer, packedLight, packedOverlay);
     }
 
     @Environment(EnvType.CLIENT)
-    public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay,
-                               float red, float green, float blue, float alpha) {
-        renderToBuffer(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha, false);
+    public void renderToBuffer(
+            PoseStack poseStack,
+            VertexConsumer buffer,
+            int packedLight,
+            int packedOverlay,
+            float red,
+            float green,
+            float blue,
+            float alpha) {
+        renderToBuffer(
+                poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha, false);
     }
 
     @Environment(EnvType.CLIENT)
-    public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay,
-                               float red, float green, float blue, float alpha, boolean skipNormalVisibilityCull) {
-        baseModel.renderToBuffer(this, poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha, skipNormalVisibilityCull);
+    public void renderToBuffer(
+            PoseStack poseStack,
+            VertexConsumer buffer,
+            int packedLight,
+            int packedOverlay,
+            float red,
+            float green,
+            float blue,
+            float alpha,
+            boolean skipNormalVisibilityCull) {
+        baseModel.renderToBuffer(
+                this,
+                poseStack,
+                buffer,
+                packedLight,
+                packedOverlay,
+                red,
+                green,
+                blue,
+                alpha,
+                skipNormalVisibilityCull);
     }
 
     @Environment(EnvType.CLIENT)
-    public void renderToBuffer(PoseStack poseStack, MultiBufferSource bufferSource, RenderType quadRenderType,
-                               RenderType triangleRenderType, int packedLight, int packedOverlay) {
-        baseModel.renderToBuffer(this, poseStack, bufferSource, quadRenderType, triangleRenderType, packedLight, packedOverlay);
+    public void renderToBuffer(
+            PoseStack poseStack,
+            MultiBufferSource bufferSource,
+            RenderType quadRenderType,
+            RenderType triangleRenderType,
+            int packedLight,
+            int packedOverlay) {
+        baseModel.renderToBuffer(
+                this,
+                poseStack,
+                bufferSource,
+                quadRenderType,
+                triangleRenderType,
+                packedLight,
+                packedOverlay);
     }
 
     @Environment(EnvType.CLIENT)
-    public void renderToBuffer(PoseStack poseStack, MultiBufferSource bufferSource, RenderType quadRenderType,
-                               RenderType triangleRenderType, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
-        renderToBuffer(poseStack, bufferSource, quadRenderType, triangleRenderType, packedLight, packedOverlay, red, green, blue, alpha, false);
+    public void renderToBuffer(
+            PoseStack poseStack,
+            MultiBufferSource bufferSource,
+            RenderType quadRenderType,
+            RenderType triangleRenderType,
+            int packedLight,
+            int packedOverlay,
+            float red,
+            float green,
+            float blue,
+            float alpha) {
+        renderToBuffer(
+                poseStack,
+                bufferSource,
+                quadRenderType,
+                triangleRenderType,
+                packedLight,
+                packedOverlay,
+                red,
+                green,
+                blue,
+                alpha,
+                false);
     }
 
     @Environment(EnvType.CLIENT)
-    public void renderToBuffer(PoseStack poseStack, MultiBufferSource bufferSource, RenderType quadRenderType,
-                               RenderType triangleRenderType, int packedLight, int packedOverlay, float red, float green, float blue, float alpha,
-                               boolean skipNormalVisibilityCull) {
-        baseModel.renderToBuffer(this, poseStack, bufferSource, quadRenderType, triangleRenderType, packedLight, packedOverlay, red, green, blue, alpha, skipNormalVisibilityCull);
+    public void renderToBuffer(
+            PoseStack poseStack,
+            MultiBufferSource bufferSource,
+            RenderType quadRenderType,
+            RenderType triangleRenderType,
+            int packedLight,
+            int packedOverlay,
+            float red,
+            float green,
+            float blue,
+            float alpha,
+            boolean skipNormalVisibilityCull) {
+        baseModel.renderToBuffer(
+                this,
+                poseStack,
+                bufferSource,
+                quadRenderType,
+                triangleRenderType,
+                packedLight,
+                packedOverlay,
+                red,
+                green,
+                blue,
+                alpha,
+                skipNormalVisibilityCull);
     }
 
     @Environment(EnvType.CLIENT)
-    public void renderSingleBonePass(PoseStack poseStack, int boneIndex, VertexConsumer buffer, int packedLight, int packedOverlay,
-                                     float red, float green, float blue, float alpha, boolean quadsPass, boolean skipNormalVisibilityCull) {
+    public void renderSingleBonePass(
+            PoseStack poseStack,
+            int boneIndex,
+            VertexConsumer buffer,
+            int packedLight,
+            int packedOverlay,
+            float red,
+            float green,
+            float blue,
+            float alpha,
+            boolean quadsPass,
+            boolean skipNormalVisibilityCull) {
         poseStack.pushPose();
         mulParentGlobalTransform(poseStack, boneIndex);
-        baseModel.renderBone(this, boneIndex, poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha,
-                quadsPass, skipNormalVisibilityCull);
+        baseModel.renderBone(
+                this,
+                boneIndex,
+                poseStack,
+                buffer,
+                packedLight,
+                packedOverlay,
+                red,
+                green,
+                blue,
+                alpha,
+                quadsPass,
+                skipNormalVisibilityCull);
         poseStack.popPose();
     }
 
     @Environment(EnvType.CLIENT)
-    public void renderSingleBone(PoseStack poseStack, int boneIndex, MultiBufferSource bufferSource, RenderType quadRenderType,
-                                 RenderType triangleRenderType, int packedLight, int packedOverlay, float red, float green, float blue,
-                                 float alpha, boolean skipNormalVisibilityCull) {
+    public void renderSingleBone(
+            PoseStack poseStack,
+            int boneIndex,
+            MultiBufferSource bufferSource,
+            RenderType quadRenderType,
+            RenderType triangleRenderType,
+            int packedLight,
+            int packedOverlay,
+            float red,
+            float green,
+            float blue,
+            float alpha,
+            boolean skipNormalVisibilityCull) {
         poseStack.pushPose();
         mulParentGlobalTransform(poseStack, boneIndex);
-        baseModel.renderBone(this, boneIndex, poseStack, bufferSource.getBuffer(quadRenderType), packedLight, packedOverlay,
-                red, green, blue, alpha, true, skipNormalVisibilityCull);
-        baseModel.renderBone(this, boneIndex, poseStack, bufferSource.getBuffer(triangleRenderType), packedLight, packedOverlay,
-                red, green, blue, alpha, false, skipNormalVisibilityCull);
+        baseModel.renderBone(
+                this,
+                boneIndex,
+                poseStack,
+                bufferSource.getBuffer(quadRenderType),
+                packedLight,
+                packedOverlay,
+                red,
+                green,
+                blue,
+                alpha,
+                true,
+                skipNormalVisibilityCull);
+        baseModel.renderBone(
+                this,
+                boneIndex,
+                poseStack,
+                bufferSource.getBuffer(triangleRenderType),
+                packedLight,
+                packedOverlay,
+                red,
+                green,
+                blue,
+                alpha,
+                false,
+                skipNormalVisibilityCull);
         poseStack.popPose();
     }
 
@@ -108,8 +243,17 @@ public class TreeModelInstance extends BoneTreeInstance {
             ICube[] cubes = definition.cubes();
             for (int cubeIndex = 0; cubeIndex < cubes.length; cubeIndex++) {
                 ICube cube = cubes[cubeIndex];
-                tracer.traceCube(definition.index(), cubeIndex, cube.x(), cube.y(), cube.z(), cube.width(), cube.height(), cube.depth(),
-                        boneTransform, cubeLocalTransform(cube));
+                tracer.traceCube(
+                        definition.index(),
+                        cubeIndex,
+                        cube.x(),
+                        cube.y(),
+                        cube.z(),
+                        cube.width(),
+                        cube.height(),
+                        cube.depth(),
+                        boneTransform,
+                        cubeLocalTransform(cube));
             }
         }
     }

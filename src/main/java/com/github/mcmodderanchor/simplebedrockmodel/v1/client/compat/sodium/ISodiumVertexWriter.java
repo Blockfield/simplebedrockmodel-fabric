@@ -2,6 +2,7 @@ package com.github.mcmodderanchor.simplebedrockmodel.v1.client.compat.sodium;
 
 import net.caffeinemc.mods.sodium.api.vertex.buffer.VertexBufferWriter;
 import net.caffeinemc.mods.sodium.api.vertex.format.common.EntityVertex;
+
 import org.joml.Vector3f;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
@@ -13,7 +14,17 @@ public interface ISodiumVertexWriter {
 
     int[] NORMALS = new int[6];
 
-    default void emitVertex(long ptr, float x, float y, float z, int color, float u, float v, int packedOverlay, int packedLight, int normal) {
+    default void emitVertex(
+            long ptr,
+            float x,
+            float y,
+            float z,
+            int color,
+            float u,
+            float v,
+            int packedOverlay,
+            int packedLight,
+            int normal) {
         EntityVertex.write(ptr, x, y, z, color, u, v, packedOverlay, packedLight, normal);
     }
 
