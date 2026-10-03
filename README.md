@@ -18,6 +18,9 @@ just build
 
 `just format` applies formatting. The mod JAR is written to `build/libs/`.
 
+`just test` runs the JVM regression checks; `just check` and `just build` also run Java compiler lint.
+CI verifies lint and formatting in Code standards, and JVM lint and regression checks in Build.
+
 ## Releases
 
 After committing to `main`, run `scripts/bump-fork.sh simplebedrockmodel` from
