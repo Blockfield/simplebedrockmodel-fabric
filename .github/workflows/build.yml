@@ -29,7 +29,7 @@ on:
         required: true
         type: string
 permissions:
-  contents: write
+  contents: read
   pull-requests: read # bot-gate reads blockfield-review-bot verdicts on the head SHA
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
