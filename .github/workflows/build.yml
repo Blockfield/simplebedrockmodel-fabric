@@ -29,7 +29,7 @@ on:
         required: true
         type: string
 permissions:
-  contents: read
+  contents: write # tag builds publish the jar as a GitHub Release in this same job; scoping PR builds to read-only needs a release-job split (follow-up, not this gate change)
   pull-requests: read # bot-gate reads blockfield-review-bot verdicts on the head SHA
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
