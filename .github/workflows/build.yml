@@ -29,7 +29,7 @@ on:
         required: true
         type: string
 permissions:
-  contents: write # tag builds publish the jar as a GitHub Release in this same job; scoping PR builds to read-only needs a release-job split (follow-up, not this gate change)
+  contents: read # least privilege; only the tag-only `release` job below gets write
   pull-requests: read # bot-gate reads blockfield-review-bot verdicts on the head SHA
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -100,12 +100,15 @@ jobs:
             echo "sha=$HEAD_SHA"
           } >> "$GITHUB_OUTPUT"
   build:
-    # Main/tag pushes and maintainer dispatches always run; PR heads run only
-    # on a gate permit for the exact head SHA.
+    # Main pushes and maintainer dispatches always run; PR heads run only
+    # on a gate permit for the exact head SHA. Tag pushes skip this job and
+    # run `release` instead: one build per event, read-only token here.
     needs: [bot-gate]
-    if: always() && (github.event_name == 'push' || github.event_name == 'workflow_dispatch' || (needs.bot-gate.outputs.verdict == 'permit' && needs.bot-gate.outputs.sha_match == 'true'))
+    if: always() && (!startsWith(github.ref, 'refs/tags/bf') && (github.event_name == 'push' || github.event_name == 'workflow_dispatch' || (needs.bot-gate.outputs.verdict == 'permit' && needs.bot-gate.outputs.sha_match == 'true')))
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    permissions:
+      contents: read # PR-controlled build scripts never get a write token
     steps:
       - uses: actions/checkout@v7
         with:
@@ -139,8 +142,47 @@ jobs:
           # Tags publish the jar as a release; branch builds only need it briefly, and Actions
           # storage over the free 0.5 GB stops GitHub-hosted runners.
           retention-days: 1
+  release:
+    # Tag pushes only: build once and publish the jar as a GitHub Release.
+    # The only job with a write token; PR code never runs here, so the
+    # write-token finding stays closed while releases keep working.
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/bf')
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write # tag builds publish the jar as a GitHub Release
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: "3.12.10"
+      - uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961 # v5
+        with:
+          distribution: temurin
+          java-version: "21.0.12"
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: "22.23.2"
+      - name: Cache pinned project tools
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: |
+            .cache/quality
+            .dev/jdk
+          key: quality-tools-v1-${{ runner.os }}-${{ runner.arch }}-${{ github.job }}-${{ hashFiles('scripts/toolchain.py', 'scripts/quality.py', 'dev/quality.py') }}
+      - run: python -I -X utf8 scripts/toolchain.py --ci
+      # v6 bundles proprietary caching under Gradle's Terms of Use; setup-gradle also validates wrappers by default.
+      - uses: gradle/actions/setup-gradle@v5
+      - name: Verify JVM lint and regression tests, then build
+        run: just build
+      - uses: actions/upload-artifact@v7
+        with:
+          name: Artifacts
+          path: build/libs/
+          # Tags publish the jar as a release; branch builds only need it briefly, and Actions
+          # storage over the free 0.5 GB stops GitHub-hosted runners.
+          retention-days: 1
       - name: Release the jar under the tag
-        if: startsWith(github.ref, 'refs/tags/bf')
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
